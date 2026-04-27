@@ -71,12 +71,6 @@ class Anak extends Model
         return $this->hasMany(Imunisasi::class);
     }
 
-    // Anak punya banyak data penimbangan
-    public function penimbangan()
-    {
-        return $this->hasMany(Penimbangan::class);
-    }
-
     // =====================
     // SCOPE (filter siap pakai)
     // =====================

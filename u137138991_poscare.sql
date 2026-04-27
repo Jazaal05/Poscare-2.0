@@ -232,86 +232,6 @@ INSERT INTO `jadwal` (`id`, `nama_kegiatan`, `jenis_kegiatan`, `tanggal`, `waktu
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `kbm_reference`
---
-
-CREATE TABLE `kbm_reference` (
-  `id` int(11) NOT NULL,
-  `umur_bulan` int(11) NOT NULL COMMENT 'Umur dalam bulan (0-60)',
-  `kbm_gram` int(11) NOT NULL COMMENT 'Kenaikan Berat Minimal dalam gram',
-  `keterangan` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Referensi Kenaikan Berat Minimal per umur';
-
---
--- Dumping data untuk tabel `kbm_reference`
---
-
-INSERT INTO `kbm_reference` (`id`, `umur_bulan`, `kbm_gram`, `keterangan`) VALUES
-(1, 0, 600, 'Bulan pertama: minimal naik 600g'),
-(2, 1, 900, 'Bulan 1-2: minimal naik 900g'),
-(3, 2, 900, 'Bulan 2-3: minimal naik 900g'),
-(4, 3, 800, 'Bulan 3-4: minimal naik 800g'),
-(5, 4, 800, 'Bulan 4-5: minimal naik 800g'),
-(6, 5, 700, 'Bulan 5-6: minimal naik 700g'),
-(7, 6, 700, 'Bulan 6-7: minimal naik 700g'),
-(8, 7, 600, 'Bulan 7-8: minimal naik 600g'),
-(9, 8, 600, 'Bulan 8-9: minimal naik 600g'),
-(10, 9, 500, 'Bulan 9-10: minimal naik 500g'),
-(11, 10, 500, 'Bulan 10-11: minimal naik 500g'),
-(12, 11, 500, 'Bulan 11-12: minimal naik 500g'),
-(13, 12, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(14, 13, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(15, 14, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(16, 15, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(17, 16, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(18, 17, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(19, 18, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(20, 19, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(21, 20, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(22, 21, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(23, 22, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(24, 23, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
-(25, 24, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(26, 25, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(27, 26, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(28, 27, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(29, 28, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(30, 29, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(31, 30, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(32, 31, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(33, 32, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(34, 33, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(35, 34, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(36, 35, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(37, 36, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(38, 37, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(39, 38, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(40, 39, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(41, 40, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(42, 41, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(43, 42, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(44, 43, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(45, 44, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(46, 45, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(47, 46, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(48, 47, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(49, 48, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(50, 49, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(51, 50, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(52, 51, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(53, 52, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(54, 53, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(55, 54, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(56, 55, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(57, 56, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(58, 57, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(59, 58, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(60, 59, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
-(61, 60, 300, 'Bulan 24-60: minimal naik 300g/bulan');
-
--- --------------------------------------------------------
-
---
 -- Struktur dari tabel `laporan`
 --
 
@@ -351,34 +271,6 @@ INSERT INTO `master_vaksin` (`id`, `nama_vaksin`, `usia_standar_bulan`, `usia_mi
 (3, 'DPT/HB/HiB ', 2, 3, 'Mencegah infeksi hati (liver) yang kronis, Mencegah infeksi bakteri yang dapat menyebabkan meningitis (radang selaput otak) dan pneumonia.', 4),
 (4, 'Campak ', 9, 9, 'Diberikan pada usia 9 bulan untuk mencegah campak dan rubella.', 18),
 (27, 'DPT HB HIB', 0, 0, 'Vaksin tambahan', 60);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `penimbangan`
---
-
-CREATE TABLE `penimbangan` (
-  `id` int(11) NOT NULL,
-  `anak_id` int(11) NOT NULL COMMENT 'FK ke tabel anak',
-  `tanggal_ukur` date NOT NULL COMMENT 'Tanggal penimbangan',
-  `umur_bulan` int(11) NOT NULL COMMENT 'Umur anak saat ditimbang (bulan)',
-  `bb_kg` decimal(5,2) DEFAULT NULL COMMENT 'Berat badan dalam kg',
-  `tb_cm` decimal(5,2) DEFAULT NULL COMMENT 'Tinggi badan dalam cm',
-  `lk_cm` decimal(5,2) DEFAULT NULL COMMENT 'Lingkar kepala dalam cm',
-  `cara_ukur` enum('berbaring','berdiri') DEFAULT 'berbaring' COMMENT 'Cara pengukuran TB',
-  `status_gizi` varchar(100) DEFAULT NULL COMMENT 'Kategori status gizi: Gizi Baik, Gizi Kurang, dll',
-  `zscore_bbu` decimal(5,2) DEFAULT NULL COMMENT 'Z-score BB/U (Berat Badan menurut Umur)',
-  `zscore_tbu` decimal(5,2) DEFAULT NULL COMMENT 'Z-score TB/U (Tinggi Badan menurut Umur)',
-  `zscore_bbtb` decimal(5,2) DEFAULT NULL COMMENT 'Z-score BB/TB (Berat Badan menurut Tinggi Badan)',
-  `status_nt` char(1) DEFAULT NULL COMMENT 'Status Naik/Tidak: N = Naik, T = Tidak Naik',
-  `kbm_gram` int(11) DEFAULT NULL COMMENT 'Kenaikan Berat Minimal (gram) sesuai umur',
-  `kenaikan_bb_gram` int(11) DEFAULT NULL COMMENT 'Kenaikan berat badan aktual (gram) dari bulan lalu',
-  `catatan` text DEFAULT NULL COMMENT 'Catatan tambahan dari bidan/petugas',
-  `user_id` int(11) DEFAULT NULL COMMENT 'ID petugas yang input data',
-  `created_at` datetime DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Riwayat penimbangan anak untuk grafik KMS';
 
 -- --------------------------------------------------------
 
@@ -546,106 +438,6 @@ INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `email`, `no_
 -- --------------------------------------------------------
 
 --
--- Stand-in struktur untuk tampilan `v_anak_lengkap`
--- (Lihat di bawah untuk tampilan aktual)
---
-CREATE TABLE `v_anak_lengkap` (
-`id` int(11)
-,`nik_anak` varchar(16)
-,`nama_anak` varchar(100)
-,`tanggal_lahir` date
-,`tempat_lahir` varchar(100)
-,`jenis_kelamin` enum('L','P')
-,`anak_ke` int(11)
-,`alamat_domisili` text
-,`nama_kk` varchar(100)
-,`nama_ayah` varchar(100)
-,`nama_ibu` varchar(100)
-,`nik_ayah` varchar(16)
-,`nik_ibu` varchar(16)
-,`hp_kontak_ortu` varchar(15)
-,`umur_bulan` bigint(21)
-,`umur_tahun` decimal(21,0)
-,`user_id` int(11)
-);
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `who_zscore_bbu`
---
-
-CREATE TABLE `who_zscore_bbu` (
-  `id` int(11) NOT NULL,
-  `jenis_kelamin` enum('L','P') NOT NULL,
-  `z_score` decimal(3,1) NOT NULL,
-  `usia_bulan` int(11) NOT NULL,
-  `berat_badan_kg` decimal(5,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `who_zscore_bbu`
---
-
-INSERT INTO `who_zscore_bbu` (`id`, `jenis_kelamin`, `z_score`, `usia_bulan`, `berat_badan_kg`) VALUES
-(1, 'L', -3.0, 0, 2.20),
-(2, 'L', -2.0, 0, 2.50),
-(3, 'L', 2.0, 0, 4.40),
-(4, 'L', -3.0, 6, 5.70),
-(5, 'L', -2.0, 6, 6.60),
-(6, 'L', 2.0, 6, 9.20),
-(7, 'L', -3.0, 12, 7.20),
-(8, 'L', -2.0, 12, 8.30),
-(9, 'L', 2.0, 12, 11.70),
-(10, 'L', -3.0, 24, 9.00),
-(11, 'L', -2.0, 24, 10.30),
-(12, 'L', 2.0, 24, 14.90),
-(13, 'L', -3.0, 36, 10.50),
-(14, 'L', -2.0, 36, 12.00),
-(15, 'L', 2.0, 36, 17.20),
-(16, 'L', -3.0, 48, 11.70),
-(17, 'L', -2.0, 48, 13.50),
-(18, 'L', 2.0, 48, 19.50),
-(19, 'L', -3.0, 60, 12.80),
-(20, 'L', -2.0, 60, 14.80),
-(21, 'L', 2.0, 60, 21.50),
-(22, 'P', -3.0, 0, 2.10),
-(23, 'P', -2.0, 0, 2.40),
-(24, 'P', 2.0, 0, 4.20),
-(25, 'P', -3.0, 6, 5.30),
-(26, 'P', -2.0, 6, 6.10),
-(27, 'P', 2.0, 6, 8.60),
-(28, 'P', -3.0, 12, 6.70),
-(29, 'P', -2.0, 12, 7.70),
-(30, 'P', 2.0, 12, 10.90),
-(31, 'P', -3.0, 24, 8.40),
-(32, 'P', -2.0, 24, 9.60),
-(33, 'P', 2.0, 24, 13.90),
-(34, 'P', -3.0, 36, 9.80),
-(35, 'P', -2.0, 36, 11.20),
-(36, 'P', 2.0, 36, 16.10),
-(37, 'P', -3.0, 48, 11.00),
-(38, 'P', -2.0, 48, 12.50),
-(39, 'P', 2.0, 48, 18.20),
-(40, 'P', -3.0, 60, 12.00),
-(41, 'P', -2.0, 60, 13.70),
-(42, 'P', 2.0, 60, 20.10),
-(43, 'L', 0.0, 0, 3.30),
-(44, 'L', 0.0, 6, 7.90),
-(45, 'L', 0.0, 12, 9.60),
-(46, 'L', 0.0, 24, 12.20),
-(47, 'L', 0.0, 36, 14.30),
-(48, 'L', 0.0, 48, 16.30),
-(49, 'L', 0.0, 60, 18.10),
-(50, 'P', 0.0, 0, 3.20),
-(51, 'P', 0.0, 6, 7.30),
-(52, 'P', 0.0, 12, 8.90),
-(53, 'P', 0.0, 24, 11.50),
-(54, 'P', 0.0, 36, 13.40),
-(55, 'P', 0.0, 48, 15.30),
-(56, 'P', 0.0, 60, 17.10);
-
---
 -- Indexes for dumped tables
 --
 
@@ -687,13 +479,6 @@ ALTER TABLE `jadwal`
   ADD KEY `idx_status` (`status`);
 
 --
--- Indeks untuk tabel `kbm_reference`
---
-ALTER TABLE `kbm_reference`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `idx_umur` (`umur_bulan`);
-
---
 -- Indeks untuk tabel `laporan`
 --
 ALTER TABLE `laporan`
@@ -706,14 +491,6 @@ ALTER TABLE `laporan`
 ALTER TABLE `master_vaksin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nama_vaksin` (`nama_vaksin`);
-
---
--- Indeks untuk tabel `penimbangan`
---
-ALTER TABLE `penimbangan`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_anak_tanggal` (`anak_id`,`tanggal_ukur`),
-  ADD KEY `idx_tanggal` (`tanggal_ukur`);
 
 --
 -- Indeks untuk tabel `riwayat_pengukuran`
@@ -736,13 +513,6 @@ ALTER TABLE `users`
   ADD KEY `idx_username` (`username`),
   ADD KEY `idx_role` (`role`),
   ADD KEY `idx_email` (`email`);
-
---
--- Indeks untuk tabel `who_zscore_bbu`
---
-ALTER TABLE `who_zscore_bbu`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `idx_standard_unique` (`jenis_kelamin`,`z_score`,`usia_bulan`);
 
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
@@ -773,12 +543,6 @@ ALTER TABLE `jadwal`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
--- AUTO_INCREMENT untuk tabel `kbm_reference`
---
-ALTER TABLE `kbm_reference`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
-
---
 -- AUTO_INCREMENT untuk tabel `laporan`
 --
 ALTER TABLE `laporan`
@@ -789,12 +553,6 @@ ALTER TABLE `laporan`
 --
 ALTER TABLE `master_vaksin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
-
---
--- AUTO_INCREMENT untuk tabel `penimbangan`
---
-ALTER TABLE `penimbangan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT untuk tabel `riwayat_pengukuran`
@@ -808,20 +566,7 @@ ALTER TABLE `riwayat_pengukuran`
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
---
--- AUTO_INCREMENT untuk tabel `who_zscore_bbu`
---
-ALTER TABLE `who_zscore_bbu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
-
 -- --------------------------------------------------------
-
---
--- Struktur untuk view `v_anak_lengkap`
---
-DROP TABLE IF EXISTS `v_anak_lengkap`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`u137138991_poscare`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_anak_lengkap`  AS SELECT `a`.`id` AS `id`, `a`.`nik_anak` AS `nik_anak`, `a`.`nama_anak` AS `nama_anak`, `a`.`tanggal_lahir` AS `tanggal_lahir`, `a`.`tempat_lahir` AS `tempat_lahir`, `a`.`jenis_kelamin` AS `jenis_kelamin`, `a`.`anak_ke` AS `anak_ke`, `a`.`alamat_domisili` AS `alamat_domisili`, `a`.`nama_kk` AS `nama_kk`, `a`.`nama_ayah` AS `nama_ayah`, `a`.`nama_ibu` AS `nama_ibu`, `a`.`nik_ayah` AS `nik_ayah`, `a`.`nik_ibu` AS `nik_ibu`, `a`.`hp_kontak_ortu` AS `hp_kontak_ortu`, timestampdiff(MONTH,`a`.`tanggal_lahir`,curdate()) AS `umur_bulan`, floor(timestampdiff(MONTH,`a`.`tanggal_lahir`,curdate()) / 12) AS `umur_tahun`, `a`.`user_id` AS `user_id` FROM `anak` AS `a` ;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -857,12 +602,6 @@ ALTER TABLE `jadwal`
 --
 ALTER TABLE `laporan`
   ADD CONSTRAINT `fk_laporan_created_by_final` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Ketidakleluasaan untuk tabel `penimbangan`
---
-ALTER TABLE `penimbangan`
-  ADD CONSTRAINT `fk_penimbangan_anak` FOREIGN KEY (`anak_id`) REFERENCES `anak` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `riwayat_pengukuran`

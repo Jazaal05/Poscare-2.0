@@ -18,6 +18,7 @@ class EdukasiContent extends Model
         'thumbnail',
         'duration',
         'penulis_id',
+        'layanan',
     ];
 
     // =====================

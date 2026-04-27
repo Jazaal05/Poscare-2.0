@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Lansia;
 
 use App\Http\Controllers\Controller;
+use App\Models\KunjunganLansia;
 use App\Models\Lansia;
-use App\Models\PemeriksaanLansia;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class LansiaDashboardController extends Controller
 {
@@ -17,37 +16,42 @@ class LansiaDashboardController extends Controller
 
     public function stats()
     {
-        $total      = Lansia::aktif()->count();
-        $totalL     = Lansia::aktif()->where('jenis_kelamin', 'L')->count();
-        $totalP     = Lansia::aktif()->where('jenis_kelamin', 'P')->count();
+        $total   = Lansia::aktif()->count();
+        $totalL  = Lansia::aktif()->where('jenis_kelamin', 'L')->count();
+        $totalP  = Lansia::aktif()->where('jenis_kelamin', 'P')->count();
+        $rataUsia = round(Lansia::aktif()->get()->avg(fn($l) => $l->umur) ?? 0, 1);
 
-        // Rata-rata usia
-        $rataUsia = Lansia::aktif()->get()->avg(fn($l) => Carbon::parse($l->tanggal_lahir)->age);
-
-        // Pemeriksaan bulan ini
-        $bulanIni = PemeriksaanLansia::whereMonth('tanggal_periksa', now()->month)
-            ->whereYear('tanggal_periksa', now()->year)
+        // Kunjungan bulan ini
+        $kunjunganBulanIni = KunjunganLansia::whereMonth('tanggal_kunjungan', now()->month)
+            ->whereYear('tanggal_kunjungan', now()->year)
             ->count();
 
-        // Statistik tekanan darah (normal: sistolik < 140)
-        $hipertensi = PemeriksaanLansia::whereIn('lansia_id',
-            Lansia::aktif()->pluck('id')
-        )->whereNotNull('tekanan_darah')
-         ->get()
-         ->filter(function ($p) {
-             $parts = explode('/', $p->tekanan_darah);
-             return isset($parts[0]) && (int)$parts[0] >= 140;
-         })->count();
+        // Lansia dengan kondisi tidak normal (dari kunjungan terakhir)
+        $lansiaIds = Lansia::aktif()->pluck('id');
+        $tidakNormal = KunjunganLansia::whereIn('lansia_id', $lansiaIds)
+            ->whereIn('lansia_id', function ($q) {
+                $q->selectRaw('lansia_id')
+                  ->from('kunjungan_lansia')
+                  ->groupBy('lansia_id')
+                  ->havingRaw('MAX(tanggal_kunjungan) = tanggal_kunjungan');
+            })
+            ->where(function ($q) {
+                $q->whereIn('status_tensi', ['hipertensi1', 'hipertensi2'])
+                  ->orWhereIn('status_gula', ['tinggi', 'sangat_tinggi'])
+                  ->orWhere('status_kolesterol', 'tinggi')
+                  ->orWhere('status_asam_urat', 'tinggi');
+            })
+            ->count();
 
         return response()->json([
             'success' => true,
             'data' => [
-                'total_lansia'    => $total,
-                'total_laki'      => $totalL,
-                'total_perempuan' => $totalP,
-                'rata_usia'       => round($rataUsia ?? 0, 1),
-                'periksa_bulan_ini' => $bulanIni,
-                'hipertensi'      => $hipertensi,
+                'total_lansia'       => $total,
+                'total_laki'         => $totalL,
+                'total_perempuan'    => $totalP,
+                'rata_rata_usia'     => $rataUsia,
+                'kunjungan_bulan_ini'=> $kunjunganBulanIni,
+                'tidak_normal'       => $tidakNormal,
             ],
         ]);
     }

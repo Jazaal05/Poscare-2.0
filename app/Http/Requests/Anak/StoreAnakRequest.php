@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Anak;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreAnakRequest extends FormRequest
 {
@@ -13,7 +14,11 @@ class StoreAnakRequest extends FormRequest
         return [
             'parent_id'      => 'required|integer|min:1',
             'nama_anak'      => 'required|string|min:3|max:100|regex:/[a-zA-Z]/',
-            'nik_anak'       => 'required|digits:16|unique:anak,nik_anak',
+            'nik_anak'       => [
+                'required',
+                'digits:16',
+                Rule::unique('anak', 'nik_anak')->where('is_deleted', 0),
+            ],
             'jenis_kelamin'  => 'required|in:L,P',
             'tanggal_lahir'  => 'required|date|before_or_equal:today',
             'tempat_lahir'   => 'required|string|max:100',

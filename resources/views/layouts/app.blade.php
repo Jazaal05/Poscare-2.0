@@ -44,16 +44,19 @@
             <li><a href="{{ route('pengaturan.index') }}" class="{{ request()->routeIs('pengaturan*') ? 'active' : '' }}">
                 <i class="fas fa-cog"></i>Pengaturan
             </a></li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}" id="logoutForm" style="display:inline;">
-                    @csrf
-                    <a href="#" onclick="event.preventDefault();document.getElementById('logoutForm').submit();"
-                       style="color:#ef4444 !important;">
-                        <i class="fas fa-sign-out-alt"></i>Keluar
-                    </a>
-                </form>
-            </li>
         </ul>
+        <div class="navbar-actions">
+            <a href="{{ route('lansia.dashboard') }}" style="color:#10B981 !important;text-decoration:none;font-weight:500;font-size:0.95rem;padding:0.5rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;" title="Ke Lansia">
+                <i class="fas fa-exchange-alt"></i>Lansia
+            </a>
+            <form method="POST" action="{{ route('logout') }}" id="logoutForm" style="display:inline;">
+                @csrf
+                <a href="#" onclick="event.preventDefault();document.getElementById('logoutForm').submit();"
+                   style="color:#ef4444 !important;text-decoration:none;font-weight:500;font-size:0.95rem;padding:0.5rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>Keluar
+                </a>
+            </form>
+        </div>
     </div>
 </nav>
 

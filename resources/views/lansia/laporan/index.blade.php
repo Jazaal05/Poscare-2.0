@@ -3,7 +3,7 @@
 
 @section('styles')
 <style>
-body { background:linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !important; }
+body { background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 50%,#A7F3D0 100%) !important; }
 .page-title    { font-size:26px; font-weight:700; color:#1E3A5F; margin-bottom:4px; }
 .page-subtitle { font-size:14px; color:#64748B; margin-bottom:24px; }
 .main-card { background:#fff; border-radius:16px; padding:28px 32px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin-bottom:24px; }
@@ -90,8 +90,8 @@ body { background:linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !i
             <label class="filter-label"><i class="fas fa-database"></i> Kategori Data</label>
             <select id="category" class="filter-input">
                 <option value="lansia">Data Lansia</option>
-                <option value="pemeriksaan">Data Pemeriksaan</option>
-                <option value="pengobatan">Data Pengobatan</option>
+                <option value="kunjungan">Data Kunjungan</option>
+                <option value="tidak_normal">Kondisi Tidak Normal</option>
             </select>
         </div>
     </div>

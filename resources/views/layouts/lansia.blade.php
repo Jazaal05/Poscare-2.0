@@ -34,8 +34,8 @@
             <li><a href="{{ route('lansia.dashboard') }}" class="{{ request()->routeIs('lansia.dashboard') ? 'active' : '' }}">
                 <i class="fas fa-home"></i>Beranda
             </a></li>
-            <li><a href="{{ route('lansia.data.index') }}" class="{{ request()->routeIs('lansia.data*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i>Data Lansia
+            <li><a href="{{ route('lansia.kunjungan.index') }}" class="{{ request()->routeIs('lansia.kunjungan*') ? 'active' : '' }}">
+                <i class="fas fa-stethoscope"></i>Kunjungan
             </a></li>
             <li><a href="{{ route('lansia.jadwal.index') }}" class="{{ request()->routeIs('lansia.jadwal*') ? 'active' : '' }}">
                 <i class="fas fa-calendar-alt"></i>Jadwal
@@ -43,30 +43,25 @@
             <li><a href="{{ route('lansia.edukasi.index') }}" class="{{ request()->routeIs('lansia.edukasi*') ? 'active' : '' }}">
                 <i class="fas fa-book-open"></i>Edukasi
             </a></li>
-            <li><a href="{{ route('lansia.pengobatan.index') }}" class="{{ request()->routeIs('lansia.pengobatan*') ? 'active' : '' }}">
-                <i class="fas fa-pills"></i>Pengobatan
-            </a></li>
             <li><a href="{{ route('lansia.laporan.index') }}" class="{{ request()->routeIs('lansia.laporan*') ? 'active' : '' }}">
                 <i class="fas fa-chart-line"></i>Laporan
             </a></li>
             <li><a href="{{ route('lansia.pengaturan.index') }}" class="{{ request()->routeIs('lansia.pengaturan*') ? 'active' : '' }}">
                 <i class="fas fa-cog"></i>Pengaturan
             </a></li>
-            <li>
-                <a href="{{ route('dashboard') }}" style="color:#246BCE !important;" title="Kembali ke Balita">
-                    <i class="fas fa-exchange-alt"></i>Balita
-                </a>
-            </li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}" id="logoutFormLansia" style="display:inline;">
-                    @csrf
-                    <a href="#" onclick="event.preventDefault();document.getElementById('logoutFormLansia').submit();"
-                       style="color:#ef4444 !important;">
-                        <i class="fas fa-sign-out-alt"></i>Keluar
-                    </a>
-                </form>
-            </li>
         </ul>
+        <div class="navbar-actions">
+            <a href="{{ route('dashboard') }}" style="color:#246BCE !important;text-decoration:none;font-weight:500;font-size:0.95rem;padding:0.5rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;" title="Ke Balita">
+                <i class="fas fa-exchange-alt"></i>Balita
+            </a>
+            <form method="POST" action="{{ route('logout') }}" id="logoutFormLansia" style="display:inline;">
+                @csrf
+                <a href="#" onclick="event.preventDefault();document.getElementById('logoutFormLansia').submit();"
+                   style="color:#ef4444 !important;text-decoration:none;font-weight:500;font-size:0.95rem;padding:0.5rem 1rem;display:inline-flex;align-items:center;gap:0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>Keluar
+                </a>
+            </form>
+        </div>
     </div>
 </nav>
 

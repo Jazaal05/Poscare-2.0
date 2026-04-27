@@ -29,9 +29,26 @@ class PengukuranController extends Controller
 
         $riwayat = RiwayatPengukuran::where('anak_id', $anakId)
             ->orderBy('tanggal_ukur', 'asc')
-            ->get();
+            ->get()
+            ->map(fn($r) => [
+                'id'          => $r->id,
+                'tanggal_ukur'=> $r->tanggal_ukur,
+                'umur_bulan'  => (float) $r->umur_bulan,
+                'bb_kg'       => (float) $r->bb_kg,
+                'tb_pb_cm'    => (float) $r->tb_pb_cm,
+                'lk_cm'       => $r->lk_cm ? (float) $r->lk_cm : null,
+                'cara_ukur'   => $r->cara_ukur,
+                'imt'         => $r->imt ? (float) $r->imt : null,
+                'z_tbu'       => $r->z_tbu ? (float) $r->z_tbu : null,
+                'z_bbu'       => $r->z_bbu ? (float) $r->z_bbu : null,
+                'z_bbtb'      => $r->z_bbtb ? (float) $r->z_bbtb : null,
+                'kat_tbu'     => $r->kat_tbu,
+                'kat_bbu'     => $r->kat_bbu,
+                'kat_bbtb'    => $r->kat_bbtb,
+                'overall_8'   => $r->overall_8,
+            ]);
 
-        return view('pengukuran.grafik', compact('anak', 'riwayat'));
+        return view('pengukuran.grafik-baru', compact('anak', 'riwayat'));
     }
 
     // =============================================

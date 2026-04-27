@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Grafik Pertumbuhan - ' . $anak->nama_anak)
 
@@ -36,6 +36,9 @@
     #toast { position:fixed; top:20px; right:20px; z-index:9999; }
     .toast-item { padding:12px 20px; border-radius:10px; color:#fff; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,0.15); margin-bottom:8px; }
     .toast-success { background:#10B981; } .toast-error { background:#EF4444; }
+    .status-box { margin-top:20px; padding:16px; border-radius:8px; border-left:4px solid #10B981; background:#ECFDF5; }
+    .status-box.warning { border-left-color:#F59E0B; background:#FEF3C7; }
+    .status-box.danger { border-left-color:#DC2626; background:#FEE2E2; }
 </style>
 @endsection
 
@@ -119,12 +122,12 @@
     <div style="position:relative;height:450px;width:100%;">
         <canvas id="growthChart"></canvas>
     </div>
-    <div id="statusBox" style="margin-top:20px;padding:16px;border-radius:8px;border-left:4px solid #10B981;background:#ECFDF5;display:none;">
-        <div style="display:flex;align-items:center;gap:10px;color:#065F46;font-weight:600;">
+    <div id="statusBox" class="status-box" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;font-weight:600;">
             <i class="fas fa-check-circle"></i>
             <span id="statusText">Status: Normal</span>
         </div>
-        <div id="zscoreText" style="color:#047857;font-size:13px;margin-top:6px;"></div>
+        <div id="zscoreText" style="font-size:13px;margin-top:6px;"></div>
     </div>
 </div>
 
@@ -149,25 +152,25 @@
             <tbody id="riwayatBody">
                 @forelse($riwayat as $r)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($r->tanggal_ukur)->format('d/m/Y') }}</td>
-                    <td>{{ number_format($r->umur_bulan, 1) }}</td>
-                    <td>{{ $r->bb_kg }}</td>
-                    <td>{{ $r->tb_pb_cm }}</td>
-                    <td>{{ $r->lk_cm ?? '-' }}</td>
-                    <td>{{ $r->z_bbu ? number_format($r->z_bbu, 2) : '-' }}</td>
-                    <td>{{ $r->z_tbu ? number_format($r->z_tbu, 2) : '-' }}</td>
-                    <td>{{ $r->z_bbtb ? number_format($r->z_bbtb, 2) : '-' }}</td>
+                    <td>{{ \Carbon\Carbon::parse($r['tanggal_ukur'])->format('d/m/Y') }}</td>
+                    <td>{{ $r['umur_bulan'] }}</td>
+                    <td>{{ $r['bb_kg'] }}</td>
+                    <td>{{ $r['tb_pb_cm'] }}</td>
+                    <td>{{ $r['lk_cm'] ?? '-' }}</td>
+                    <td>{{ number_format($r['z_bbu'], 2) }}</td>
+                    <td>{{ number_format($r['z_tbu'], 2) }}</td>
+                    <td>{{ number_format($r['z_bbtb'], 2) }}</td>
                     <td>
                         @php
-                            $s = $r->overall_8 ?? 'Belum diukur';
+                            $s = $r['overall_8'] ?? 'Belum diukur';
                             $cls = match(true) {
-                                $s === 'Gizi Baik' => 'success',
-                                str_contains($s, 'Stunting') || str_contains($s, 'Kurang') => 'warning',
-                                str_contains($s, 'Lebih') || $s === 'Obesitas' => 'danger',
+                                $s === 'normal' => 'success',
+                                in_array($s, ['kurang', 'sangat_kurang']) => 'warning',
+                                in_array($s, ['lebih', 'sangat_lebih']) => 'danger',
                                 default => 'secondary'
                             };
                         @endphp
-                        <span class="badge badge-{{ $cls }}">{{ $s }}</span>
+                        <span class="badge badge-{{ $cls }}">{{ ucfirst(str_replace('_', ' ', $s)) }}</span>
                     </td>
                 </tr>
                 @empty
@@ -186,32 +189,59 @@ const riwayatData = @json($riwayat);
 let growthChart = null;
 let currentChartType = 'bbu';
 
-// WHO Growth Reference Data (simplified curves for boys 0-60 months)
+// WHO Growth Reference Data - Lengkap 0-60 bulan (Laki-laki)
 const whoData = {
-    bbu: {
-        ages: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
-        p3: [2.1,2.9,3.6,4.3,4.9,5.4,5.9,6.3,6.7,7.0,7.3,7.6,7.9,8.1,8.4,8.6,8.8,9.0,9.2,9.4,9.6,9.8,10.0,10.1,10.3,10.5,10.6,10.8,11.0,11.1,11.3,11.4,11.6,11.7,11.9,12.0,12.2,12.3,12.5,12.6,12.8,12.9,13.1,13.2,13.4,13.5,13.7,13.8,14.0,14.1,14.3,14.4,14.6,14.7,14.9,15.0,15.2,15.3,15.5,15.6,15.8],
-        p15: [2.5,3.4,4.3,5.1,5.8,6.4,6.9,7.3,7.7,8.1,8.4,8.7,9.0,9.3,9.6,9.8,10.1,10.3,10.6,10.8,11.0,11.2,11.4,11.6,11.8,12.0,12.2,12.4,12.6,12.8,13.0,13.2,13.4,13.6,13.8,14.0,14.2,14.4,14.6,14.8,15.0,15.2,15.4,15.6,15.8,16.0,16.2,16.4,16.6,16.8,17.0,17.2,17.4,17.6,17.8,18.0,18.2,18.4,18.6,18.8,19.0],
-        p50: [3.3,4.5,5.6,6.4,7.0,7.6,8.1,8.5,8.9,9.3,9.6,9.9,10.2,10.5,10.8,11.0,11.3,11.5,11.8,12.0,12.2,12.5,12.7,12.9,13.1,13.3,13.5,13.7,13.9,14.1,14.3,14.5,14.7,14.9,15.1,15.3,15.5,15.7,15.9,16.1,16.3,16.5,16.7,16.9,17.1,17.3,17.5,17.7,17.9,18.1,18.3,18.5,18.7,18.9,19.1,19.3,19.5,19.7,19.9,20.1,20.3],
-        p85: [4.2,5.7,6.9,7.9,8.7,9.3,9.9,10.4,10.9,11.3,11.7,12.1,12.5,12.8,13.2,13.5,13.8,14.1,14.4,14.7,15.0,15.3,15.6,15.9,16.2,16.5,16.8,17.1,17.4,17.7,18.0,18.3,18.6,18.9,19.2,19.5,19.8,20.1,20.4,20.7,21.0,21.3,21.6,21.9,22.2,22.5,22.8,23.1,23.4,23.7,24.0,24.3,24.6,24.9,25.2,25.5,25.8,26.1,26.4,26.7,27.0],
-        p97: [4.8,6.3,7.6,8.7,9.6,10.3,11.0,11.6,12.2,12.7,13.2,13.7,14.1,14.6,15.0,15.5,15.9,16.3,16.8,17.2,17.6,18.1,18.5,18.9,19.4,19.8,20.2,20.7,21.1,21.5,22.0,22.4,22.8,23.3,23.7,24.1,24.6,25.0,25.4,25.9,26.3,26.7,27.2,27.6,28.0,28.5,28.9,29.3,29.8,30.2,30.6,31.1,31.5,31.9,32.4,32.8,33.2,33.7,34.1,34.5,35.0]
-    },
-    tbu: {
-        ages: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],
-        p3: [45.4,48.9,52.0,54.7,57.0,59.1,61.0,62.8,64.5,66.0,67.5,68.9,70.2,71.5,72.7,73.9,75.0,76.1,77.1,78.1,79.1,80.0,80.9,81.8,82.7,83.5,84.3,85.1,85.9,86.7,87.4,88.2,88.9,89.6,90.3,91.0,91.7,92.4,93.0,93.7,94.3,95.0,95.6,96.2,96.8,97.4,98.0,98.6,99.2,99.8,100.3,100.9,101.5,102.0,102.6,103.1,103.7,104.2,104.8,105.3,105.9],
-        p15: [47.8,51.4,54.6,57.3,59.7,61.8,63.7,65.5,67.1,68.7,70.1,71.5,72.8,74.1,75.3,76.5,77.6,78.7,79.7,80.7,81.7,82.6,83.5,84.4,85.3,86.1,87.0,87.8,88.6,89.4,90.2,91.0,91.7,92.5,93.2,94.0,94.7,95.4,96.1,96.8,97.5,98.2,98.9,99.6,100.2,100.9,101.6,102.2,102.9,103.6,104.2,104.9,105.5,106.2,106.8,107.5,108.1,108.8,109.4,110.1,110.7],
-        p50: [49.9,53.7,57.1,60.0,62.5,64.8,66.9,68.8,70.6,72.3,73.9,75.4,76.8,78.2,79.5,80.8,82.0,83.2,84.3,85.4,86.5,87.6,88.6,89.6,90.6,91.6,92.6,93.5,94.5,95.4,96.3,97.2,98.1,99.0,99.9,100.8,101.6,102.5,103.4,104.2,105.1,105.9,106.8,107.6,108.5,109.3,110.2,111.0,111.8,112.7,113.5,114.3,115.2,116.0,116.8,117.6,118.5,119.3,120.1,120.9,121.7],
-        p85: [52.0,55.9,59.4,62.4,65.0,67.3,69.5,71.5,73.4,75.2,76.9,78.5,80.0,81.5,82.9,84.3,85.6,86.9,88.1,89.3,90.5,91.7,92.8,93.9,95.0,96.1,97.2,98.2,99.3,100.3,101.3,102.3,103.3,104.3,105.3,106.3,107.3,108.2,109.2,110.2,111.1,112.1,113.0,114.0,114.9,115.9,116.8,117.8,118.7,119.6,120.6,121.5,122.4,123.4,124.3,125.2,126.2,127.1,128.0,129.0,129.9],
-        p97: [54.0,57.9,61.5,64.6,67.3,69.7,72.0,74.1,76.1,77.9,79.7,81.4,83.0,84.5,86.0,87.4,88.8,90.1,91.4,92.7,93.9,95.1,96.3,97.5,98.6,99.7,100.8,101.9,103.0,104.0,105.1,106.1,107.2,108.2,109.2,110.3,111.3,112.3,113.3,114.3,115.3,116.3,117.3,118.3,119.3,120.3,121.3,122.3,123.3,124.3,125.3,126.3,127.3,128.3,129.3,130.3,131.3,132.3,133.3,134.3,135.3],
-    },
-    bbtb: {
-        heights: [45,50,55,60,65,70,75,80,85,90,95,100,105,110,115,120],
-        p3: [2.4,3.0,3.7,4.5,5.3,6.2,7.2,8.2,9.3,10.5,11.7,13.0,14.4,15.8,17.3,18.9],
-        p15: [2.9,3.6,4.4,5.3,6.3,7.4,8.6,9.9,11.2,12.7,14.2,15.8,17.5,19.2,21.0,22.9],
-        p50: [3.5,4.4,5.4,6.5,7.7,9.0,10.4,11.9,13.5,15.2,17.0,18.9,20.9,23.0,25.2,27.5],
-        p85: [4.2,5.2,6.4,7.7,9.1,10.6,12.2,14.0,15.8,17.8,19.9,22.1,24.4,26.8,29.3,31.9],
-        p97: [4.8,5.9,7.2,8.6,10.2,11.9,13.7,15.6,17.7,19.9,22.2,24.6,27.1,29.7,32.4,35.2],
-    }
+    bbu: [
+        [0, 2.1, 2.5, 2.9, 3.3, 3.9, 4.4, 5.0],
+        [1, 2.9, 3.4, 3.9, 4.5, 5.1, 5.8, 6.6],
+        [2, 3.8, 4.3, 4.9, 5.6, 6.3, 7.1, 8.0],
+        [3, 4.4, 5.0, 5.7, 6.4, 7.2, 8.0, 9.0],
+        [4, 4.9, 5.6, 6.2, 7.0, 7.8, 8.7, 9.7],
+        [5, 5.3, 6.0, 6.7, 7.5, 8.4, 9.3, 10.4],
+        [6, 5.7, 6.4, 7.1, 7.9, 8.8, 9.8, 10.9],
+        [7, 5.9, 6.7, 7.4, 8.3, 9.2, 10.3, 11.4],
+        [8, 6.2, 6.9, 7.7, 8.6, 9.6, 10.7, 11.9],
+        [9, 6.4, 7.1, 8.0, 8.9, 9.9, 11.0, 12.3],
+        [10, 6.6, 7.4, 8.2, 9.2, 10.2, 11.4, 12.7],
+        [11, 6.8, 7.6, 8.4, 9.4, 10.5, 11.7, 13.0],
+        [12, 6.9, 7.7, 8.6, 9.6, 10.8, 12.0, 13.3],
+        [24, 8.6, 9.7, 10.8, 12.2, 13.6, 15.3, 17.1],
+        [36, 10.0, 11.3, 12.7, 14.3, 16.2, 18.3, 20.7],
+        [48, 11.2, 12.7, 14.4, 16.3, 18.6, 21.2, 24.2],
+        [60, 12.4, 14.1, 16.0, 18.3, 21.0, 24.2, 27.9]
+    ],
+    tbu: [
+        [0, 44.2, 46.1, 48.0, 49.9, 51.8, 53.7, 55.6],
+        [1, 48.9, 50.8, 52.8, 54.7, 56.7, 58.6, 60.6],
+        [2, 52.4, 54.4, 56.4, 58.4, 60.4, 62.4, 64.4],
+        [3, 55.3, 57.3, 59.4, 61.4, 63.5, 65.5, 67.6],
+        [4, 57.6, 59.7, 61.8, 63.9, 66.0, 68.0, 70.1],
+        [5, 59.6, 61.7, 63.8, 65.9, 68.0, 70.1, 72.2],
+        [6, 61.2, 63.3, 65.5, 67.6, 69.8, 71.9, 74.0],
+        [12, 68.6, 71.0, 73.4, 75.7, 78.1, 80.5, 82.9],
+        [24, 78.7, 81.7, 84.8, 87.8, 90.9, 93.9, 97.0],
+        [36, 85.0, 88.7, 92.4, 96.1, 99.8, 103.5, 107.2],
+        [48, 90.7, 94.9, 99.1, 103.3, 107.5, 111.7, 115.9],
+        [60, 96.1, 100.7, 105.3, 110.0, 114.6, 119.2, 123.9]
+    ],
+    bbtb: [
+        [45.0, 1.9, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3],
+        [50.0, 2.6, 2.9, 3.2, 3.6, 4.0, 4.4, 4.9],
+        [55.0, 3.6, 4.0, 4.4, 4.9, 5.5, 6.1, 6.7],
+        [60.0, 4.8, 5.3, 5.9, 6.5, 7.2, 8.0, 8.8],
+        [65.0, 5.8, 6.5, 7.2, 8.0, 8.9, 9.9, 11.0],
+        [70.0, 6.6, 7.4, 8.3, 9.2, 10.3, 11.4, 12.7],
+        [75.0, 7.4, 8.3, 9.3, 10.4, 11.6, 12.9, 14.3],
+        [80.0, 8.2, 9.2, 10.3, 11.5, 12.8, 14.3, 15.9],
+        [85.0, 8.9, 10.0, 11.2, 12.5, 14.0, 15.6, 17.4],
+        [90.0, 9.6, 10.8, 12.1, 13.5, 15.1, 16.9, 18.8],
+        [95.0, 10.3, 11.5, 12.9, 14.5, 16.2, 18.1, 20.2],
+        [100.0, 10.9, 12.2, 13.7, 15.4, 17.2, 19.3, 21.5],
+        [105.0, 11.5, 12.9, 14.5, 16.2, 18.2, 20.4, 22.8],
+        [110.0, 12.1, 13.6, 15.2, 17.1, 19.2, 21.5, 24.1],
+        [115.0, 12.7, 14.2, 16.0, 17.9, 20.1, 22.6, 25.3],
+        [120.0, 13.3, 14.9, 16.7, 18.7, 21.0, 23.6, 26.5]
+    ]
 };
 
 function toast(msg, type = 'success') {
@@ -239,52 +269,49 @@ function renderChart(type) {
     };
     const yLabel = { bbu: 'Berat Badan (kg)', tbu: 'Tinggi Badan (cm)', bbtb: 'Berat Badan (kg)' };
     const xLabel = { bbu: 'Umur (bulan)', tbu: 'Umur (bulan)', bbtb: 'Tinggi Badan (cm)' };
-    const zMap = { bbu: 'z_bbu', tbu: 'z_tbu', bbtb: 'z_bbtb' };
 
-    let labels, datasets = [];
+    const data_standar = whoData[type];
+    let labels = [];
+    let datasets = [];
 
-    if (type === 'bbtb') {
-        labels = whoData.bbtb.heights;
-        datasets = [
-            { label: '-3 SD', data: whoData.bbtb.p3, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '-2 SD (Kurang)', data: whoData.bbtb.p15, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: 'Median (Normal)', data: whoData.bbtb.p50, borderColor: '#10B981', borderWidth: 2.5, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '+2 SD (Lebih)', data: whoData.bbtb.p85, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '+3 SD', data: whoData.bbtb.p97, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-        ];
-        
-        // Add child data for BB/TB
-        const childDataBBTB = riwayatData.map(r => ({ x: parseFloat(r.tb_pb_cm), y: parseFloat(r.bb_kg) }));
+    // Buat kurva WHO
+    const sd_minus_3 = [], sd_minus_2 = [], sd_minus_1 = [], median_data = [], sd_plus_1 = [], sd_plus_2 = [], sd_plus_3 = [];
+    
+    data_standar.forEach(row => {
+        const x = row[0];
+        labels.push(x);
+        sd_minus_3.push({x, y: row[1]});
+        sd_minus_2.push({x, y: row[2]});
+        sd_minus_1.push({x, y: row[3]});
+        median_data.push({x, y: row[4]});
+        sd_plus_1.push({x, y: row[5]});
+        sd_plus_2.push({x, y: row[6]});
+        sd_plus_3.push({x, y: row[7]});
+    });
+
+    // Tambah kurva WHO
+    datasets.push({label: '-3 SD', data: sd_minus_3, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0.4, showLine: true});
+    datasets.push({label: '-2 SD (Kurang)', data: sd_minus_2, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0.4, showLine: true});
+    datasets.push({label: 'Median (Normal)', data: median_data, borderColor: '#10B981', borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0.4, showLine: true});
+    datasets.push({label: '+2 SD (Lebih)', data: sd_plus_2, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0.4, showLine: true});
+    datasets.push({label: '+3 SD', data: sd_plus_3, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, pointHoverRadius: 0, fill: false, tension: 0.4, showLine: true});
+
+    // Tambah data anak
+    const anak_data = [];
+    riwayatData.forEach(r => {
+        if (type === 'bbtb') {
+            anak_data.push({x: r.tb_pb_cm, y: r.bb_kg});
+        } else if (type === 'bbu') {
+            anak_data.push({x: r.umur_bulan, y: r.bb_kg});
+        } else {
+            anak_data.push({x: r.umur_bulan, y: r.tb_pb_cm});
+        }
+    });
+
+    if (anak_data.length > 0) {
         datasets.push({
             label: 'Data Anak',
-            data: childDataBBTB,
-            borderColor: '#246BCE',
-            backgroundColor: '#246BCE',
-            borderWidth: 2,
-            pointRadius: 6,
-            pointBackgroundColor: '#246BCE',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointHoverRadius: 8,
-            fill: false,
-            tension: 0.4,
-            type: 'scatter'
-        });
-    } else {
-        labels = whoData[type].ages;
-        datasets = [
-            { label: '-3 SD', data: whoData[type].p3, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '-2 SD (Kurang)', data: whoData[type].p15, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: 'Median (Normal)', data: whoData[type].p50, borderColor: '#10B981', borderWidth: 2.5, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '+2 SD (Lebih)', data: whoData[type].p85, borderColor: '#F59E0B', borderDash: [4,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-            { label: '+3 SD', data: whoData[type].p97, borderColor: '#DC2626', borderDash: [6,3], borderWidth: 2, pointRadius: 0, fill: false, tension: 0.4 },
-        ];
-        
-        // Add child data
-        const childData = riwayatData.map(r => parseFloat(r[type === 'bbu' ? 'bb_kg' : 'tb_pb_cm']));
-        datasets.push({
-            label: 'Data Anak',
-            data: childData,
+            data: anak_data,
             borderColor: '#246BCE',
             backgroundColor: '#246BCE',
             borderWidth: 2,
@@ -299,50 +326,24 @@ function renderChart(type) {
     }
 
     growthChart = new Chart(ctx, {
-        type: type === 'bbtb' ? 'scatter' : 'line',
-        data: { labels, datasets },
+        type: 'line',
+        data: {labels, datasets},
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            interaction: { mode: 'nearest', intersect: false },
+            interaction: {mode: 'nearest', intersect: false},
+            elements: {
+                line: {borderWidth: 2},
+                point: {radius: 0, hitRadius: 10, hoverRadius: 6}
+            },
             plugins: {
-                title: {
-                    display: true,
-                    text: titleMap[type],
-                    font: { size: 14, weight: 'bold' },
-                    color: '#1E3A5F',
-                    padding: { bottom: 16 },
-                },
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: { size: 11 },
-                        boxWidth: 15,
-                        padding: 12,
-                        usePointStyle: true,
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    callbacks: {
-                        label: ctx => {
-                            return ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`;
-                        }
-                    }
-                }
+                title: {display: true, text: titleMap[type], font: {size: 14, weight: 'bold'}, color: '#1E3A5F', padding: {bottom: 16}},
+                legend: {position: 'bottom', labels: {font: {size: 11}, boxWidth: 15, padding: 12, usePointStyle: true}},
+                tooltip: {enabled: true, callbacks: {label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`}}
             },
             scales: {
-                x: {
-                    type: type === 'bbtb' ? 'linear' : 'linear',
-                    title: { display: true, text: xLabel[type], font: { weight: 'bold', size: 12 } },
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: { font: { size: 11 } },
-                },
-                y: {
-                    title: { display: true, text: yLabel[type], color: '#246BCE', font: { weight: 'bold', size: 12 } },
-                    grid: { color: 'rgba(0,0,0,0.08)', drawBorder: true },
-                    ticks: { font: { size: 11 } },
-                }
+                x: {type: 'linear', title: {display: true, text: xLabel[type], font: {weight: 'bold', size: 12}}, grid: {color: 'rgba(0,0,0,0.05)'}, ticks: {font: {size: 11}}},
+                y: {title: {display: true, text: yLabel[type], color: '#246BCE', font: {weight: 'bold', size: 12}}, grid: {color: 'rgba(0,0,0,0.08)', drawBorder: true}, ticks: {font: {size: 11}}}
             }
         }
     });
@@ -350,37 +351,30 @@ function renderChart(type) {
     // Update status box
     if (riwayatData.length > 0) {
         const latest = riwayatData[riwayatData.length - 1];
+        const zMap = {bbu: 'z_bbu', tbu: 'z_tbu', bbtb: 'z_bbtb'};
         const zScore = latest[zMap[type]];
         const statusBox = document.getElementById('statusBox');
         const statusText = document.getElementById('statusText');
         const zscoreText = document.getElementById('zscoreText');
         
-        let status = 'Normal';
-        let statusColor = '#10B981';
-        let statusBg = '#ECFDF5';
+        let status = 'Normal', statusColor = '#10B981', statusBg = '#ECFDF5';
         
-        if (zScore !== null) {
-            if (zScore < -3) {
-                status = 'Sangat Kurang';
-                statusColor = '#DC2626';
-                statusBg = '#FEE2E2';
-            } else if (zScore < -2) {
-                status = 'Kurang';
-                statusColor = '#F59E0B';
-                statusBg = '#FEF3C7';
-            } else if (zScore < -1) {
-                status = 'Berisiko';
-                statusColor = '#F59E0B';
-                statusBg = '#FEF3C7';
-            } else if (zScore > 3) {
-                status = 'Obesitas';
-                statusColor = '#DC2626';
-                statusBg = '#FEE2E2';
-            } else if (zScore > 2) {
-                status = 'Lebih';
-                statusColor = '#F59E0B';
-                statusBg = '#FEF3C7';
-            }
+        if (zScore < -3) {
+            status = 'Sangat Kurang';
+            statusColor = '#DC2626';
+            statusBg = '#FEE2E2';
+        } else if (zScore < -2) {
+            status = 'Kurang';
+            statusColor = '#F59E0B';
+            statusBg = '#FEF3C7';
+        } else if (zScore > 3) {
+            status = 'Sangat Lebih';
+            statusColor = '#DC2626';
+            statusBg = '#FEE2E2';
+        } else if (zScore > 2) {
+            status = 'Lebih';
+            statusColor = '#F59E0B';
+            statusBg = '#FEF3C7';
         }
         
         statusBox.style.display = 'block';
@@ -388,25 +382,26 @@ function renderChart(type) {
         statusBox.style.backgroundColor = statusBg;
         statusText.textContent = `Status: ${status}`;
         statusText.style.color = statusColor;
-        zscoreText.textContent = `Z-score ${type.toUpperCase()}: ${zScore ? zScore.toFixed(3) : '-'}`;
+        zscoreText.textContent = `Z-score ${type.toUpperCase()}: ${zScore.toFixed(3)}`;
     }
 }
 
 async function submitPengukuran(e) {
     e.preventDefault();
-    const btn  = document.getElementById('btnSimpan');
+    const btn = document.getElementById('btnSimpan');
     const form = document.getElementById('formPengukuran');
-    const fd   = new FormData(form);
+    const fd = new FormData(form);
     const payload = {};
-    fd.forEach((v, k) => { if (v) payload[k] = v; });
+    fd.forEach((v, k) => {if (v) payload[k] = v;});
     payload.anak_id = parseInt(payload.anak_id);
 
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch('{{ route("pengukuran.store") }}', {
+        const res = await fetch('{{ route("pengukuran.store") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json'},
             credentials: 'same-origin',
             body: JSON.stringify(payload),
         });
@@ -424,7 +419,8 @@ async function submitPengukuran(e) {
     } catch (err) {
         toast('Koneksi gagal', 'error');
     } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pengukuran';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pengukuran';
     }
 }
 

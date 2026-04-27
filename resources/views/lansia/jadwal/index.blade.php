@@ -3,7 +3,7 @@
 
 @section('styles')
 <style>
-    body { background: linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !important; }
+    body { background: linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 50%,#A7F3D0 100%) !important; }
     .main-card { background:#fff; border-radius:16px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
     .page-title { font-size:2rem; font-weight:700; color:#1E293B; margin-bottom:6px; }
     .page-subtitle { color:#64748B; font-size:1rem; margin-bottom:24px; }
@@ -73,18 +73,15 @@
         <h1 class="page-title">Jadwal Posyandu Lansia</h1>
         <p class="page-subtitle">Kelola jadwal kegiatan posyandu lansia</p>
     </div>
-    <div class="tab-nav">
+    <div class="tab-nav" style="display:none;">
         <button class="tab-btn active" id="tabBtnJadwal" onclick="switchTab('jadwal')">
-            <i class="fas fa-calendar-alt"></i> Jadwal Bulanan Posyandu
-        </button>
-        <button class="tab-btn" id="tabBtnImunisasi" onclick="switchTab('imunisasi')">
-            <i class="fas fa-syringe"></i> Jadwal Imunisasi
+            <i class="fas fa-calendar-alt"></i> Jadwal Posyandu
         </button>
     </div>
 
     <div id="tab-jadwal" class="tab-content active">
         <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-calendar-plus"></i> Buat Jadwal Bulanan Posyandu Baru</h2>
+            <h2 class="section-title"><i class="fas fa-calendar-plus"></i> Buat Jadwal Posyandu Baru</h2>
             <form id="formJadwal" onsubmit="submitJadwal(event)">
                 <input type="hidden" id="jadwalId">
                 <div class="form-row">
@@ -92,7 +89,7 @@
                     <div class="form-group"><label>Tanggal</label><input type="date" id="tanggalJadwal" required><small class="error-hint" id="errorTanggal">❌ Tanggal tidak boleh di masa lalu!</small></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Waktu Mulai</label><input type="time" id="waktuJadwal" required></div>
+                    <div class="form-group"><label>Waktu Mulai (Format: HH:MM)</label><input type="text" id="waktuJadwal" placeholder="Contoh: 08:30" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required><small style="color:#6B7280; font-size:12px;">Gunakan format 24 jam (00:00 - 23:59)</small></div>
                     <div class="form-group"><label>Lokasi</label>
                         <select id="lokasiJadwal" required>
                             <option value="">-- Pilih Lokasi Posyandu --</option>
@@ -112,44 +109,12 @@
             </form>
         </div>
         <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-list"></i> Daftar Jadwal Bulanan Posyandu</h2>
+            <h2 class="section-title"><i class="fas fa-list"></i> Daftar Jadwal Posyandu</h2>
             <div class="jadwal-grid" id="jadwalCardsContainer"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></div></div>
         </div>
     </div>
 
-    <div id="tab-imunisasi" class="tab-content">
-        <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-calendar-plus"></i> Buat Jadwal Imunisasi Baru</h2>
-            <form id="formImunisasi" onsubmit="submitImunisasi(event)">
-                <input type="hidden" id="imunisasiId">
-                <div class="form-row">
-                    <div class="form-group"><label>Tanggal</label><input type="date" id="tanggalImunisasi" required><small class="error-hint" id="errorTanggalImunisasi">❌ Tanggal tidak boleh di masa lalu!</small></div>
-                    <div class="form-group"><label>Waktu Mulai</label><input type="time" id="waktuImunisasi" required></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Jenis Imunisasi</label><select id="jenisImunisasi" required><option value="">-- Pilih Jenis Imunisasi --</option></select></div>
-                    <div class="form-group"><label>Lokasi</label>
-                        <select id="lokasiImunisasi" required>
-                            <option value="">-- Pilih Lokasi Posyandu --</option>
-                            <option>Posyandu Sedap Malam di Ds. Bagorwetan 1</option>
-                            <option>Posyandu Kenanga di Ds. Bagorwetan 2</option>
-                            <option>Posyandu Anggrek di Dsn. Padasan</option>
-                            <option>Posyandu Teratai di Dsn. Ngronggo</option>
-                            <option>Posyandu Flamboyan di Dsn. Jogolewon</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group"><label>Keterangan &amp; Catatan Khusus</label><textarea id="keteranganImunisasi" placeholder="Catatan tambahan..."></textarea></div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success" id="btnSubmitImunisasi"><i class="fas fa-check-circle"></i> Buat Jadwal</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetFormImunisasi()"><i class="fas fa-times"></i> Cancel / Reset</button>
-                </div>
-            </form>
-        </div>
-        <div class="form-section">
-            <h2 class="section-title"><i class="fas fa-list"></i> Daftar Jadwal Imunisasi</h2>
-            <div class="jadwal-grid" id="imunisasiCardsContainer"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></div></div>
-        </div>
+    <div id="tab-imunisasi" class="tab-content" style="display:none!important;">
     </div>
 </div>
 
@@ -171,7 +136,7 @@
 @section('scripts')
 {{-- Script identik dengan jadwal balita --}}
 <script>
-let hapusId = null, allJadwal = [], allImunisasi = [];
+let hapusId = null, allJadwal = [];
 function toast(msg, type='success') {
     const icons={success:'check-circle',error:'times-circle',warning:'exclamation-triangle'};
     const el=document.createElement('div'); el.className=`toast-item toast-${type}`;
@@ -181,11 +146,10 @@ function toast(msg, type='success') {
 function openModal(id){document.getElementById(id).classList.add('active');}
 function closeModal(id){document.getElementById(id).classList.remove('active');}
 function formatTgl(d){if(!d)return'-';return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});}
-function switchTab(tab){
-    ['jadwal','imunisasi'].forEach(t=>{
-        document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-        document.getElementById('tabBtn'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active',t===tab);
-    });
+function formatWaktu(w){
+    if(!w)return'-';
+    const [jam,menit]=w.split(':');
+    return `${jam}:${menit} WIB`;
 }
 function buildCard(j,isImunisasi=false){
     const status=j.status||'Terjadwal';
@@ -198,7 +162,7 @@ function buildCard(j,isImunisasi=false){
         <h3 class="jadwal-title">${j.nama_kegiatan}</h3>
         <div class="jadwal-info">
             <div class="info-row"><i class="fas fa-calendar"></i><span>${formatTgl(j.tanggal)}</span></div>
-            <div class="info-row"><i class="fas fa-clock"></i><span>${j.waktu_mulai||'-'} WIB</span></div>
+            <div class="info-row"><i class="fas fa-clock"></i><span>${formatWaktu(j.waktu_mulai)}</span></div>
             <div class="info-row"><i class="fas fa-map-marker-alt"></i><span>${j.lokasi||'-'}</span></div>
             ${ket}
         </div>
@@ -210,33 +174,32 @@ function buildCard(j,isImunisasi=false){
 }
 async function loadJadwal(){
     try{
-        const res=await fetch('{{ route("jadwal.list") }}',{headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin'});
+        const res=await fetch('{{ route("jadwal.list") }}?layanan=lansia',{headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin'});
         const data=await res.json(); const list=data.data||[];
         allJadwal=list.filter(j=>j.jenis_kegiatan!=='Imunisasi');
-        allImunisasi=list.filter(j=>j.jenis_kegiatan==='Imunisasi');
         renderCards();
     }catch(e){toast('Gagal memuat data jadwal','error');}
 }
 function renderCards(){
-    document.getElementById('jadwalCardsContainer').innerHTML=allJadwal.length?allJadwal.map(j=>buildCard(j,false)).join(''):`<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Belum Ada Jadwal</h3></div>`;
-    document.getElementById('imunisasiCardsContainer').innerHTML=allImunisasi.length?allImunisasi.map(j=>buildCard(j,true)).join(''):`<div class="empty-state"><i class="fas fa-syringe"></i><h3>Belum Ada Jadwal Imunisasi</h3></div>`;
+    const el = document.getElementById('jadwalCardsContainer');
+    if (el) el.innerHTML=allJadwal.length?allJadwal.map(j=>buildCard(j,false)).join(''):`<div class="empty-state"><i class="fas fa-calendar-times"></i><h3>Belum Ada Jadwal</h3></div>`;
 }
-async function loadVaksin(){
-    try{
-        const res=await fetch('{{ route("vaksin.list") }}',{headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin'});
-        const data=await res.json(); const sel=document.getElementById('jenisImunisasi');
-        (data.data||[]).forEach(v=>{const o=document.createElement('option');o.value=v.nama_vaksin;o.textContent=v.nama_vaksin;sel.appendChild(o);});
-    }catch(e){}
-}
+async function loadVaksin(){ /* tidak dipakai di lansia */ }
 async function submitJadwal(e){
     e.preventDefault(); const id=document.getElementById('jadwalId').value; const isEdit=!!id;
     const tgl=document.getElementById('tanggalJadwal').value;
     const errTgl=document.getElementById('errorTanggal');
     if(!isEdit&&tgl&&new Date(tgl)<new Date(new Date().toDateString())){errTgl.style.display='block';return;}
     errTgl.style.display='none';
+    
+    // Validasi format waktu
+    const waktu=document.getElementById('waktuJadwal').value;
+    const waktuRegex=/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if(!waktuRegex.test(waktu)){toast('Format waktu tidak valid. Gunakan format HH:MM (contoh: 08:30)','warning');return;}
+    
     const btn=document.getElementById('btnSubmitJadwal');
     btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-    const body={nama_kegiatan:document.getElementById('namaKegiatan').value,jenis_kegiatan:'Penimbangan',tanggal:tgl,waktu_mulai:document.getElementById('waktuJadwal').value,lokasi:document.getElementById('lokasiJadwal').value,keterangan:document.getElementById('keteranganJadwal').value,status:'Terjadwal'};
+    const body={nama_kegiatan:document.getElementById('namaKegiatan').value,jenis_kegiatan:'Penimbangan',tanggal:tgl,waktu_mulai:waktu,lokasi:document.getElementById('lokasiJadwal').value,keterangan:document.getElementById('keteranganJadwal').value,status:'Terjadwal',layanan:'lansia'};
     try{
         const res=await fetch(isEdit?`/api/jadwal/${id}`:'/api/jadwal',{method:isEdit?'PUT':'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin',body:JSON.stringify(body)});
         const data=await res.json();
@@ -245,47 +208,20 @@ async function submitJadwal(e){
     }catch(err){toast('Koneksi gagal','error');}
     finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle"></i> '+(isEdit?'Simpan Perubahan':'Buat Jadwal');}
 }
-async function submitImunisasi(e){
-    e.preventDefault(); const id=document.getElementById('imunisasiId').value; const isEdit=!!id;
-    const tgl=document.getElementById('tanggalImunisasi').value;
-    const errTgl=document.getElementById('errorTanggalImunisasi');
-    if(!isEdit&&tgl&&new Date(tgl)<new Date(new Date().toDateString())){errTgl.style.display='block';return;}
-    errTgl.style.display='none';
-    const btn=document.getElementById('btnSubmitImunisasi');
-    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-    const jenisVal=document.getElementById('jenisImunisasi').value;
-    const body={nama_kegiatan:jenisVal?`Imunisasi ${jenisVal}`:'Jadwal Imunisasi',jenis_kegiatan:'Imunisasi',tanggal:tgl,waktu_mulai:document.getElementById('waktuImunisasi').value,lokasi:document.getElementById('lokasiImunisasi').value,keterangan:document.getElementById('keteranganImunisasi').value,status:'Terjadwal'};
-    try{
-        const res=await fetch(isEdit?`/api/jadwal/${id}`:'/api/jadwal',{method:isEdit?'PUT':'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin',body:JSON.stringify(body)});
-        const data=await res.json();
-        if(data.success){toast(data.message||(isEdit?'Jadwal diperbarui!':'Jadwal imunisasi berhasil dibuat!'),'success');resetFormImunisasi();loadJadwal();}
-        else toast(data.message||'Gagal menyimpan','error');
-    }catch(err){toast('Koneksi gagal','error');}
-    finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle"></i> '+(isEdit?'Simpan Perubahan':'Buat Jadwal');}
-}
-function openEdit(j,isImunisasi){
-    if(isImunisasi){
-        switchTab('imunisasi');
-        document.getElementById('imunisasiId').value=j.id;
-        document.getElementById('tanggalImunisasi').value=j.tanggal;
-        document.getElementById('waktuImunisasi').value=j.waktu_mulai;
-        document.getElementById('lokasiImunisasi').value=j.lokasi;
-        document.getElementById('keteranganImunisasi').value=j.keterangan||'';
-        document.getElementById('btnSubmitImunisasi').innerHTML='<i class="fas fa-check-circle"></i> Simpan Perubahan';
-    }else{
-        switchTab('jadwal');
-        document.getElementById('jadwalId').value=j.id;
-        document.getElementById('namaKegiatan').value=j.nama_kegiatan;
-        document.getElementById('tanggalJadwal').value=j.tanggal;
-        document.getElementById('waktuJadwal').value=j.waktu_mulai;
-        document.getElementById('lokasiJadwal').value=j.lokasi;
-        document.getElementById('keteranganJadwal').value=j.keterangan||'';
-        document.getElementById('btnSubmitJadwal').innerHTML='<i class="fas fa-check-circle"></i> Simpan Perubahan';
-    }
+async function submitImunisasi(e){ e.preventDefault(); /* tidak dipakai */ }
+function resetFormImunisasi(){ /* tidak dipakai */ }
+function openEdit(j, isImunisasi){
+    // Lansia hanya punya jadwal posyandu, tidak ada imunisasi
+    document.getElementById('jadwalId').value=j.id;
+    document.getElementById('namaKegiatan').value=j.nama_kegiatan;
+    document.getElementById('tanggalJadwal').value=j.tanggal;
+    document.getElementById('waktuJadwal').value=j.waktu_mulai;
+    document.getElementById('lokasiJadwal').value=j.lokasi;
+    document.getElementById('keteranganJadwal').value=j.keterangan||'';
+    document.getElementById('btnSubmitJadwal').innerHTML='<i class="fas fa-check-circle"></i> Simpan Perubahan';
     window.scrollTo({top:0,behavior:'smooth'});
 }
 function resetFormJadwal(){document.getElementById('formJadwal').reset();document.getElementById('jadwalId').value='';document.getElementById('btnSubmitJadwal').innerHTML='<i class="fas fa-check-circle"></i> Buat Jadwal';document.getElementById('errorTanggal').style.display='none';}
-function resetFormImunisasi(){document.getElementById('formImunisasi').reset();document.getElementById('imunisasiId').value='';document.getElementById('btnSubmitImunisasi').innerHTML='<i class="fas fa-check-circle"></i> Buat Jadwal';document.getElementById('errorTanggalImunisasi').style.display='none';}
 function confirmHapus(id,nama){hapusId=id;document.getElementById('hapusNama').textContent=nama;openModal('modalHapus');}
 document.getElementById('btnKonfirmasiHapus').addEventListener('click',async()=>{
     if(!hapusId)return;
@@ -300,6 +236,9 @@ document.getElementById('btnKonfirmasiHapus').addEventListener('click',async()=>
     finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-trash"></i> Ya, Hapus';hapusId=null;}
 });
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active');}));
-document.addEventListener('DOMContentLoaded',()=>{loadJadwal();loadVaksin();});
+document.addEventListener('DOMContentLoaded',()=>{
+    loadJadwal();
+    loadVaksin();
+});
 </script>
 @endsection

@@ -147,8 +147,9 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Waktu Mulai</label>
-                        <input type="time" id="waktuJadwal" required>
+                        <label>Waktu Mulai (Format: HH:MM)</label>
+                        <input type="text" id="waktuJadwal" placeholder="Contoh: 08:30" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                        <small style="color:#6B7280; font-size:12px;">Gunakan format 24 jam (00:00 - 23:59)</small>
                     </div>
                     <div class="form-group">
                         <label>Lokasi</label>
@@ -204,8 +205,9 @@
                         <small class="error-hint" id="errorTanggalImunisasi">❌ Tanggal tidak boleh di masa lalu!</small>
                     </div>
                     <div class="form-group">
-                        <label>Waktu Mulai</label>
-                        <input type="time" id="waktuImunisasi" required>
+                        <label>Waktu Mulai (Format: HH:MM)</label>
+                        <input type="text" id="waktuImunisasi" placeholder="Contoh: 08:30" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" required>
+                        <small style="color:#6B7280; font-size:12px;">Gunakan format 24 jam (00:00 - 23:59)</small>
                     </div>
                 </div>
                 <div class="form-row">
@@ -295,6 +297,12 @@ function formatTgl(d) {
     return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
 }
 
+function formatWaktu(w) {
+    if (!w) return '-';
+    const [jam, menit] = w.split(':');
+    return `${jam}:${menit} WIB`;
+}
+
 // ── Tab switching ──────────────────────────────────────────
 function switchTab(tab) {
     ['jadwal','imunisasi'].forEach(t => {
@@ -322,7 +330,7 @@ function buildCard(j, isImunisasi = false) {
             <h3 class="jadwal-title">${j.nama_kegiatan}</h3>
             <div class="jadwal-info">
                 <div class="info-row"><i class="fas fa-calendar"></i><span>${formatTgl(j.tanggal)}</span></div>
-                <div class="info-row"><i class="fas fa-clock"></i><span>${j.waktu_mulai || '-'} WIB</span></div>
+                <div class="info-row"><i class="fas fa-clock"></i><span>${formatWaktu(j.waktu_mulai)}</span></div>
                 <div class="info-row"><i class="fas fa-map-marker-alt"></i><span>${j.lokasi || '-'}</span></div>
                 ${keteranganHtml}
             </div>
@@ -340,7 +348,7 @@ function buildCard(j, isImunisasi = false) {
 // ── Load data ──────────────────────────────────────────────
 async function loadJadwal() {
     try {
-        const res  = await fetch('{{ route("jadwal.list") }}', {
+        const res  = await fetch('{{ route("jadwal.list") }}?layanan=balita', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -402,16 +410,25 @@ async function submitJadwal(e) {
     }
     errTgl.style.display = 'none';
 
+    // Validasi format waktu
+    const waktu = document.getElementById('waktuJadwal').value;
+    const waktuRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!waktuRegex.test(waktu)) {
+        toast('Format waktu tidak valid. Gunakan format HH:MM (contoh: 08:30)', 'warning');
+        return;
+    }
+
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     const body = {
         nama_kegiatan:  document.getElementById('namaKegiatan').value,
         jenis_kegiatan: 'Penimbangan',
         tanggal:        tgl,
-        waktu_mulai:    document.getElementById('waktuJadwal').value,
+        waktu_mulai:    waktu,
         lokasi:         document.getElementById('lokasiJadwal').value,
         keterangan:     document.getElementById('keteranganJadwal').value,
         status:         'Terjadwal',
+        layanan:        'balita',
     };
 
     try {
@@ -450,6 +467,14 @@ async function submitImunisasi(e) {
     }
     errTgl.style.display = 'none';
 
+    // Validasi format waktu
+    const waktu = document.getElementById('waktuImunisasi').value;
+    const waktuRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!waktuRegex.test(waktu)) {
+        toast('Format waktu tidak valid. Gunakan format HH:MM (contoh: 08:30)', 'warning');
+        return;
+    }
+
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     const jenisVal = document.getElementById('jenisImunisasi').value;
@@ -457,10 +482,11 @@ async function submitImunisasi(e) {
         nama_kegiatan:  jenisVal ? `Imunisasi ${jenisVal}` : 'Jadwal Imunisasi',
         jenis_kegiatan: 'Imunisasi',
         tanggal:        tgl,
-        waktu_mulai:    document.getElementById('waktuImunisasi').value,
+        waktu_mulai:    waktu,
         lokasi:         document.getElementById('lokasiImunisasi').value,
         keterangan:     document.getElementById('keteranganImunisasi').value,
         status:         'Terjadwal',
+        layanan:        'balita',
     };
 
     try {

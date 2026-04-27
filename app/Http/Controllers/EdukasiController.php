@@ -17,8 +17,9 @@ class EdukasiController extends Controller
     {
         $platform = $request->get('platform');
         $category = $request->get('category');
+        $layanan  = $request->get('layanan', 'balita');
 
-        $query = EdukasiContent::query();
+        $query = EdukasiContent::query()->where('layanan', $layanan);
         if ($platform) $query->where('platform', $platform);
         if ($category) $query->where('category', $category);
 
@@ -37,9 +38,10 @@ class EdukasiController extends Controller
             'platform'  => 'required|in:youtube,tiktok,facebook,instagram,article',
             'url'       => 'required|url',
             'title'     => 'nullable|string|max:255',
-            'category'  => 'required|in:gizi,tumbuh-kembang,kesehatan,imunisasi,tips',
+            'category'  => 'required|in:gizi,tumbuh-kembang,kesehatan,imunisasi,tips,kesehatan-lansia,pola-hidup-sehat,pencegahan-penyakit,gizi-lansia,tips-lansia',
             'thumbnail' => 'nullable|url',
             'duration'  => 'nullable|string|max:50',
+            'layanan'   => 'nullable|in:balita,lansia',
         ]);
 
         // Auto-fetch info jika title atau thumbnail kosong
@@ -53,6 +55,7 @@ class EdukasiController extends Controller
         if (empty($data['title'])) $data['title'] = $data['url'];
 
         $data['penulis_id'] = Auth::id();
+        $data['layanan']    = $data['layanan'] ?? 'balita';
         $edukasi = EdukasiContent::create($data);
 
         return response()->json([
@@ -99,7 +102,7 @@ class EdukasiController extends Controller
             'platform'  => 'sometimes|in:youtube,tiktok,facebook,instagram,article',
             'url'       => 'sometimes|url',
             'title'     => 'sometimes|string|max:255',
-            'category'  => 'sometimes|in:gizi,tumbuh-kembang,kesehatan,imunisasi,tips',
+            'category'  => 'sometimes|in:gizi,tumbuh-kembang,kesehatan,imunisasi,tips,kesehatan-lansia,pola-hidup-sehat,pencegahan-penyakit,gizi-lansia,tips-lansia',
             'thumbnail' => 'nullable|url',
         ]);
         $item->update($data);

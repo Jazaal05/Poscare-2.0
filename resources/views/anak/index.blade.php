@@ -154,7 +154,7 @@
 
 <div class="page-header" style="margin-bottom:20px;">
     <h1 class="page-title">Data Anak</h1>
-    <p class="page-subtitle">Kelola data anak dan registrasi orang tua</p>
+    <p class="page-subtitle"><i class="fas fa-shield-alt" style="color:#246BCE; margin-right:6px;"></i> Halaman Admin - Kelola data anak dan registrasi orang tua</p>
 </div>
 
 {{-- TABS --}}

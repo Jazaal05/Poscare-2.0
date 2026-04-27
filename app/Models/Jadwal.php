@@ -18,6 +18,7 @@ class Jadwal extends Model
         'lokasi',
         'keterangan',
         'status',
+        'layanan',
         'created_by',
         'is_posted',
     ];

@@ -26,14 +26,19 @@ class Lansia extends Model
         return $query->where('is_deleted', false);
     }
 
+    public function kunjungan()
+    {
+        return $this->hasMany(KunjunganLansia::class);
+    }
+
+    public function kunjunganTerakhir()
+    {
+        return $this->hasOne(KunjunganLansia::class)->latestOfMany('tanggal_kunjungan');
+    }
+
     public function pemeriksaan()
     {
         return $this->hasMany(PemeriksaanLansia::class);
-    }
-
-    public function pengobatan()
-    {
-        return $this->hasMany(PengobatanLansia::class);
     }
 
     public function pemeriksaanTerakhir()

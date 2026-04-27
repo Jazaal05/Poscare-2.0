@@ -16,7 +16,9 @@ class JadwalController extends Controller
 
     public function list(Request $request)
     {
-        $jadwal = Jadwal::orderBy('tanggal', 'desc')->get()->map(fn($j) => [
+        $layanan = $request->get('layanan', 'balita');
+        $jadwal = Jadwal::where('layanan', $layanan)
+            ->orderBy('tanggal', 'desc')->get()->map(fn($j) => [
             'id'             => $j->id,
             'nama_kegiatan'  => $j->nama_kegiatan,
             'jenis_kegiatan' => $j->jenis_kegiatan,
@@ -25,6 +27,7 @@ class JadwalController extends Controller
             'lokasi'         => $j->lokasi,
             'keterangan'     => $j->keterangan,
             'status'         => $j->status ?? 'Terjadwal',
+            'layanan'        => $j->layanan ?? 'balita',
             'is_posted'      => (bool) ($j->is_posted ?? false),
         ]);
 
@@ -47,6 +50,7 @@ class JadwalController extends Controller
             'lokasi'         => 'required|string|max:200',
             'keterangan'     => 'nullable|string',
             'status'         => 'nullable|in:Terjadwal,Selesai,Dibatalkan',
+            'layanan'        => 'nullable|in:balita,lansia',
         ]);
 
         // Validasi 1: Tanggal tidak boleh di masa lalu
@@ -78,6 +82,7 @@ class JadwalController extends Controller
 
         $data['created_by'] = Auth::id();
         $data['status']     = $data['status'] ?? 'Terjadwal';
+        $data['layanan']    = $data['layanan'] ?? 'balita';
         $jadwal = Jadwal::create($data);
 
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil disimpan!', 'data' => $jadwal], 201);
@@ -94,6 +99,7 @@ class JadwalController extends Controller
             'lokasi'         => 'sometimes|string|max:200',
             'keterangan'     => 'nullable|string',
             'status'         => 'nullable|in:Terjadwal,Selesai,Dibatalkan',
+            'layanan'        => 'nullable|in:balita,lansia',
         ]);
 
         // Validasi tanggal tidak di masa lalu (jika diubah)

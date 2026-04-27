@@ -10,9 +10,16 @@ class PemeriksaanLansia extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'lansia_id', 'tanggal_periksa', 'berat_badan', 'tinggi_badan',
-        'tekanan_darah', 'gula_darah', 'asam_urat', 'kolesterol',
-        'catatan', 'dicatat_oleh',
+        'lansia_id',
+        'tanggal_periksa',
+        'berat_badan',
+        'tinggi_badan',
+        'tekanan_darah',
+        'gula_darah',
+        'asam_urat',
+        'kolesterol',
+        'catatan',
+        'dicatat_oleh',
     ];
 
     protected $casts = [
