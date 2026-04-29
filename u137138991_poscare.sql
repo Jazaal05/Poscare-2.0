@@ -117,7 +117,7 @@ CREATE TABLE `edukasi_content` (
   `platform` enum('youtube','tiktok','article') NOT NULL,
   `url` text NOT NULL,
   `title` varchar(255) NOT NULL,
-  `category` enum('gizi','tumbuh-kembang','kesehatan','imunisasi','tips') NOT NULL,
+  `category` enum('gizi','tumbuh-kembang','kesehatan','imunisasi','tips','kesehatan-lansia','pola-hidup-sehat','pencegahan-penyakit','gizi-lansia','tips-lansia') NOT NULL,
   `thumbnail` text DEFAULT NULL,
   `duration` varchar(50) DEFAULT NULL,
   `penulis_id` int(11) DEFAULT NULL
