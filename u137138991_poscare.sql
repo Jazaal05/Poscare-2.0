@@ -114,7 +114,7 @@ INSERT INTO `anak` (`id`, `nik_anak`, `nama_anak`, `tanggal_lahir`, `tempat_lahi
 
 CREATE TABLE `edukasi_content` (
   `id` int(11) NOT NULL,
-  `platform` enum('youtube','tiktok','article') NOT NULL,
+  `platform` enum('youtube','tiktok','article','facebook','instagram') NOT NULL,
   `url` text NOT NULL,
   `title` varchar(255) NOT NULL,
   `category` enum('gizi','tumbuh-kembang','kesehatan','imunisasi','tips','kesehatan-lansia','pola-hidup-sehat','pencegahan-penyakit','gizi-lansia','tips-lansia') NOT NULL,
