@@ -18,7 +18,7 @@ class StoreRegistrasiRequest extends FormRequest
             'nik_ayah'       => 'required|digits:16',
             'no_hp_ibu'      => 'required|string|min:10|max:15',
             'alamat'         => 'required|string|min:10',
-            'rt_rw'          => 'required|string',
+            'rt_rw'          => 'nullable|string',
             'nama_anak'      => 'required|string|min:3|max:100|regex:/[a-zA-Z]/',
             'nik_anak'       => 'required|digits:16|unique:anak,nik_anak',
             'jenis_kelamin'  => 'required|in:L,P',

@@ -314,7 +314,7 @@ class AnakController extends Controller
                 'nik_ayah'       => $data['nik_ayah'],
                 'hp_kontak_ortu' => $hp,
                 'alamat_domisili'=> trim($data['alamat']),
-                'rt_rw'          => $data['rt_rw'],
+                'rt_rw'          => $data['rt_rw'] ?? null,
                 'is_deleted'     => 0,
             ]);
 
