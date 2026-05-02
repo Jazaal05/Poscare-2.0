@@ -8,7 +8,7 @@ use Carbon\Carbon;
 class Lansia extends Model
 {
     protected $table = 'lansia';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'nik', 'nama_lengkap', 'jenis_kelamin', 'tanggal_lahir',

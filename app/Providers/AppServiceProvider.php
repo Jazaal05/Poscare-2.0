@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Services\WhoService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Bind WhoService sebagai singleton
+        $this->app->singleton(WhoService::class, function ($app) {
+            return new WhoService();
+        });
     }
 
     /**
@@ -23,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Disable data wrapping untuk API Resources
+        JsonResource::withoutWrapping();
+        
+        // Set default pagination view
+        \Illuminate\Pagination\Paginator::defaultView('pagination::bootstrap-4');
+        \Illuminate\Pagination\Paginator::defaultSimpleView('pagination::simple-bootstrap-4');
     }
 }

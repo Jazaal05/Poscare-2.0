@@ -37,19 +37,25 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| PROTECTED ROUTES
+| PROTECTED ROUTES - UNTUK DEVELOPMENT & PRODUCTION
+|--------------------------------------------------------------------------
+| DEVELOPMENT MODE: Semua role bisa akses untuk testing
+| PRODUCTION MODE: Uncomment middleware 'kader.only' untuk restrict orangtua
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
+// Route::middleware(['auth', 'kader.only'])->group(function () { // Uncomment untuk production
+    
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/home', fn() => redirect()->route('dashboard'));
 
     // ── Dashboard ──────────────────────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
+    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats'); // API untuk dashboard
 
     // ── Data Anak ──────────────────────────────────────────────────────
     Route::get('/data-anak', [AnakController::class, 'index'])->name('anak.index');
+    // API routes untuk AJAX calls dari view
     Route::get('/api/anak', [AnakController::class, 'list'])->name('anak.list');
     Route::get('/api/anak/{id}', [AnakController::class, 'show'])->name('anak.show');
     Route::post('/api/anak/registrasi', [AnakController::class, 'store'])->name('anak.store');
@@ -63,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/grafik-pertumbuhan/{id}', [PengukuranController::class, 'grafik'])->name('pengukuran.grafik');
     Route::post('/api/pengukuran', [PengukuranController::class, 'store'])->name('pengukuran.store');
     Route::get('/api/pengukuran/{anakId}/riwayat', [PengukuranController::class, 'riwayat'])->name('pengukuran.riwayat');
+    Route::delete('/api/pengukuran/{id}', [PengukuranController::class, 'destroy'])->name('pengukuran.destroy');
 
     // ── Imunisasi ──────────────────────────────────────────────────────
     Route::get('/imunisasi', [ImunisasiController::class, 'index'])->name('imunisasi.index');
@@ -90,8 +97,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/edukasi', [EdukasiController::class, 'store'])->name('edukasi.store');
     Route::get('/api/edukasi/{id}', [EdukasiController::class, 'show'])->name('edukasi.show');
     Route::put('/api/edukasi/{id}', [EdukasiController::class, 'update'])->name('edukasi.update');
-    Route::post('/api/edukasi/fetch-info', [EdukasiController::class, 'fetchInfo'])->name('edukasi.fetchInfo');
     Route::delete('/api/edukasi/{id}', [EdukasiController::class, 'destroy'])->name('edukasi.destroy');
+    Route::post('/api/edukasi/fetch-info', [EdukasiController::class, 'fetchInfo'])->name('edukasi.fetchInfo');
 
     // ── Pengaturan ─────────────────────────────────────────────────────
     Route::get('/pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
@@ -120,29 +127,43 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/dashboard/stats', [LansiaDashboardController::class, 'stats'])->name('dashboard.stats');
         Route::get('/api/stats', [LansiaDashboardController::class, 'stats'])->name('stats');
 
-        // ── API Lansia (untuk autocomplete kunjungan) ──────────────
+        // ── Data Lansia ────────────────────────────────────────────
+        Route::get('/data', [LansiaDataController::class, 'index'])->name('data.index');
         Route::get('/api/lansia', [LansiaDataController::class, 'list'])->name('lansia.list');
         Route::post('/api/lansia', [LansiaDataController::class, 'store'])->name('lansia.store');
+        Route::get('/api/lansia/{id}', [LansiaDataController::class, 'show'])->name('lansia.show');
+        Route::put('/api/lansia/{id}', [LansiaDataController::class, 'update'])->name('lansia.update');
+        Route::delete('/api/lansia/{id}', [LansiaDataController::class, 'destroy'])->name('lansia.destroy');
 
-        // ── Jadwal ─────────────────────────────────────────────────
-        Route::get('/jadwal', [LansiaJadwalController::class, 'index'])->name('jadwal.index');
-
-        // ── Edukasi ────────────────────────────────────────────────
-        Route::get('/edukasi', [LansiaEdukasiController::class, 'index'])->name('edukasi.index');
-
+        // ── Kunjungan ──────────────────────────────────────────────
         Route::get('/kunjungan', [LansiaKunjunganController::class, 'index'])->name('kunjungan.index');
         Route::get('/api/kunjungan', [LansiaKunjunganController::class, 'list'])->name('kunjungan.list');
         Route::post('/api/kunjungan', [LansiaKunjunganController::class, 'store'])->name('kunjungan.store');
+        Route::get('/api/kunjungan/{id}', [LansiaKunjunganController::class, 'show'])->name('kunjungan.show');
         Route::put('/api/kunjungan/{id}', [LansiaKunjunganController::class, 'update'])->name('kunjungan.update');
         Route::delete('/api/kunjungan/{id}', [LansiaKunjunganController::class, 'destroy'])->name('kunjungan.destroy');
         Route::get('/api/kunjungan/{lansiaId}/riwayat', [LansiaKunjunganController::class, 'riwayat'])->name('kunjungan.riwayat');
+
+        // ── Jadwal ─────────────────────────────────────────────────
+        Route::get('/jadwal', [LansiaJadwalController::class, 'index'])->name('jadwal.index');
+        Route::get('/api/jadwal', [LansiaJadwalController::class, 'list'])->name('jadwal.list');
+        Route::post('/api/jadwal', [LansiaJadwalController::class, 'store'])->name('jadwal.store');
+        Route::put('/api/jadwal/{id}', [LansiaJadwalController::class, 'update'])->name('jadwal.update');
+        Route::delete('/api/jadwal/{id}', [LansiaJadwalController::class, 'destroy'])->name('jadwal.destroy');
 
         // ── Laporan ────────────────────────────────────────────────
         Route::get('/laporan', [LansiaLaporanController::class, 'index'])->name('laporan.index');
         Route::get('/api/laporan', [LansiaLaporanController::class, 'list'])->name('laporan.list');
         Route::post('/api/laporan/export', [LansiaLaporanController::class, 'exportExcel'])->name('laporan.export');
 
-        // ── Pengaturan (pakai yang sama) ───────────────────────────
+        // ── Edukasi ────────────────────────────────────────────────
+        Route::get('/edukasi', [LansiaEdukasiController::class, 'index'])->name('edukasi.index');
+        Route::get('/api/edukasi', [LansiaEdukasiController::class, 'list'])->name('edukasi.list');
+        Route::post('/api/edukasi', [LansiaEdukasiController::class, 'store'])->name('edukasi.store');
+        Route::put('/api/edukasi/{id}', [LansiaEdukasiController::class, 'update'])->name('edukasi.update');
+        Route::delete('/api/edukasi/{id}', [LansiaEdukasiController::class, 'destroy'])->name('edukasi.destroy');
+
+        // ── Pengaturan ─────────────────────────────────────────────
         Route::get('/pengaturan', [LansiaPengaturanController::class, 'index'])->name('pengaturan.index');
     });
 });

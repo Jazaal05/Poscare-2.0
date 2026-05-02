@@ -15,12 +15,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('username', 50)->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('nama_lengkap', 100);
+            $table->enum('role', ['kader', 'orangtua'])->default('orangtua');
+            $table->string('no_telp', 15)->nullable();
+            $table->string('nik', 16)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            
+            // Indexes
+            $table->index('username');
+            $table->index('role');
         });
     }
 

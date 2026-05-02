@@ -28,6 +28,10 @@ class LoginController extends Controller
     /**
      * Proses login
      * Menggantikan: api_web/auth.php
+     * 
+     * CATATAN UNTUK DEVELOPER:
+     * - Saat development: Semua role bisa login untuk testing
+     * - Saat production: Uncomment role check untuk restrict orangtua
      */
     public function login(LoginRequest $request)
     {
@@ -39,7 +43,6 @@ class LoginController extends Controller
         $user = User::where('email', $email)->first();
 
         // Cek user ada dan password cocok
-        // Sama seperti password_verify() di auth.php lama
         if (!$user || !Hash::check($password, $user->password)) {
             return response()->json([
                 'success' => false,
@@ -47,8 +50,22 @@ class LoginController extends Controller
             ], 401);
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        // ROLE CHECK - UNCOMMENT UNTUK PRODUCTION
+        // ═══════════════════════════════════════════════════════════════
+        // Saat production, uncomment code di bawah untuk restrict orangtua
+        // Website hanya untuk Kader (Admin)
+        
+        /*
+        if ($user->role !== 'kader') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak. Website ini hanya untuk Kader/Admin. Orangtua silakan gunakan aplikasi mobile.',
+            ], 403);
+        }
+        */
+
         // Login berhasil - buat session
-        // Menggantikan: $_SESSION['loggedIn'], $_SESSION['user_id'], dll
         Auth::login($user, $remember);
 
         // Regenerate session untuk keamanan (anti session fixation)

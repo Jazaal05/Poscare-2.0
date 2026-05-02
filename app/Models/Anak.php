@@ -8,8 +8,8 @@ class Anak extends Model
 {
     protected $table = 'anak';
 
-    // Nonaktifkan timestamps karena tabel tidak punya created_at/updated_at
-    public $timestamps = false;
+    // Aktifkan timestamps untuk audit trail
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',

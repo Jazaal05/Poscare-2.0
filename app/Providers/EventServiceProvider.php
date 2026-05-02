@@ -18,6 +18,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \App\Events\AnakCreated::class => [
+            // Add listeners here if needed
+        ],
+        \App\Events\PengukuranRecorded::class => [
+            \App\Listeners\UpdateAnakStatusGizi::class,
+        ],
     ];
 
     /**
