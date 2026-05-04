@@ -1,944 +1,1265 @@
-@extends('layouts.lansia')
+﻿@extends('layouts.lansia')
+
 @section('title', 'Kunjungan Lansia')
 
 @section('styles')
 <style>
-    body { background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 50%,#A7F3D0 100%) !important; }
+    .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
+    .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 6px 24px rgba(16,24,40,0.06); margin-bottom:24px; }
+    .page-title { font-size:28px; font-weight:700; color:#1E3A5F; margin-bottom:4px; }
+    .page-subtitle { font-size:14px; color:#64748B; margin-bottom:24px; }
 
-    /* ── Header ── */
-    .page-header { margin-bottom:28px; }
-    .page-title  { font-size:26px; font-weight:800; color:#064E3B; margin-bottom:4px; }
-    .page-sub    { font-size:14px; color:#6B7280; }
+    /* Menu Navigasi Lansia */
+    .lansia-menu { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px; }
+    .menu-card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 2px 12px rgba(0,0,0,0.08); text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:12px; transition:all 0.3s; border:2px solid transparent; }
+    .menu-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.12); border-color:#246BCE; }
+    .menu-card.active { border-color:#246BCE; background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); }
+    .menu-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; }
+    .menu-icon.blue { background:linear-gradient(135deg, #3B82F6, #2563EB); color:#fff; }
+    .menu-icon.green { background:linear-gradient(135deg, #10B981, #059669); color:#fff; }
+    .menu-icon.purple { background:linear-gradient(135deg, #8B5CF6, #7C3AED); color:#fff; }
+    .menu-icon.orange { background:linear-gradient(135deg, #F59E0B, #D97706); color:#fff; }
+    .menu-icon.red { background:linear-gradient(135deg, #EF4444, #DC2626); color:#fff; }
+    .menu-icon.indigo { background:linear-gradient(135deg, #6366F1, #4F46E5); color:#fff; }
+    .menu-icon.teal { background:linear-gradient(135deg, #14B8A6, #0D9488); color:#fff; }
+    .menu-title { font-size:15px; font-weight:600; color:#1E3A5F; text-align:center; }
+    .menu-desc { font-size:12px; color:#64748B; text-align:center; }
 
-    /* ── Toolbar ── */
-    .toolbar { display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
-    .search-box { flex:1; min-width:220px; position:relative; }
-    .search-box input { width:100%; padding:11px 14px 11px 40px; border:1px solid #A7F3D0;
-                        border-radius:12px; font-size:14px; background:#fff; box-sizing:border-box;
-                        transition:all 0.2s; }
-    .search-box input:focus { outline:none; border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.12); }
-    .search-box i { position:absolute; left:13px; top:50%; transform:translateY(-50%); color:#6B7280; }
+    /* Tabs */
+    .tab-nav { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #E5E7EB; padding-bottom:0; }
+    .tab-btn { padding:10px 20px; border:none; background:none; font-size:14px; font-weight:600; color:#64748B; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; border-radius:8px 8px 0 0; }
+    .tab-btn.active { color:#246BCE; border-bottom-color:#246BCE; background:rgba(36,107,206,0.05); }
+    .tab-btn:hover:not(.active) { color:#246BCE; background:rgba(36,107,206,0.03); }
+    .tab-content { display:none; } .tab-content.active { display:block; }
 
-    /* ── Buttons ── */
-    .btn { padding:10px 20px; border:none; border-radius:10px; font-size:14px; font-weight:600;
-           cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:7px; }
-    .btn:hover { transform:translateY(-1px); }
-    .btn-teal   { background:#10B981; color:#fff; } .btn-teal:hover   { background:#059669; }
-    .btn-yellow { background:#F59E0B; color:#fff; } .btn-yellow:hover { background:#D97706; }
-    .btn-red    { background:#EF4444; color:#fff; } .btn-red:hover    { background:#DC2626; }
-    .btn-outline{ background:transparent; border:2px solid #10B981; color:#10B981; }
-    .btn-outline:hover { background:#10B981; color:#fff; }
-    .btn-sm { padding:6px 12px; font-size:12px; }
+    /* Search & Filter */
+    .search-bar { display:flex; gap:12px; margin-bottom:16px; align-items:center; flex-wrap:wrap; }
+    .search-input { flex:1; min-width:200px; padding:10px 16px 10px 40px; border:2px solid #E5E7EB; border-radius:10px; font-size:14px; transition:all 0.2s; }
+    .search-input:focus { outline:none; border-color:#246BCE; box-shadow:0 0 0 3px rgba(36,107,206,0.1); }
+    .search-wrapper { position:relative; flex:1; }
+    .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9CA3AF; }
 
-    /* ── Table card ── */
-    .table-card { background:#fff; border-radius:20px; box-shadow:0 4px 20px rgba(6,78,59,0.08);
-                  overflow:hidden; border:1px solid rgba(16,185,129,0.1); }
-    .table-scroll { overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; font-size:13px; }
-    thead tr { background:linear-gradient(135deg,#064E3B,#065F46); }
-    thead th { padding:14px 14px; color:#fff; font-weight:600; text-align:left; white-space:nowrap;
-               font-size:12px; text-transform:uppercase; letter-spacing:0.04em; }
-    tbody tr { border-bottom:1px solid #ECFDF5; transition:background 0.15s; }
-    tbody tr:hover { background:#F0FDF4; }
-    tbody td { padding:12px 14px; color:#374151; vertical-align:middle; }
+    /* Table */
+    .table-wrapper { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    thead th { background:#F8FAFC; padding:12px 16px; text-align:left; font-weight:600; color:#4A6FA3; border-bottom:2px solid #E5E7EB; white-space:nowrap; }
+    tbody td { padding:12px 16px; border-bottom:1px solid #F1F5F9; color:#374151; vertical-align:middle; }
+    tbody tr:hover { background:#F8FAFC; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .badge-success { background:#D1FAE5; color:#065F46; }
+    .badge-warning { background:#FEF3C7; color:#92400E; }
+    .badge-danger  { background:#FEE2E2; color:#991B1B; }
+    .badge-info    { background:#DBEAFE; color:#1E40AF; }
+    .badge-secondary { background:#F3F4F6; color:#374151; }
 
-    /* ── Status badges ── */
-    .status-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px;
-                    border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
-    .s-normal    { background:#D1FAE5; color:#065F46; }
-    .s-warning   { background:#FEF3C7; color:#92400E; }
-    .s-danger    { background:#FEE2E2; color:#991B1B; }
-    .s-info      { background:#DBEAFE; color:#1E40AF; }
-    .s-unknown   { background:#F3F4F6; color:#6B7280; }
+    /* Buttons */
+    .btn { padding:8px 16px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px; }
+    .btn-primary { background:#246BCE; color:#fff; } .btn-primary:hover { background:#1D58A8; }
+    .btn-success { background:#10B981; color:#fff; } .btn-success:hover { background:#059669; }
+    .btn-warning { background:#F59E0B; color:#fff; } .btn-warning:hover { background:#D97706; }
+    .btn-danger  { background:#EF4444; color:#fff; } .btn-danger:hover  { background:#DC2626; }
+    .btn-sm { padding:5px 10px; font-size:12px; }
+    .btn-outline { background:transparent; border:2px solid #246BCE; color:#246BCE; } .btn-outline:hover { background:#246BCE; color:#fff; }
 
-    /* ── Masalah indicator ── */
-    .ada-masalah { display:inline-flex; align-items:center; gap:5px; padding:4px 10px;
-                   border-radius:20px; font-size:11px; font-weight:700; }
-    .masalah-ya  { background:#FEE2E2; color:#991B1B; }
-    .masalah-tidak { background:#D1FAE5; color:#065F46; }
+    /* Form */
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    @media(max-width:768px){ .form-grid{ grid-template-columns:1fr; } }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-group label { font-size:13px; font-weight:600; color:#374151; }
+    .form-group input, .form-group select, .form-group textarea { padding:10px 14px; border:2px solid #E5E7EB; border-radius:8px; font-size:14px; transition:all 0.2s; }
+    .form-group input:focus, .form-group select:focus { outline:none; border-color:#246BCE; box-shadow:0 0 0 3px rgba(36,107,206,0.1); }
+    .form-section-title { font-size:15px; font-weight:700; color:#1E3A5F; margin:16px 0 8px; padding-bottom:8px; border-bottom:2px solid #E5E7EB; grid-column:1/-1; }
 
-    /* ── Pagination ── */
-    .pagination { display:flex; align-items:center; justify-content:space-between;
-                  padding:14px 20px; border-top:1px solid #ECFDF5; flex-wrap:wrap; gap:10px; }
-    .pagination-info { font-size:13px; color:#6B7280; }
-    .pagination-btns { display:flex; gap:6px; }
-    .page-btn { padding:6px 12px; border:1px solid #A7F3D0; background:#fff; border-radius:8px;
-                font-size:13px; cursor:pointer; transition:all 0.2s; color:#065F46; }
-    .page-btn:hover, .page-btn.active { background:#10B981; color:#fff; border-color:#10B981; }
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:1000; align-items:center; justify-content:center; }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:#fff; border-radius:20px; padding:28px; width:90%; max-width:700px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s ease; }
+    .modal-box.modal-lg { max-width:900px; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:2px solid #E5E7EB; }
+    .modal-title { font-size:20px; font-weight:700; color:#1E3A5F; }
+    .modal-close { background:none; border:none; font-size:24px; color:#9CA3AF; cursor:pointer; transition:all 0.2s; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+    .modal-close:hover { background:#FEE2E2; color:#EF4444; transform:rotate(90deg); }
+
+    /* Pagination */
+    .pagination { display:flex; gap:6px; justify-content:center; align-items:center; margin-top:20px; }
+    .page-btn { padding:6px 12px; border:1px solid #E5E7EB; background:#fff; border-radius:6px; cursor:pointer; font-size:13px; transition:all 0.2s; }
+    .page-btn:hover { background:#F3F4F6; border-color:#246BCE; }
+    .page-btn.active { background:#246BCE; color:#fff; border-color:#246BCE; }
     .page-btn:disabled { opacity:0.4; cursor:not-allowed; }
 
-    /* ── Modal ── */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5);
-                     backdrop-filter:blur(4px); z-index:1000; align-items:center; justify-content:center; padding:16px; }
-    .modal-overlay.open { display:flex; }
-    .modal-box { background:#fff; border-radius:20px; width:100%; max-width:680px; max-height:92vh;
-                 overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s ease; }
-    .modal-box.modal-sm { max-width:460px; }
-    @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    .modal-header { display:flex; align-items:center; justify-content:space-between;
-                    padding:20px 24px; border-bottom:2px solid #ECFDF5; position:sticky; top:0; background:#fff; z-index:1; }
-    .modal-title { font-size:18px; font-weight:800; color:#064E3B; }
-    .modal-close { background:none; border:none; font-size:22px; color:#9CA3AF; cursor:pointer;
-                   width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
-    .modal-close:hover { background:#FEE2E2; color:#EF4444; }
-    .modal-body { padding:24px; }
-    .modal-footer { padding:16px 24px; border-top:1px solid #ECFDF5; display:flex; justify-content:flex-end; gap:10px; }
+    /* Autocomplete */
+    .autocomplete-wrapper { position:relative; }
+    .autocomplete-input { width:100%; padding:10px 14px; border:2px solid #E5E7EB; border-radius:8px; font-size:14px; }
+    .autocomplete-input:focus { outline:none; border-color:#246BCE; }
+    .autocomplete-dropdown { position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #E5E7EB; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); z-index:100; max-height:300px; overflow-y:auto; display:none; }
+    .autocomplete-item { padding:12px 16px; cursor:pointer; border-bottom:1px solid #F1F5F9; transition:background 0.15s; }
+    .autocomplete-item:hover, .autocomplete-item.selected { background:#EFF6FF; }
+    .autocomplete-item .name { font-weight:600; color:#1E3A5F; font-size:14px; }
+    .autocomplete-item .detail { font-size:12px; color:#64748B; margin-top:2px; }
+    .autocomplete-selected-info { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:12px 16px; margin-top:8px; display:none; }
+    .autocomplete-selected-info .info-name { font-weight:700; color:#1E3A5F; }
+    .autocomplete-selected-info .info-detail { font-size:12px; color:#64748B; margin-top:4px; }
 
-    /* ── Form ── */
-    .form-section { margin-bottom:24px; }
-    .form-section-title { font-size:14px; font-weight:700; color:#065F46; margin-bottom:14px;
-                          padding-bottom:8px; border-bottom:2px solid #D1FAE5;
-                          display:flex; align-items:center; gap:8px; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    @media(max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
-    .form-group { display:flex; flex-direction:column; gap:5px; }
-    .form-group.full { grid-column:1/-1; }
-    .form-label { font-size:12px; font-weight:700; color:#374151; text-transform:uppercase; letter-spacing:0.4px; }
-    .form-label .req { color:#EF4444; }
-    .form-input { padding:10px 13px; border:1px solid #D1FAE5; border-radius:10px; font-size:14px;
-                  color:#1E3A5F; transition:all 0.2s; background:#fff; }
-    .form-input:focus { outline:none; border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.12); }
-    .form-hint { font-size:11px; color:#6B7280; margin-top:3px; }
+    /* Detail modal */
+    .detail-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    @media(max-width:600px){ .detail-grid{ grid-template-columns:1fr; } }
+    .detail-item label { font-size:11px; font-weight:600; color:#9CA3AF; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:2px; }
+    .detail-item span { font-size:14px; color:#1E3A5F; font-weight:500; }
+    .detail-section { margin-bottom:20px; }
+    .detail-section-title { font-size:14px; font-weight:700; color:#246BCE; margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid #DBEAFE; display:flex; align-items:center; gap:8px; }
 
-    /* ── Autocomplete ── */
-    .autocomplete-wrap { position:relative; }
-    .autocomplete-list { position:absolute; top:100%; left:0; right:0; background:#fff;
-                         border:1px solid #D1FAE5; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,0.1);
-                         z-index:100; max-height:200px; overflow-y:auto; display:none; }
-    .autocomplete-item { padding:10px 14px; cursor:pointer; font-size:14px; border-bottom:1px solid #ECFDF5; }
-    .autocomplete-item:hover { background:#F0FDF4; color:#065F46; }
+    /* Badge Status Gizi */
+    .badge-gizi-baik { background:#D1FAE5; color:#065F46; }
+    .badge-stunting { background:#FEE2E2; color:#991B1B; }
+    .badge-risk-stunting { background:#FED7AA; color:#9A3412; }
+    .badge-gizi-kurang { background:#FECACA; color:#7F1D1D; }
+    .badge-risk-gizi-kurang { background:#FEF3C7; color:#78350F; }
+    .badge-risk-gizi-lebih { background:#FEF3C7; color:#92400E; }
+    .badge-gizi-lebih { background:#E9D5FF; color:#6B21A8; }
+    .badge-obesitas { background:#DDD6FE; color:#5B21B6; }
 
-    /* ── Toggle keluhan ── */
-    .toggle-row { display:flex; gap:10px; }
-    .toggle-btn { flex:1; padding:10px; border:2px solid #D1FAE5; border-radius:10px; background:#fff;
-                  font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; text-align:center; }
-    .toggle-btn.active-ya    { border-color:#EF4444; background:#FEF2F2; color:#991B1B; }
-    .toggle-btn.active-tidak { border-color:#10B981; background:#F0FDF4; color:#065F46; }
+    /* Badge Status Kesehatan Lansia */
+    .badge-sehat { background:#D1FAE5; color:#065F46; }
+    .badge-hipertensi { background:#FEE2E2; color:#991B1B; }
+    .badge-diabetes { background:#FED7AA; color:#9A3412; }
+    .badge-kolesterol-tinggi { background:#FEF3C7; color:#92400E; }
+    .badge-asam-urat-tinggi { background:#E9D5FF; color:#6B21A8; }
 
-    /* ── Checklist ── */
-    .checklist-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
-    .check-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid #D1FAE5;
-                  border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:13px; }
-    .check-item:hover { border-color:#10B981; background:#F0FDF4; }
-    .check-item input[type=checkbox] { accent-color:#10B981; width:15px; height:15px; }
-    .check-item.checked { border-color:#10B981; background:#F0FDF4; }
-
-    /* ── Riwayat kunjungan ── */
-    .riwayat-item { background:#F0FDF4; border-radius:12px; padding:16px; margin-bottom:12px;
-                    border-left:4px solid #10B981; }
-    .riwayat-item.ada-masalah-item { border-left-color:#EF4444; background:#FEF2F2; }
-    .riwayat-date { font-size:13px; font-weight:700; color:#064E3B; margin-bottom:10px; }
-    .riwayat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-    @media(max-width:600px){ .riwayat-grid{ grid-template-columns:repeat(2,1fr); } }
-    .riwayat-field { background:#fff; border-radius:8px; padding:8px 10px; }
-    .riwayat-field-label { font-size:10px; color:#6B7280; font-weight:700; text-transform:uppercase; margin-bottom:3px; }
-    .riwayat-field-value { font-size:13px; font-weight:700; color:#064E3B; }
-
-    /* ── Empty state ── */
-    .empty-state { text-align:center; padding:50px 20px; color:#9CA3AF; }
-    .empty-state i { font-size:3rem; margin-bottom:12px; display:block; color:#A7F3D0; }
-    .empty-state p { font-size:15px; }
-
-    /* ── Toast ── */
+    /* Notification */
     #toast { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
-    .toast-item { padding:13px 18px; border-radius:10px; color:#fff; font-size:14px; font-weight:600;
-                  box-shadow:0 4px 16px rgba(0,0,0,0.15); animation:slideIn 0.3s ease;
-                  display:flex; align-items:center; gap:10px; min-width:260px; }
-    @keyframes slideIn { from{opacity:0;transform:translateX(100%)} to{opacity:1;transform:translateX(0)} }
-    .toast-success { background:#10B981; } .toast-error { background:#EF4444; } .toast-warning { background:#F59E0B; }
+    .toast-item { padding:14px 20px; border-radius:10px; color:#fff; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,0.15); animation:slideInRight 0.3s ease; display:flex; align-items:center; gap:10px; min-width:280px; }
+    @keyframes slideInRight { from{opacity:0;transform:translateX(100%)} to{opacity:1;transform:translateX(0)} }
+    .toast-success { background:#10B981; }
+    .toast-error   { background:#EF4444; }
+    .toast-warning { background:#F59E0B; }
+
+    /* Loading */
+    .loading-row td { text-align:center; padding:40px; color:#9CA3AF; }
+    .empty-row td { text-align:center; padding:40px; color:#9CA3AF; }
+
+    /* Table nav arrows */
+    .table-nav-wrapper { position:relative; display:flex; align-items:center; gap:8px; }
+    .table-nav-arrow { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#4A90E2,#357ABD); border:none; box-shadow:0 2px 8px rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:all 0.3s ease; color:white; font-size:14px; opacity:0.3; pointer-events:none; }
+    .table-nav-arrow.visible { opacity:1; pointer-events:auto; }
+    .table-nav-arrow:hover { background:linear-gradient(135deg,#357ABD,#2868A8); transform:scale(1.1); }
+    .table-slider-container { flex:1; overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:#CBD5E1 #F1F5F9; padding-bottom:8px; }
+    .table-slider-container::-webkit-scrollbar { height:8px; }
+    .table-slider-container::-webkit-scrollbar-track { background:#F1F5F9; border-radius:999px; }
+    .table-slider-container::-webkit-scrollbar-thumb { background:#CBD5E1; border-radius:999px; }
+
+    /* Data table */
+    .data-table { width:max-content; border-collapse:separate; border-spacing:0; font-size:14px; }
+    .data-table thead th { background:#F6F8FB; color:#4A5E7D; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.02em; padding:14px 16px; text-align:left; border-bottom:2px solid #E7ECF3; white-space:nowrap; }
+    .data-table tbody td { padding:12px 16px; vertical-align:middle; border-bottom:1px solid #E7ECF3; white-space:nowrap; font-size:14px; }
+    .data-table tbody tr:nth-child(odd) { background:#FCFDFE; }
+    .data-table tbody tr:nth-child(even) { background:#fff; }
+    .data-table tbody tr:hover { background:#F1F5FF; }
+
+    /* Pagination */
+    .pagination-container { display:flex; justify-content:center; align-items:center; gap:12px; margin-top:20px; padding:16px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-radius:16px; border:1px solid #bae6fd; }
+    .pagination-btn { display:flex; align-items:center; gap:8px; padding:10px 22px; border:2px solid #3b82f6; border-radius:12px; background:white; color:#3b82f6; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.3s ease; min-width:130px; justify-content:center; }
+    .pagination-btn:hover:not(:disabled) { background:#3b82f6; color:white; transform:translateY(-2px); box-shadow:0 4px 12px rgba(59,130,246,0.3); }
+    .pagination-btn:disabled { opacity:0.4; cursor:not-allowed; border-color:#cbd5e1; color:#94a3b8; }
+    .pagination-info { display:flex; flex-direction:column; align-items:center; padding:8px 20px; background:white; border-radius:12px; border:1px solid #e2e8f0; min-width:160px; }
+    .pagination-info .page-number { font-size:18px; font-weight:700; color:#1e40af; }
+    .pagination-info .page-text { font-size:12px; color:#64748b; margin-top:2px; }
+    .pagination-dots { display:flex; gap:6px; margin-top:8px; }
+    .pagination-dot { width:10px; height:10px; border-radius:50%; background:#cbd5e1; cursor:pointer; transition:all 0.3s ease; }
+    .pagination-dot.active { background:#3b82f6; transform:scale(1.2); }
+    .pagination-dot:hover:not(.active) { background:#93c5fd; }
+
+    /* Action buttons */
+    .action-group { display:flex; gap:6px; justify-content:center; }
+    .action-btn { width:36px; height:36px; border-radius:6px; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; transition:all 0.2s ease; font-size:15px; }
+    .action-btn.-chart { background:linear-gradient(135deg,#10B981,#059669); color:#fff; box-shadow:0 2px 8px rgba(16,185,129,0.3); }
+    .action-btn.-chart:hover { background:linear-gradient(135deg,#059669,#047857); transform:translateY(-2px); }
+    .action-btn.-view { background:#E8F1FF; color:#2563EB; }
+    .action-btn.-edit { background:#FFF7E6; color:#D97706; }
+    .action-btn.-delete { background:#FEECEF; color:#DC2626; }
+    .action-btn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 </style>
 @endsection
 
 @section('content')
 <div id="toast"></div>
 
-<div class="page-header">
-    <h1 class="page-title"><i class="fas fa-stethoscope" style="color:#10B981;"></i> Kunjungan Posyandu Lansia</h1>
-    <p class="page-sub">Catat dan pantau hasil pemeriksaan serta pengobatan setiap kunjungan</p>
+<div class="page-header" style="margin-bottom:20px;">
+    <h1 style="font-size:28px;font-weight:700;color:#065F46;margin-bottom:4px;">Kunjungan Lansia</h1>
+    <p style="font-size:14px;color:#64748B;"><i class="fas fa-calendar-check" style="color:#10B981;margin-right:6px;"></i> Kelola Data Kunjungan Lansia</p>
 </div>
 
-<div class="toolbar">
-    <div class="search-box">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Cari nama lansia..." oninput="debounceSearch()">
-    </div>
-    <button class="btn btn-teal" onclick="openModalTambah()">
-        <i class="fas fa-plus"></i> Catat Kunjungan
-    </button>
+{{-- TABS --}}
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('tabel')"><i class="fas fa-table"></i> Kunjungan</button>
+    <button class="tab-btn" onclick="switchTab('tambah')"><i class="fas fa-plus-circle"></i> Tambah Data Kunjungan</button>
 </div>
 
-<div class="table-card">
-    <div class="table-scroll">
-        <table>
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Lansia</th>
-                    <th>Tgl Kunjungan</th>
-                    <th>BB (kg)</th>
-                    <th>Tensi</th>
-                    <th>Gula Darah</th>
-                    <th>Kolesterol</th>
-                    <th>Asam Urat</th>
-                    <th>Keluhan</th>
-                    <th>Kondisi</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="11" class="empty-state"><i class="fas fa-spinner fa-spin"></i><br>Memuat data...</td></tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination">
-        <div class="pagination-info" id="paginationInfo">Menampilkan 0 data</div>
-        <div class="pagination-btns" id="paginationBtns"></div>
-    </div>
-</div>
-
-{{-- ── Modal Catat Kunjungan ── --}}
-<div class="modal-overlay" id="modalForm">
-    <div class="modal-box">
-        <div class="modal-header">
-            <span class="modal-title" id="modalFormTitle">
-                <i class="fas fa-stethoscope" style="color:#10B981;"></i> Catat Kunjungan
-            </span>
-            <button class="modal-close" onclick="closeModal('modalForm')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="editId">
-
-            {{-- Step 1: Pilih Lansia --}}
-            <div class="form-section">
-                <div class="form-section-title"><i class="fas fa-user"></i> Identitas & Tanggal</div>
-                <div class="form-grid">
-                    <div class="form-group full">
-                        <label class="form-label">Pilih Lansia <span class="req">*</span></label>
-                        <div class="autocomplete-wrap">
-                            <input type="text" id="lansiaSearch" class="form-input"
-                                   placeholder="Ketik nama lansia..." autocomplete="off"
-                                   oninput="searchLansia(this.value)">
-                            <div class="autocomplete-list" id="autocompleteList"></div>
-                        </div>
-                        <input type="hidden" id="lansia_id">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tanggal Kunjungan <span class="req">*</span></label>
-                        <input type="date" id="tanggal_kunjungan" class="form-input" required>
-                        <small style="color:#6B7280; margin-top:4px; display:block;">Hanya bisa memilih hari ini atau tanggal yang akan datang</small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Berat Badan (kg)</label>
-                        <input type="number" id="berat_badan" class="form-input" placeholder="60" step="0.1" min="20" max="200">
-                    </div>
-                </div>
-            </div>
-
-            {{-- Step 2: Tekanan Darah --}}
-            <div class="form-section">
-                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Tekanan Darah</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Tekanan Darah</label>
-                        <input type="text" id="tekanan_darah" class="form-input" placeholder="120/80"
-                               oninput="previewStatusTensi(this.value)">
-                        <div class="form-hint">Format: sistolik/diastolik (contoh: 130/85)</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Tensi</label>
-                        <div id="previewTensi" style="padding:10px 13px;border-radius:10px;background:#F3F4F6;font-size:13px;font-weight:600;color:#6B7280;">
-                            — Isi tekanan darah
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Step 3: Cek Darah --}}
-            <div class="form-section">
-                <div class="form-section-title"><i class="fas fa-tint"></i> Cek Darah</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Gula Darah (mg/dL)</label>
-                        <input type="number" id="gula_darah" class="form-input" placeholder="100" step="0.1"
-                               oninput="previewStatusGula(this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Gula</label>
-                        <div id="previewGula" style="padding:10px 13px;border-radius:10px;background:#F3F4F6;font-size:13px;font-weight:600;color:#6B7280;">— Isi gula darah</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kolesterol (mg/dL)</label>
-                        <input type="number" id="kolesterol" class="form-input" placeholder="180" step="0.1"
-                               oninput="previewStatusKol(this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Kolesterol</label>
-                        <div id="previewKol" style="padding:10px 13px;border-radius:10px;background:#F3F4F6;font-size:13px;font-weight:600;color:#6B7280;">— Isi kolesterol</div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Asam Urat (mg/dL)</label>
-                        <input type="number" id="asam_urat" class="form-input" placeholder="5.5" step="0.1"
-                               oninput="previewStatusAU(this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status Asam Urat</label>
-                        <div id="previewAU" style="padding:10px 13px;border-radius:10px;background:#F3F4F6;font-size:13px;font-weight:600;color:#6B7280;">— Isi asam urat</div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Step 4: Pengobatan --}}
-            <div class="form-section">
-                <div class="form-section-title"><i class="fas fa-pills"></i> Pengobatan</div>
-                <div class="form-group" style="margin-bottom:14px;">
-                    <label class="form-label">Ada Keluhan?</label>
-                    <div class="toggle-row">
-                        <button type="button" class="toggle-btn" id="btnYa" onclick="setKeluhan(true)">
-                            <i class="fas fa-exclamation-circle"></i> Ya, Ada Keluhan
-                        </button>
-                        <button type="button" class="toggle-btn active-tidak" id="btnTidak" onclick="setKeluhan(false)">
-                            <i class="fas fa-check-circle"></i> Tidak Ada Keluhan
-                        </button>
-                    </div>
-                </div>
-                <div id="sectionKeluhan" style="display:none;">
-                    <div class="form-group" style="margin-bottom:14px;">
-                        <label class="form-label">Deskripsi Keluhan</label>
-                        <textarea id="keluhan" class="form-input" rows="2" placeholder="Deskripsi keluhan lansia..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Obat Diberikan</label>
-                        <div class="checklist-grid" id="checklistObat"></div>
-                    </div>
-                </div>
-                <div id="sectionVitamin">
-                    <div class="form-group">
-                        <label class="form-label">Vitamin Diberikan</label>
-                        <div class="checklist-grid" id="checklistVitamin"></div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Step 5: Catatan Bidan --}}
-            <div class="form-section">
-                <div class="form-section-title"><i class="fas fa-notes-medical"></i> Catatan Bidan</div>
-                <div class="form-group">
-                    <textarea id="catatan_bidan" class="form-input" rows="3"
-                              placeholder="Catatan atau hasil penyuluhan dari bidan (opsional)..."></textarea>
-                </div>
+{{-- TAB 1: TABEL DATA LANSIA --}}
+<div id="tab-tabel" class="tab-content active">
+    <div class="card">
+        <div class="search-bar">
+            <div class="search-wrapper" style="flex:1;">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" style="width:100%;" placeholder="Cari nama lansia, NIK, atau nama wali..." oninput="debounceSearch()">
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('modalForm')">Batal</button>
-            <button class="btn btn-teal" id="btnSimpan" onclick="submitForm()">
-                <i class="fas fa-save"></i> Simpan Kunjungan
+        <div class="table-nav-wrapper" style="display:flex;align-items:center;gap:8px;">
+            <button class="table-nav-arrow" id="scrollLeft" onclick="scrollTable(-300)" title="Geser kiri">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="table-slider-container" id="tableSlider">
+                <div class="table-wrapper">
+                    <table id="lansiaTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NAMA LANSIA</th>
+                                <th>NIK LANSIA</th>
+                                <th>JK</th>
+                                <th>TANGGAL LAHIR</th>
+                                <th>TEMPAT LAHIR</th>
+                                <th>USIA</th>
+                                <th>BB (KG)</th>
+                                <th>TB (CM)</th>
+                                <th>TEKANAN DARAH</th>
+                                <th>GULA DARAH</th>
+                                <th>KOLESTEROL</th>
+                                <th>ASAM URAT</th>
+                                <th>STATUS KESEHATAN</th>
+                                <th>ALAMAT</th>
+                                <th>NAMA WALI</th>
+                                <th>NIK WALI</th>
+                                <th>AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lansiaTableBody">
+                            <tr class="loading-row"><td colspan="18"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button class="table-nav-arrow visible" id="scrollRight" onclick="scrollTable(300)" title="Geser kanan">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div class="pagination-container" id="paginationContainer" style="display:none;">
+            <button class="pagination-btn" id="btnPrev" onclick="goPage(currentPage-1)" disabled>
+                <i class="fas fa-chevron-left"></i> Sebelumnya
+            </button>
+            <div class="pagination-info">
+                <div class="page-number" id="pageInfo">Halaman 1 dari 1</div>
+                <div class="page-text" id="pageTotal">0 total data</div>
+                <div class="pagination-dots" id="paginationDots"></div>
+            </div>
+            <button class="pagination-btn" id="btnNext" onclick="goPage(currentPage+1)">
+                Berikutnya <i class="fas fa-chevron-right"></i>
             </button>
         </div>
     </div>
 </div>
 
-{{-- ── Modal Riwayat Kunjungan ── --}}
-<div class="modal-overlay" id="modalRiwayat">
+{{-- TAB 2: TAMBAH DATA KUNJUNGAN --}}
+<div id="tab-tambah" class="tab-content">
+    <div class="card">
+        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#10B981;"></i> Tambah Data Kunjungan</h3>
+        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Catat kunjungan dan pemeriksaan kesehatan lansia.</p>
+        <form id="formTambah" onsubmit="submitTambah(event)">
+            <div class="form-grid">
+                <div class="form-section-title"><i class="fas fa-user-check"></i> Pilih Lansia</div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Pilih Lansia <span style="color:red">*</span></label>
+                    <select name="lansia_id" id="selectLansia" required onchange="loadLansiaInfo(this.value)">
+                        <option value="">-- Pilih Lansia --</option>
+                    </select>
+                    <small style="color:#64748B;font-size:12px;">Pilih lansia yang akan diperiksa</small>
+                </div>
+                
+                {{-- Info Lansia Terpilih --}}
+                <div id="lansiaInfo" style="grid-column:1/-1;display:none;background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:8px;">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
+                        <div><strong>Nama:</strong> <span id="infoNama">-</span></div>
+                        <div><strong>NIK:</strong> <span id="infoNik">-</span></div>
+                        <div><strong>Usia:</strong> <span id="infoUsia">-</span></div>
+                        <div><strong>Jenis Kelamin:</strong> <span id="infoJK">-</span></div>
+                    </div>
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Tanggal Kunjungan</div>
+                <div class="form-group">
+                    <label>Tanggal Kunjungan <span style="color:red">*</span></label>
+                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
+                <div class="form-group">
+                    <label>Berat Badan (kg)</label>
+                    <input type="number" name="berat_badan" placeholder="Contoh: 65.5" step="0.1" min="30" max="150">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi Badan (cm)</label>
+                    <input type="number" name="tinggi_badan" placeholder="Contoh: 160" step="0.1" min="100" max="200">
+                </div>
+                <div class="form-group">
+                    <label>Tekanan Darah (mmHg)</label>
+                    <input type="text" name="tekanan_darah" placeholder="Contoh: 120/80" maxlength="20">
+                    <small style="color:#64748B;font-size:12px;">Format: sistolik/diastolik (contoh: 120/80)</small>
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-vial"></i> Pemeriksaan Darah</div>
+                <div class="form-group">
+                    <label>Gula Darah (mg/dL)</label>
+                    <input type="number" name="gula_darah" placeholder="Contoh: 95" step="0.1" min="50" max="500">
+                </div>
+                <div class="form-group">
+                    <label>Kolesterol (mg/dL)</label>
+                    <input type="number" name="kolesterol" placeholder="Contoh: 180" step="0.1" min="100" max="400">
+                </div>
+                <div class="form-group">
+                    <label>Asam Urat (mg/dL)</label>
+                    <input type="number" name="asam_urat" placeholder="Contoh: 5.5" step="0.1" min="1" max="15">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-notes-medical"></i> Keluhan & Pengobatan</div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" name="ada_keluhan" value="1" onchange="toggleKeluhan(this)">
+                        <span>Ada Keluhan</span>
+                    </label>
+                </div>
+                <div class="form-group" style="grid-column:1/-1;display:none;" id="groupKeluhan">
+                    <label>Keluhan</label>
+                    <textarea name="keluhan" placeholder="Jelaskan keluhan yang dialami..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Obat Diberikan</label>
+                    <select name="obat_diberikan[]" multiple style="height:120px;">
+                        <option value="Paracetamol">Paracetamol</option>
+                        <option value="Amlodipin">Amlodipin</option>
+                        <option value="Metformin">Metformin</option>
+                        <option value="Captopril">Captopril</option>
+                        <option value="Simvastatin">Simvastatin</option>
+                        <option value="Antasida">Antasida</option>
+                        <option value="Asam Mefenamat">Asam Mefenamat</option>
+                        <option value="Glibenklamid">Glibenklamid</option>
+                        <option value="Furosemid">Furosemid</option>
+                        <option value="Lisinopril">Lisinopril</option>
+                    </select>
+                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Vitamin Diberikan</label>
+                    <select name="vitamin_diberikan[]" multiple style="height:100px;">
+                        <option value="Vitamin C">Vitamin C</option>
+                        <option value="Vitamin D">Vitamin D</option>
+                        <option value="Vitamin B12">Vitamin B12</option>
+                        <option value="Kalsium">Kalsium</option>
+                        <option value="Asam Folat">Asam Folat</option>
+                        <option value="Zinc">Zinc</option>
+                        <option value="Vitamin E">Vitamin E</option>
+                        <option value="Omega-3">Omega-3</option>
+                        <option value="Multivitamin">Multivitamin</option>
+                    </select>
+                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Catatan Bidan/Kader</label>
+                    <textarea name="catatan_bidan" placeholder="Catatan tambahan..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+            </div>
+            <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="reset" class="btn btn-outline"><i class="fas fa-undo"></i> Reset Form</button>
+                <button type="submit" class="btn btn-primary" id="btnTambah"><i class="fas fa-save"></i> Simpan Data Kunjungan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- MODAL DETAIL --}}
+<div class="modal-overlay" id="modalDetail">
+    <div class="modal-box modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-user-circle" style="color:#246BCE;"></i> Detail Data Lansia</h3>
+            <button class="modal-close" onclick="closeModal('modalDetail')">&times;</button>
+        </div>
+        <div id="detailContent">Memuat...</div>
+        <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn btn-warning" id="btnEditFromDetail" onclick="openEditFromDetail()"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn btn-outline" onclick="closeModal('modalDetail')">Tutup</button>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL EDIT --}}
+<div class="modal-overlay" id="modalEdit">
     <div class="modal-box">
         <div class="modal-header">
-            <span class="modal-title" id="riwayatTitle">Riwayat Kunjungan</span>
-            <button class="modal-close" onclick="closeModal('modalRiwayat')">&times;</button>
+            <h3 class="modal-title"><i class="fas fa-edit" style="color:#F59E0B;"></i> Edit Data Lansia</h3>
+            <button class="modal-close" onclick="closeModal('modalEdit')">&times;</button>
         </div>
-        <div class="modal-body" id="riwayatBody">
-            <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('modalRiwayat')">Tutup</button>
-        </div>
-    </div>
-</div>
-
-{{-- ── Modal Konfirmasi Hapus ── --}}
-<div class="modal-overlay" id="modalHapus">
-    <div class="modal-box modal-sm">
-        <div class="modal-header">
-            <span class="modal-title" style="color:#EF4444;"><i class="fas fa-trash"></i> Hapus Kunjungan</span>
-            <button class="modal-close" onclick="closeModal('modalHapus')">&times;</button>
-        </div>
-        <div class="modal-body" style="text-align:center;">
-            <i class="fas fa-exclamation-triangle" style="font-size:48px;color:#F59E0B;margin-bottom:16px;display:block;"></i>
-            <p style="font-size:15px;color:#374151;">Hapus data kunjungan ini?</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('modalHapus')">Batal</button>
-            <button class="btn btn-red" id="btnKonfirmasiHapus"><i class="fas fa-trash"></i> Hapus</button>
-        </div>
-    </div>
-</div>
-
-{{-- ── Modal: Daftarkan Lansia Baru ── --}}
-<div class="modal-overlay" id="modalDaftarLansia">
-    <div class="modal-box modal-sm" style="max-width:520px;">
-        <div class="modal-header">
-            <span class="modal-title"><i class="fas fa-user-plus" style="color:#10B981;"></i> Daftarkan Lansia Baru</span>
-            <button class="modal-close" onclick="closeModal('modalDaftarLansia')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p style="font-size:13px;color:#6B7280;margin-bottom:16px;background:#F0FDF4;padding:10px 14px;border-radius:8px;">
-                <i class="fas fa-info-circle" style="color:#10B981;"></i>
-                Lansia belum terdaftar. Isi data dasar untuk mendaftarkan terlebih dahulu, lalu lanjutkan catat kunjungan.
-            </p>
+        <form id="formEdit" onsubmit="submitEdit(event)">
+            <input type="hidden" id="editId">
             <div class="form-grid">
-                <div class="form-group full">
-                    <label class="form-label">Nama Lengkap <span class="req">*</span></label>
-                    <input type="text" id="daftarNamaLengkap" class="form-input" placeholder="Nama lengkap lansia">
+                <div class="form-group">
+                    <label>Nama Lansia</label>
+                    <input type="text" id="editNamaLansia" name="nama_lansia">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">NIK (16 digit) <span class="req">*</span></label>
-                    <input type="text" id="daftarNik" class="form-input" placeholder="16 digit NIK" maxlength="16">
+                    <label>NIK Lansia</label>
+                    <input type="text" id="editNikLansia" name="nik_lansia" maxlength="16">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Jenis Kelamin <span class="req">*</span></label>
-                    <select id="daftarJK" class="form-input">
-                        <option value="">-- Pilih --</option>
+                    <label>Jenis Kelamin</label>
+                    <select id="editJenisKelamin" name="jenis_kelamin">
                         <option value="L">Laki-laki</option>
                         <option value="P">Perempuan</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Tanggal Lahir <span class="req">*</span></label>
-                    <input type="date" id="daftarTglLahir" class="form-input">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" id="editTanggalLahir" name="tanggal_lahir" max="{{ date('Y-m-d') }}">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">No HP</label>
-                    <input type="text" id="daftarNoHp" class="form-input" placeholder="08xx-xxxx-xxxx">
+                    <label>Tempat Lahir</label>
+                    <input type="text" id="editTempatLahir" name="tempat_lahir">
+                </div>
+                <div class="form-group">
+                    <label>No HP Wali</label>
+                    <input type="text" id="editHp" name="hp_kontak_wali">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Alamat Domisili</label>
+                    <input type="text" id="editAlamat" name="alamat_domisili">
+                </div>
+                <div class="form-group">
+                    <label>RT/RW</label>
+                    <input type="text" id="editRtRw" name="rt_rw">
+                </div>
+                <div class="form-group">
+                    <label>Nama Wali</label>
+                    <input type="text" id="editNamaWali" name="nama_wali">
+                </div>
+                <div class="form-group">
+                    <label>NIK Wali</label>
+                    <input type="text" id="editNikWali" name="nik_wali" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>Berat Badan (kg)</label>
+                    <input type="number" id="editBeratBadan" name="berat_badan" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi Badan (cm)</label>
+                    <input type="number" id="editTinggiBadan" name="tinggi_badan" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Tekanan Darah</label>
+                    <input type="text" id="editTekananDarah" name="tekanan_darah" placeholder="120/80">
+                </div>
+                <div class="form-group">
+                    <label>Gula Darah (mg/dL)</label>
+                    <input type="number" id="editGulaDarah" name="gula_darah" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Kolesterol (mg/dL)</label>
+                    <input type="number" id="editKolesterol" name="kolesterol" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Asam Urat (mg/dL)</label>
+                    <input type="number" id="editAsamUrat" name="asam_urat" step="0.1">
                 </div>
             </div>
+            <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+                <button type="submit" class="btn btn-warning" id="btnSaveEdit"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                <button type="button" class="btn btn-outline" onclick="closeModal('modalEdit')">Batal</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- MODAL KONFIRMASI HAPUS --}}
+<div class="modal-overlay" id="modalHapus">
+    <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header">
+            <h3 class="modal-title" style="color:#EF4444;"><i class="fas fa-trash"></i> Hapus Data Lansia</h3>
+            <button class="modal-close" onclick="closeModal('modalHapus')">&times;</button>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-outline" onclick="closeModal('modalDaftarLansia')">Batal</button>
-            <button class="btn btn-teal" id="btnSimpanDaftar" onclick="submitDaftarLansia()">
-                <i class="fas fa-save"></i> Simpan & Pilih
-            </button>
+        <p style="color:#374151;margin-bottom:20px;">Apakah Anda yakin ingin menghapus data lansia <strong id="hapusNama"></strong>? Data tidak akan hilang permanen (soft delete).</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn btn-danger" id="btnKonfirmasiHapus"><i class="fas fa-trash"></i> Ya, Hapus</button>
+            <button class="btn btn-outline" onclick="closeModal('modalHapus')">Batal</button>
         </div>
+    </div>
+</div>
+
+{{-- MODAL KUNJUNGAN SELANJUTNYA --}}
+<div class="modal-overlay" id="modalKunjunganSelanjutnya">
+    <div class="modal-box modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title" style="color:#10B981;"><i class="fas fa-notes-medical"></i> Kunjungan Selanjutnya</h3>
+            <button class="modal-close" onclick="closeModal('modalKunjunganSelanjutnya')">&times;</button>
+        </div>
+        <form id="formKunjunganSelanjutnya" onsubmit="submitKunjunganSelanjutnya(event)">
+            <input type="hidden" id="kunjunganLansiaId">
+            
+            {{-- Info Lansia --}}
+            <div style="background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:20px;">
+                <h4 style="font-size:14px;font-weight:700;color:#065F46;margin-bottom:12px;"><i class="fas fa-user-circle"></i> Data Lansia</h4>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
+                    <div><strong>Nama:</strong> <span id="kunjNama">-</span></div>
+                    <div><strong>NIK:</strong> <span id="kunjNik">-</span></div>
+                    <div><strong>Usia:</strong> <span id="kunjUsia">-</span></div>
+                    <div><strong>Jenis Kelamin:</strong> <span id="kunjJK">-</span></div>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                {{-- Data yang bisa diupdate --}}
+                <div class="form-section-title"><i class="fas fa-user-edit"></i> Update Data Lansia (Opsional)</div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" name="nama_lengkap" id="kunjNamaLengkap" placeholder="Nama lengkap lansia">
+                </div>
+                <div class="form-group">
+                    <label>NIK Lansia</label>
+                    <input type="text" name="nik_lansia" id="kunjNikLansia" placeholder="16 digit NIK" maxlength="16">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Alamat Domisili</label>
+                    <textarea name="alamat_domisili" id="kunjAlamat" placeholder="Alamat lengkap" rows="2" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>RT/RW</label>
+                    <input type="text" name="rt_rw" id="kunjRtRw" placeholder="001/005" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label>Nama Wali</label>
+                    <input type="text" name="nama_wali" id="kunjNamaWali" placeholder="Nama wali/keluarga">
+                </div>
+                <div class="form-group">
+                    <label>NIK Wali</label>
+                    <input type="text" name="nik_wali" id="kunjNikWali" placeholder="16 digit NIK wali" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>No HP Kontak Wali</label>
+                    <input type="text" name="hp_kontak_wali" id="kunjHpWali" placeholder="+62...">
+                </div>
+
+                {{-- Data Kunjungan --}}
+                <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Data Kunjungan</div>
+                <div class="form-group">
+                    <label>Tanggal Kunjungan <span style="color:red">*</span></label>
+                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
+                <div class="form-group">
+                    <label>Berat Badan (kg)</label>
+                    <input type="number" name="berat_badan" placeholder="Contoh: 65.5" step="0.1" min="30" max="150">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi Badan (cm)</label>
+                    <input type="number" name="tinggi_badan" placeholder="Contoh: 160" step="0.1" min="100" max="200">
+                </div>
+                <div class="form-group">
+                    <label>Tekanan Darah (mmHg)</label>
+                    <input type="text" name="tekanan_darah" placeholder="Contoh: 120/80" maxlength="20">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-vial"></i> Pemeriksaan Darah</div>
+                <div class="form-group">
+                    <label>Gula Darah (mg/dL)</label>
+                    <input type="number" name="gula_darah" placeholder="Contoh: 95" step="0.1" min="50" max="500">
+                </div>
+                <div class="form-group">
+                    <label>Kolesterol (mg/dL)</label>
+                    <input type="number" name="kolesterol" placeholder="Contoh: 180" step="0.1" min="100" max="400">
+                </div>
+                <div class="form-group">
+                    <label>Asam Urat (mg/dL)</label>
+                    <input type="number" name="asam_urat" placeholder="Contoh: 5.5" step="0.1" min="1" max="15">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-notes-medical"></i> Keluhan & Pengobatan</div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label style="display:flex;align-items:center;gap:8px;">
+                        <input type="checkbox" name="ada_keluhan" value="1" onchange="toggleKeluhanKunjungan(this)">
+                        <span>Ada Keluhan</span>
+                    </label>
+                </div>
+                <div class="form-group" style="grid-column:1/-1;display:none;" id="groupKeluhanKunjungan">
+                    <label>Keluhan</label>
+                    <textarea name="keluhan" placeholder="Jelaskan keluhan yang dialami..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Obat Diberikan</label>
+                    <select name="obat_diberikan[]" multiple style="height:120px;">
+                        <option value="Paracetamol">Paracetamol</option>
+                        <option value="Amlodipin">Amlodipin</option>
+                        <option value="Metformin">Metformin</option>
+                        <option value="Captopril">Captopril</option>
+                        <option value="Simvastatin">Simvastatin</option>
+                        <option value="Antasida">Antasida</option>
+                        <option value="Asam Mefenamat">Asam Mefenamat</option>
+                        <option value="Glibenklamid">Glibenklamid</option>
+                        <option value="Furosemid">Furosemid</option>
+                        <option value="Lisinopril">Lisinopril</option>
+                    </select>
+                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Vitamin Diberikan</label>
+                    <select name="vitamin_diberikan[]" multiple style="height:100px;">
+                        <option value="Vitamin C">Vitamin C</option>
+                        <option value="Vitamin D">Vitamin D</option>
+                        <option value="Vitamin B12">Vitamin B12</option>
+                        <option value="Kalsium">Kalsium</option>
+                        <option value="Asam Folat">Asam Folat</option>
+                        <option value="Zinc">Zinc</option>
+                        <option value="Vitamin E">Vitamin E</option>
+                        <option value="Omega-3">Omega-3</option>
+                        <option value="Multivitamin">Multivitamin</option>
+                    </select>
+                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Catatan Bidan/Kader</label>
+                    <textarea name="catatan_bidan" placeholder="Catatan tambahan..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+            </div>
+            <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="button" class="btn btn-outline" onclick="closeModal('modalKunjunganSelanjutnya')">Batal</button>
+                <button type="submit" class="btn btn-primary" id="btnKunjunganSelanjutnya"><i class="fas fa-save"></i> Simpan Kunjungan</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-const LIST_URL   = '{{ route("lansia.kunjungan.list") }}';
-const STORE_URL  = '{{ route("lansia.kunjungan.store") }}';
-const API_BASE   = '/lansia/api/kunjungan';
-const LANSIA_URL = '{{ route("lansia.lansia.list") }}';
+// ============================================================
+// STATE
+// ============================================================
+let allLansia = [], currentPage = 1, perPage = 10, searchTimer = null, currentDetailId = null, hapusId = null;
 
-const DAFTAR_OBAT    = ['Paracetamol','Amlodipin','Metformin','Captopril','Simvastatin','Antasida','Vitamin B Complex','Asam Mefenamat','Glibenklamid','Furosemid','Amlodipine','Lisinopril'];
-const DAFTAR_VITAMIN = ['Vitamin C','Vitamin D','Vitamin B12','Kalsium','Asam Folat','Zinc','Vitamin E','Omega-3','Multivitamin'];
-
-let allData = [], allLansia = [], currentPage = 1, perPage = 10;
-let searchTimer = null, adaKeluhan = false;
-
-// ── Toast ──────────────────────────────────────────────────
-function toast(msg, type='success') {
-    const icons={success:'check-circle',error:'times-circle',warning:'exclamation-triangle'};
-    const el=document.createElement('div'); el.className=`toast-item toast-${type}`;
-    el.innerHTML=`<i class="fas fa-${icons[type]||'info-circle'}"></i> ${msg}`;
-    document.getElementById('toast').appendChild(el); setTimeout(()=>el.remove(),4000);
-}
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-
-// ── Status helpers ─────────────────────────────────────────
-const STATUS_MAP = {
-    tensi: {
-        normal:        {label:'Normal',        cls:'s-normal'},
-        prehipertensi: {label:'Prehipertensi', cls:'s-warning'},
-        hipertensi1:   {label:'Hipertensi I',  cls:'s-danger'},
-        hipertensi2:   {label:'Hipertensi II', cls:'s-danger'},
-    },
-    gula: {
-        rendah:       {label:'Rendah',        cls:'s-info'},
-        normal:       {label:'Normal',        cls:'s-normal'},
-        tinggi:       {label:'Tinggi',        cls:'s-warning'},
-        sangat_tinggi:{label:'Sangat Tinggi', cls:'s-danger'},
-    },
-    kol: {
-        normal:{label:'Normal',cls:'s-normal'},
-        batas: {label:'Batas', cls:'s-warning'},
-        tinggi:{label:'Tinggi',cls:'s-danger'},
-    },
-    au: {
-        normal:{label:'Normal',cls:'s-normal'},
-        tinggi:{label:'Tinggi',cls:'s-danger'},
-    },
-};
-
-function statusBadge(type, val) {
-    if (!val) return '<span class="status-badge s-unknown">—</span>';
-    const s = STATUS_MAP[type]?.[val];
-    if (!s) return `<span class="status-badge s-unknown">${val}</span>`;
-    return `<span class="status-badge ${s.cls}">${s.label}</span>`;
+// ============================================================
+// TOAST NOTIFICATION
+// ============================================================
+function toast(msg, type = 'success') {
+    const icons = { success:'check-circle', error:'times-circle', warning:'exclamation-triangle' };
+    const el = document.createElement('div');
+    el.className = `toast-item toast-${type}`;
+    el.innerHTML = `<i class="fas fa-${icons[type]||'info-circle'}"></i> ${msg}`;
+    document.getElementById('toast').appendChild(el);
+    setTimeout(() => el.remove(), 4000);
 }
 
-// ── Preview status real-time ───────────────────────────────
-function hitungTensi(td) {
-    if (!td) return null;
-    const p = td.split('/'); if (p.length < 2) return null;
-    const s = parseInt(p[0]), d = parseInt(p[1]);
-    if (s >= 160 || d >= 100) return 'hipertensi2';
-    if (s >= 140 || d >= 90)  return 'hipertensi1';
-    if (s >= 120 || d >= 80)  return 'prehipertensi';
-    return 'normal';
-}
-function hitungGula(v) {
-    if (!v) return null; v = parseFloat(v);
-    if (v < 70) return 'rendah'; if (v < 140) return 'normal';
-    if (v < 200) return 'tinggi'; return 'sangat_tinggi';
-}
-function hitungKol(v) {
-    if (!v) return null; v = parseFloat(v);
-    if (v < 200) return 'normal'; if (v < 240) return 'batas'; return 'tinggi';
-}
-function hitungAU(v) {
-    if (!v) return null; return parseFloat(v) <= 7.0 ? 'normal' : 'tinggi';
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['tabel','tambah'][i] === tab));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
 }
 
-function setPreview(elId, type, status) {
-    const el = document.getElementById(elId);
-    if (!el) return;
-    if (!status) { el.style.background='#F3F4F6'; el.style.color='#6B7280'; el.textContent='—'; return; }
-    const s = STATUS_MAP[type]?.[status];
-    const colors = {
-        's-normal':  {bg:'#D1FAE5',color:'#065F46'},
-        's-warning': {bg:'#FEF3C7',color:'#92400E'},
-        's-danger':  {bg:'#FEE2E2',color:'#991B1B'},
-        's-info':    {bg:'#DBEAFE',color:'#1E40AF'},
-    };
-    const c = colors[s?.cls] || {bg:'#F3F4F6',color:'#6B7280'};
-    el.style.background = c.bg; el.style.color = c.color;
-    el.textContent = s?.label || status;
-}
+// ============================================================
+// LOAD DATA LANSIA
+// ============================================================
+async function loadLansia() {
+    const search = document.getElementById('searchInput').value.trim();
+    const tbody  = document.getElementById('lansiaTableBody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="18"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
 
-function previewStatusTensi(v) { setPreview('previewTensi','tensi', hitungTensi(v)); }
-function previewStatusGula(v)  { setPreview('previewGula', 'gula',  hitungGula(v)); }
-function previewStatusKol(v)   { setPreview('previewKol',  'kol',   hitungKol(v)); }
-function previewStatusAU(v)    { setPreview('previewAU',   'au',    hitungAU(v)); }
-
-// ── Load data ──────────────────────────────────────────────
-async function loadData(q='') {
     try {
-        const url = LIST_URL + (q ? `?q=${encodeURIComponent(q)}` : '');
-        const res = await fetch(url, {headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin'});
-        const json = await res.json();
-        if (!json.success) throw new Error(json.message);
-        allData = json.data;
+        const url = `/lansia/api/kunjungan?q=${encodeURIComponent(search)}&limit=200`;
+        console.log('Fetching lansia data from:', url);
+        
+        const res = await fetch(url, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        console.log('Response status:', res.status, res.statusText);
+        
+        const data = await res.json();
+        console.log('Response data:', data);
+
+        if (!data.success) { 
+            console.error('API returned success=false:', data.message);
+            toast(data.message || 'Gagal memuat data', 'error'); 
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-exclamation-triangle"></i> ' + (data.message || 'Gagal memuat data') + '</td></tr>';
+            return; 
+        }
+
+        allLansia = data.data;
+        console.log('Total lansia loaded:', allLansia.length);
+        
+        const tc = document.getElementById('totalCount');
+        if (tc) tc.textContent = allLansia.length;
         currentPage = 1;
         renderTable();
-    } catch(e) {
-        document.getElementById('tableBody').innerHTML = `<tr><td colspan="11" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>${e.message}</td></tr>`;
+    } catch (e) {
+        console.error('Error loading lansia:', e);
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data: ' + e.message + '</td></tr>';
     }
 }
 
-async function loadLansia() {
-    try {
-        const res = await fetch(LANSIA_URL, {headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},credentials:'same-origin'});
-        const json = await res.json();
-        if (json.success) {
-            allLansia = json.data;
-            console.log('Lansia loaded:', allLansia.length, 'items');
-        } else {
-            console.error('Failed to load lansia:', json.message);
-        }
-    } catch(e) {
-        console.error('Error loading lansia:', e);
+function renderTable() {
+    const tbody = document.getElementById('lansiaTableBody');
+    const start = (currentPage - 1) * perPage;
+    const page  = allLansia.slice(start, start + perPage);
+
+    if (!page.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-inbox"></i> Tidak ada data</td></tr>';
+        document.getElementById('paginationContainer').style.display = 'none';
+        return;
     }
+
+    const statusBadge = (s) => {
+        if (!s || s === 'Sehat') return '<span class="badge badge-sehat">Sehat</span>';
+        
+        // Handle multiple conditions
+        const conditions = s.split(', ');
+        return conditions.map(cond => {
+            const map = {
+                'Hipertensi': 'badge-hipertensi',
+                'Diabetes': 'badge-diabetes',
+                'Kolesterol Tinggi': 'badge-kolesterol-tinggi',
+                'Asam Urat Tinggi': 'badge-asam-urat-tinggi',
+            };
+            const cls = map[cond] || 'badge-secondary';
+            return `<span class="badge ${cls}">${cond}</span>`;
+        }).join(' ');
+    };
+
+    const jkBadge = (jk) => {
+        if (jk === 'L') return `<span class="badge badge-info" style="font-size:11px;padding:3px 8px;">L</span>`;
+        if (jk === 'P') return `<span class="badge badge-warning" style="font-size:11px;padding:3px 8px;">P</span>`;
+        return '-';
+    };
+
+    tbody.innerHTML = page.map((l) => `
+        <tr id="row-${l.id}">
+            <td>${l.id}</td>
+            <td class="nama-lansia-cell"><strong>${l.nama_lansia || '-'}</strong></td>
+            <td><code style="font-size:12px;">${l.nik_lansia || '-'}</code></td>
+            <td>${jkBadge(l.jenis_kelamin)}</td>
+            <td>${l.tanggal_lahir ? new Date(l.tanggal_lahir).toLocaleDateString('id-ID') : '-'}</td>
+            <td>${l.tempat_lahir || '-'}</td>
+            <td>${l.usia || '-'}</td>
+            <td>${l.berat_badan ? parseFloat(l.berat_badan).toFixed(1) : '-'}</td>
+            <td>${l.tinggi_badan ? parseFloat(l.tinggi_badan).toFixed(1) : '-'}</td>
+            <td>${l.tekanan_darah || '-'}</td>
+            <td>${l.gula_darah ? parseFloat(l.gula_darah).toFixed(1) : '-'}</td>
+            <td>${l.kolesterol ? parseFloat(l.kolesterol).toFixed(1) : '-'}</td>
+            <td>${l.asam_urat ? parseFloat(l.asam_urat).toFixed(1) : '-'}</td>
+            <td>${statusBadge(l.status_kesehatan)}</td>
+            <td>${l.alamat_domisili || '-'}</td>
+            <td>${l.nama_wali || '-'}</td>
+            <td><code style="font-size:12px;">${l.nik_wali || '-'}</code></td>
+            <td>
+                <div class="action-group">
+                    <button class="action-btn -view" onclick="openDetail(${l.id})" title="Lihat Detail"><i class="fas fa-eye"></i></button>
+                    <button class="action-btn" style="background:#10B981;color:white;" onclick="openKunjunganSelanjutnya(${l.id})" title="Kunjungan Selanjutnya"><i class="fas fa-notes-medical"></i></button>
+                    <button class="action-btn -edit" onclick="openEdit(${l.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn -delete" onclick="confirmHapus(${l.id}, '${(l.nama_lansia || 'Data').replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    renderPagination();
+    updateScrollArrows();
+}
+
+function renderPagination() {
+    const total = Math.ceil(allLansia.length / perPage);
+    const container = document.getElementById('paginationContainer');
+
+    if (total <= 1) { container.style.display = 'none'; return; }
+    container.style.display = 'flex';
+
+    document.getElementById('btnPrev').disabled = currentPage === 1;
+    document.getElementById('btnNext').disabled = currentPage === total;
+    document.getElementById('pageInfo').textContent = `Halaman ${currentPage} dari ${total}`;
+    document.getElementById('pageTotal').textContent = `${allLansia.length} total data`;
+
+    // Render dots
+    let dots = '';
+    for (let i = 1; i <= total; i++) {
+        dots += `<div class="pagination-dot ${i===currentPage?'active':''}" onclick="goPage(${i})" title="Halaman ${i}"></div>`;
+    }
+    document.getElementById('paginationDots').innerHTML = dots;
+}
+
+function goPage(p) {
+    const total = Math.ceil(allLansia.length / perPage);
+    if (p < 1 || p > total) return;
+    currentPage = p;
+    renderTable();
+}
+
+function scrollTable(amount) {
+    const slider = document.getElementById('tableSlider');
+    if (slider) slider.scrollLeft += amount;
+    setTimeout(updateScrollArrows, 100);
+}
+
+function updateScrollArrows() {
+    const slider = document.getElementById('tableSlider');
+    if (!slider) return;
+    const leftBtn  = document.getElementById('scrollLeft');
+    const rightBtn = document.getElementById('scrollRight');
+    if (leftBtn)  leftBtn.classList.toggle('visible', slider.scrollLeft > 10);
+    if (rightBtn) rightBtn.classList.toggle('visible', slider.scrollLeft < slider.scrollWidth - slider.clientWidth - 10);
 }
 
 function debounceSearch() {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => loadData(document.getElementById('searchInput').value.trim()), 400);
+    searchTimer = setTimeout(loadLansia, 400);
 }
 
-// ── Render table ───────────────────────────────────────────
-function renderTable() {
-    const tbody = document.getElementById('tableBody');
-    const start = (currentPage-1)*perPage;
-    const page  = allData.slice(start, start+perPage);
-
-    if (!allData.length) {
-        tbody.innerHTML = `<tr><td colspan="11" class="empty-state"><i class="fas fa-stethoscope"></i><br>Belum ada data kunjungan</td></tr>`;
-        updatePagination(); return;
-    }
-
-    tbody.innerHTML = page.map((d,i) => `
-        <tr>
-            <td>${start+i+1}</td>
-            <td><strong>${d.nama_lansia||'-'}</strong><br><small style="color:#6B7280;">${d.jk_lansia==='L'?'Laki-laki':'Perempuan'}, ${d.umur_lansia||'-'} th</small></td>
-            <td>${d.tanggal_kunjungan ? formatDate(d.tanggal_kunjungan) : '-'}</td>
-            <td>${d.berat_badan ? d.berat_badan+' kg' : '-'}</td>
-            <td>${d.tekanan_darah||'-'}<br>${statusBadge('tensi',d.status_tensi)}</td>
-            <td>${d.gula_darah ? d.gula_darah+' mg/dL' : '-'}<br>${statusBadge('gula',d.status_gula)}</td>
-            <td>${d.kolesterol ? d.kolesterol+' mg/dL' : '-'}<br>${statusBadge('kol',d.status_kolesterol)}</td>
-            <td>${d.asam_urat ? d.asam_urat+' mg/dL' : '-'}<br>${statusBadge('au',d.status_asam_urat)}</td>
-            <td><span class="status-badge ${d.ada_keluhan?'s-danger':'s-normal'}">${d.ada_keluhan?'Ada':'Tidak'}</span></td>
-            <td><span class="ada-masalah ${d.ada_masalah?'masalah-ya':'masalah-tidak'}">
-                <i class="fas fa-${d.ada_masalah?'exclamation-triangle':'check-circle'}"></i>
-                ${d.ada_masalah?'Perlu Perhatian':'Normal'}
-            </span></td>
-            <td style="white-space:nowrap;">
-                <button class="btn btn-outline btn-sm" onclick="openRiwayat(${d.lansia_id},'${(d.nama_lansia||'').replace(/'/g,"\\'")}')">
-                    <i class="fas fa-history"></i>
-                </button>
-                <button class="btn btn-yellow btn-sm" onclick="openEdit(${d.id})">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-red btn-sm" onclick="openHapus(${d.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>`).join('');
-
-    updatePagination();
-}
-
-function updatePagination() {
-    const total = allData.length, pages = Math.ceil(total/perPage)||1;
-    const start = total ? (currentPage-1)*perPage+1 : 0;
-    const end   = Math.min(currentPage*perPage, total);
-    document.getElementById('paginationInfo').textContent = `Menampilkan ${start}–${end} dari ${total} data`;
-    const btns = document.getElementById('paginationBtns');
-    let html = `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
-    for (let p=Math.max(1,currentPage-2); p<=Math.min(pages,currentPage+2); p++) {
-        html += `<button class="page-btn ${p===currentPage?'active':''}" onclick="changePage(${p})">${p}</button>`;
-    }
-    html += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage>=pages?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
-    btns.innerHTML = html;
-}
-
-function changePage(p) {
-    const pages = Math.ceil(allData.length/perPage)||1;
-    if (p<1||p>pages) return; currentPage=p; renderTable();
-}
-
-// ── Checklist ──────────────────────────────────────────────
-function renderChecklist(id, items, selected=[]) {
-    document.getElementById(id).innerHTML = items.map(item => `
-        <label class="check-item ${selected.includes(item)?'checked':''}">
-            <input type="checkbox" value="${item}" ${selected.includes(item)?'checked':''}
-                onchange="this.closest('.check-item').classList.toggle('checked',this.checked)">
-            ${item}
-        </label>`).join('');
-}
-function getChecked(id) {
-    return [...document.querySelectorAll(`#${id} input[type=checkbox]:checked`)].map(el=>el.value);
-}
-
-// ── Toggle keluhan ─────────────────────────────────────────
-function setKeluhan(val) {
-    adaKeluhan = val;
-    document.getElementById('btnYa').className    = 'toggle-btn'+(val?' active-ya':'');
-    document.getElementById('btnTidak').className = 'toggle-btn'+(!val?' active-tidak':'');
-    document.getElementById('sectionKeluhan').style.display = val?'':'none';
-    document.getElementById('sectionVitamin').style.display = val?'none':'';
-}
-
-// ── Autocomplete lansia ────────────────────────────────────
-function searchLansia(q) {
-    const list = document.getElementById('autocompleteList');
-    if (!q.trim()) { list.style.display='none'; return; }
-    const filtered = allLansia.filter(l=>l.nama_lengkap.toLowerCase().includes(q.toLowerCase())).slice(0,8);
-    if (!filtered.length) {
-        list.innerHTML = `
-            <div style="padding:10px 14px;font-size:13px;color:#9CA3AF;">Tidak ada hasil untuk "${q}"</div>
-            <div class="autocomplete-item" style="color:#10B981;font-weight:700;border-top:1px solid #ECFDF5;"
-                 onclick="openModalDaftarLansia('${q.replace(/'/g,"\\'")}')">
-                <i class="fas fa-user-plus"></i> Daftarkan "${q}" sebagai lansia baru
-            </div>`;
-        list.style.display = 'block';
-        return;
-    }
-    list.innerHTML = filtered.map(l=>`
-        <div class="autocomplete-item" onclick="selectLansia(${l.id},'${l.nama_lengkap.replace(/'/g,"\\'")}')">
-            ${l.nama_lengkap} <small style="color:#9CA3AF;">${l.nik||''} • ${l.umur||'-'} th</small>
-        </div>`).join('');
-    list.style.display = 'block';
-}
-function selectLansia(id, nama) {
-    document.getElementById('lansia_id').value = id;
-    document.getElementById('lansiaSearch').value = nama;
-    document.getElementById('autocompleteList').style.display = 'none';
-    console.log('Lansia selected:', id, nama);
-}
-document.addEventListener('click', e => {
-    if (!e.target.closest('.autocomplete-wrap')) document.getElementById('autocompleteList').style.display='none';
-});
-
-// ── Tambah ─────────────────────────────────────────────────
-function openModalTambah() {
-    document.getElementById('editId').value = '';
-    document.getElementById('modalFormTitle').innerHTML = '<i class="fas fa-stethoscope" style="color:#10B981;"></i> Catat Kunjungan';
-    document.getElementById('lansiaSearch').value = '';
-    document.getElementById('lansia_id').value = '';
-    setMinTanggalKunjungan();
-    ['berat_badan','tekanan_darah','gula_darah','kolesterol','asam_urat','keluhan','catatan_bidan'].forEach(id=>{
-        const el=document.getElementById(id); if(el) el.value='';
-    });
-    ['previewTensi','previewGula','previewKol','previewAU'].forEach(id=>setPreview(id,'tensi',null));
-    setKeluhan(false);
-    renderChecklist('checklistObat', DAFTAR_OBAT);
-    renderChecklist('checklistVitamin', DAFTAR_VITAMIN);
-    openModal('modalForm');
-}
-
-// ── Edit ───────────────────────────────────────────────────
-function openEdit(id) {
-    const d = allData.find(x=>x.id===id); if (!d) return;
-    document.getElementById('editId').value = id;
-    document.getElementById('modalFormTitle').innerHTML = '<i class="fas fa-edit" style="color:#F59E0B;"></i> Edit Kunjungan';
-    document.getElementById('lansiaSearch').value = d.nama_lansia||'';
-    document.getElementById('lansia_id').value = d.lansia_id||'';
-    document.getElementById('tanggal_kunjungan').value = d.tanggal_kunjungan||'';
-    // Saat edit, hapus batasan minimum tanggal agar bisa edit tanggal lama
-    document.getElementById('tanggal_kunjungan').min = '';
-    document.getElementById('berat_badan').value = d.berat_badan||'';
-    document.getElementById('tekanan_darah').value = d.tekanan_darah||'';
-    document.getElementById('gula_darah').value = d.gula_darah||'';
-    document.getElementById('kolesterol').value = d.kolesterol||'';
-    document.getElementById('asam_urat').value = d.asam_urat||'';
-    document.getElementById('keluhan').value = d.keluhan||'';
-    document.getElementById('catatan_bidan').value = d.catatan_bidan||'';
-    previewStatusTensi(d.tekanan_darah||'');
-    previewStatusGula(d.gula_darah||'');
-    previewStatusKol(d.kolesterol||'');
-    previewStatusAU(d.asam_urat||'');
-    setKeluhan(!!d.ada_keluhan);
-    renderChecklist('checklistObat', DAFTAR_OBAT, d.obat_diberikan||[]);
-    renderChecklist('checklistVitamin', DAFTAR_VITAMIN, d.vitamin_diberikan||[]);
-    openModal('modalForm');
-}
-
-// ── Submit ─────────────────────────────────────────────────
-async function submitForm() {
-    const editId = document.getElementById('editId').value;
-    const lansiaId = document.getElementById('lansia_id').value;
-    const lansiaSearch = document.getElementById('lansiaSearch').value.trim();
-    const tanggalKunjungan = document.getElementById('tanggal_kunjungan').value;
-    
-    if (!lansiaId && !editId) { 
-        if (!lansiaSearch) {
-            toast('Pilih lansia dari daftar atau ketik nama lansia','warning');
-        } else {
-            toast('Pilih lansia dari hasil pencarian','warning');
-        }
-        return; 
-    }
-
-    // Validasi tanggal tidak boleh di masa lalu
-    if (tanggalKunjungan && !editId) {
-        const selectedDate = new Date(tanggalKunjungan);
-        const todayDate = new Date(today());
-        if (selectedDate < todayDate) {
-            toast('Tanggal kunjungan tidak boleh di masa lalu. Pilih hari ini atau tanggal yang akan datang','warning');
-            return;
-        }
-    }
-
-    const body = {
-        lansia_id:         parseInt(lansiaId)||undefined,
-        tanggal_kunjungan: document.getElementById('tanggal_kunjungan').value,
-        berat_badan:       document.getElementById('berat_badan').value||null,
-        tekanan_darah:     document.getElementById('tekanan_darah').value.trim()||null,
-        gula_darah:        document.getElementById('gula_darah').value||null,
-        kolesterol:        document.getElementById('kolesterol').value||null,
-        asam_urat:         document.getElementById('asam_urat').value||null,
-        ada_keluhan:       adaKeluhan,
-        keluhan:           adaKeluhan ? document.getElementById('keluhan').value.trim()||null : null,
-        obat_diberikan:    adaKeluhan ? getChecked('checklistObat') : [],
-        vitamin_diberikan: !adaKeluhan ? getChecked('checklistVitamin') : [],
-        catatan_bidan:     document.getElementById('catatan_bidan').value.trim()||null,
-    };
-
-    const btn = document.getElementById('btnSimpan');
-    btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+// ============================================================
+// DETAIL
+// ============================================================
+async function openDetail(id) {
+    currentDetailId = id;
+    document.getElementById('detailContent').innerHTML = '<div style="text-align:center;padding:40px;"><i class="fas fa-spinner fa-spin fa-2x" style="color:#246BCE;"></i></div>';
+    openModal('modalDetail');
 
     try {
-        const url    = editId ? `${API_BASE}/${editId}` : STORE_URL;
-        const method = editId ? 'PUT' : 'POST';
-        const res    = await fetch(url, {
-            method, credentials:'same-origin',
-            headers:{'Content-Type':'application/json','X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'},
-            body: JSON.stringify(body),
-        });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.message||'Gagal menyimpan');
-        toast(json.message||'Kunjungan berhasil dicatat!');
-        closeModal('modalForm');
-        loadData(document.getElementById('searchInput').value.trim());
-    } catch(err) { toast(err.message||'Terjadi kesalahan','error'); }
-    finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> Simpan Kunjungan'; }
-}
+        const res  = await fetch(`/lansia/api/kunjungan/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const data = await res.json();
+        if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
-// ── Riwayat ────────────────────────────────────────────────
-async function openRiwayat(lansiaId, nama) {
-    document.getElementById('riwayatTitle').textContent = `Riwayat Kunjungan — ${nama}`;
-    document.getElementById('riwayatBody').innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div>';
-    openModal('modalRiwayat');
-    try {
-        const res  = await fetch(`${API_BASE}/${lansiaId}/riwayat`, {
-            headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'}, credentials:'same-origin'
-        });
-        const json = await res.json();
-        if (!json.success) throw new Error(json.message);
-        const list = json.data;
-        if (!list.length) {
-            document.getElementById('riwayatBody').innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>Belum ada riwayat kunjungan</p></div>';
-            return;
-        }
-        document.getElementById('riwayatBody').innerHTML = list.map(k => `
-            <div class="riwayat-item ${k.ada_masalah?'ada-masalah-item':''}">
-                <div class="riwayat-date">
-                    <i class="fas fa-calendar-check"></i> ${formatDate(k.tanggal_kunjungan)}
-                    ${k.ada_masalah ? '<span class="ada-masalah masalah-ya" style="margin-left:8px;"><i class="fas fa-exclamation-triangle"></i> Perlu Perhatian</span>' : '<span class="ada-masalah masalah-tidak" style="margin-left:8px;"><i class="fas fa-check-circle"></i> Normal</span>'}
+        const d = data.data;
+        document.getElementById('detailContent').innerHTML = `
+            <div class="detail-section">
+                <div class="detail-section-title"><i class="fas fa-user"></i> Data Lansia</div>
+                <div class="detail-grid">
+                    <div class="detail-item"><label>Nama Lansia</label><span>${d.nama_lansia}</span></div>
+                    <div class="detail-item"><label>NIK Lansia</label><span>${d.nik_lansia||'-'}</span></div>
+                    <div class="detail-item"><label>Jenis Kelamin</label><span>${d.jenis_kelamin==='L'?'Laki-laki':'Perempuan'}</span></div>
+                    <div class="detail-item"><label>Tanggal Lahir</label><span>${d.tanggal_lahir||'-'}</span></div>
+                    <div class="detail-item"><label>Tempat Lahir</label><span>${d.tempat_lahir||'-'}</span></div>
+                    <div class="detail-item"><label>Usia</label><span>${d.umur_display||'-'}</span></div>
+                    <div class="detail-item"><label>Status Kesehatan</label><span>${d.status_kesehatan||'Belum diperiksa'}</span></div>
                 </div>
-                <div class="riwayat-grid">
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">BB</div>
-                        <div class="riwayat-field-value">${k.berat_badan ? k.berat_badan+' kg' : '—'}</div>
-                    </div>
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">Tensi</div>
-                        <div class="riwayat-field-value">${k.tekanan_darah||'—'}</div>
-                        ${statusBadge('tensi',k.status_tensi)}
-                    </div>
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">Gula Darah</div>
-                        <div class="riwayat-field-value">${k.gula_darah ? k.gula_darah+' mg/dL' : '—'}</div>
-                        ${statusBadge('gula',k.status_gula)}
-                    </div>
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">Kolesterol</div>
-                        <div class="riwayat-field-value">${k.kolesterol ? k.kolesterol+' mg/dL' : '—'}</div>
-                        ${statusBadge('kol',k.status_kolesterol)}
-                    </div>
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">Asam Urat</div>
-                        <div class="riwayat-field-value">${k.asam_urat ? k.asam_urat+' mg/dL' : '—'}</div>
-                        ${statusBadge('au',k.status_asam_urat)}
-                    </div>
-                    <div class="riwayat-field">
-                        <div class="riwayat-field-label">Keluhan</div>
-                        <div class="riwayat-field-value">${k.ada_keluhan ? 'Ada' : 'Tidak'}</div>
-                    </div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-section-title"><i class="fas fa-home"></i> Data Keluarga</div>
+                <div class="detail-grid">
+                    <div class="detail-item"><label>Nama Wali</label><span>${d.nama_wali||'-'}</span></div>
+                    <div class="detail-item"><label>NIK Wali</label><span>${d.nik_wali||'-'}</span></div>
+                    <div class="detail-item"><label>No HP Wali</label><span>${d.hp_kontak_wali||'-'}</span></div>
+                    <div class="detail-item"><label>Nama KK</label><span>${d.nama_kk||'-'}</span></div>
+                    <div class="detail-item" style="grid-column:1/-1"><label>Alamat</label><span>${d.alamat_domisili||'-'} ${d.rt_rw?'RT/RW '+d.rt_rw:''}</span></div>
                 </div>
-                ${k.obat_diberikan?.length ? `<div style="margin-top:10px;font-size:12px;color:#065F46;"><strong>Obat:</strong> ${k.obat_diberikan.join(', ')}</div>` : ''}
-                ${k.vitamin_diberikan?.length ? `<div style="margin-top:4px;font-size:12px;color:#065F46;"><strong>Vitamin:</strong> ${k.vitamin_diberikan.join(', ')}</div>` : ''}
-                ${k.catatan_bidan ? `<div style="margin-top:8px;font-size:12px;color:#6B7280;background:#fff;padding:8px 10px;border-radius:8px;"><strong>Catatan Bidan:</strong> ${k.catatan_bidan}</div>` : ''}
-            </div>`).join('');
-    } catch(err) {
-        document.getElementById('riwayatBody').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>${err.message}</p></div>`;
+            </div>
+            ${d.berat_badan ? `
+            <div class="detail-section">
+                <div class="detail-section-title"><i class="fas fa-heartbeat"></i> Data Kesehatan Terakhir</div>
+                <div class="detail-grid">
+                    <div class="detail-item"><label>Berat Badan</label><span>${d.berat_badan} kg</span></div>
+                    <div class="detail-item"><label>Tinggi Badan</label><span>${d.tinggi_badan} cm</span></div>
+                    ${d.tekanan_darah ? `<div class="detail-item"><label>Tekanan Darah</label><span>${d.tekanan_darah} mmHg</span></div>` : ''}
+                    ${d.gula_darah ? `<div class="detail-item"><label>Gula Darah</label><span>${d.gula_darah} mg/dL</span></div>` : ''}
+                    ${d.kolesterol ? `<div class="detail-item"><label>Kolesterol</label><span>${d.kolesterol} mg/dL</span></div>` : ''}
+                    ${d.asam_urat ? `<div class="detail-item"><label>Asam Urat</label><span>${d.asam_urat} mg/dL</span></div>` : ''}
+                    <div class="detail-item"><label>Tanggal Pemeriksaan</label><span>${d.tanggal_pemeriksaan_terakhir||'-'}</span></div>
+                </div>
+            </div>` : ''}
+            ${d.status_detail_array ? `
+            <div class="detail-section">
+                <div class="detail-section-title"><i class="fas fa-notes-medical"></i> Detail Status Kesehatan</div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                    ${d.status_detail_array.tekanan_darah ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Tekanan Darah:</strong> ${d.status_detail_array.tekanan_darah.nilai} - ${d.status_detail_array.tekanan_darah.kategori}</div>` : ''}
+                    ${d.status_detail_array.gula_darah ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Gula Darah:</strong> ${d.status_detail_array.gula_darah.nilai} mg/dL - ${d.status_detail_array.gula_darah.kategori}</div>` : ''}
+                    ${d.status_detail_array.kolesterol ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Kolesterol:</strong> ${d.status_detail_array.kolesterol.nilai} mg/dL - ${d.status_detail_array.kolesterol.kategori}</div>` : ''}
+                    ${d.status_detail_array.asam_urat ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Asam Urat:</strong> ${d.status_detail_array.asam_urat.nilai} mg/dL - ${d.status_detail_array.asam_urat.kategori}</div>` : ''}
+                    ${d.status_detail_array.bmi ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>BMI:</strong> ${d.status_detail_array.bmi.nilai} - ${d.status_detail_array.bmi.kategori}</div>` : ''}
+                </div>
+            </div>` : ''}
+        `;
+    } catch (e) {
+        document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>';
     }
 }
 
-// ── Hapus ──────────────────────────────────────────────────
-function openHapus(id) {
-    document.getElementById('btnKonfirmasiHapus').onclick = () => hapus(id);
-    openModal('modalHapus');
-}
-async function hapus(id) {
-    try {
-        const res  = await fetch(`${API_BASE}/${id}`, {method:'DELETE',credentials:'same-origin',headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'}});
-        const json = await res.json();
-        if (!json.success) throw new Error(json.message);
-        toast(json.message||'Data berhasil dihapus!');
-        closeModal('modalHapus');
-        loadData(document.getElementById('searchInput').value.trim());
-    } catch(err) { toast(err.message||'Gagal menghapus','error'); }
+function openEditFromDetail() {
+    closeModal('modalDetail');
+    if (currentDetailId) openEdit(currentDetailId);
 }
 
-// ── Helpers ────────────────────────────────────────────────
-function today() { return new Date().toISOString().split('T')[0]; }
+// ============================================================
+// EDIT
+// ============================================================
+async function openEdit(id) {
+    const lansia = allLansia.find(l => l.id === id);
+    if (!lansia) { toast('Data tidak ditemukan', 'error'); return; }
 
-function setMinTanggalKunjungan() {
-    const input = document.getElementById('tanggal_kunjungan');
-    if (input) {
-        input.min = today();
-        input.value = today();
-    }
+    document.getElementById('editId').value             = lansia.id;
+    document.getElementById('editNamaLansia').value     = lansia.nama_lansia || '';
+    document.getElementById('editNikLansia').value      = lansia.nik_lansia || '';
+    document.getElementById('editJenisKelamin').value   = lansia.jenis_kelamin || 'L';
+    document.getElementById('editTanggalLahir').value   = lansia.tanggal_lahir || '';
+    document.getElementById('editTempatLahir').value    = lansia.tempat_lahir || '';
+    document.getElementById('editHp').value             = lansia.hp_kontak_wali || '';
+    document.getElementById('editAlamat').value         = lansia.alamat_domisili || '';
+    document.getElementById('editRtRw').value           = lansia.rt_rw || '';
+    document.getElementById('editNamaWali').value       = lansia.nama_wali || '';
+    document.getElementById('editNikWali').value        = lansia.nik_wali || '';
+    document.getElementById('editBeratBadan').value     = lansia.berat_badan || '';
+    document.getElementById('editTinggiBadan').value    = lansia.tinggi_badan || '';
+    document.getElementById('editTekananDarah').value   = lansia.tekanan_darah || '';
+    document.getElementById('editGulaDarah').value      = lansia.gula_darah || '';
+    document.getElementById('editKolesterol').value     = lansia.kolesterol || '';
+    document.getElementById('editAsamUrat').value       = lansia.asam_urat || '';
+
+    openModal('modalEdit');
 }
 
-function formatDate(s) {
-    if (!s) return '-';
-    return new Date(s).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
-}
+async function submitEdit(e) {
+    e.preventDefault();
+    const id  = document.getElementById('editId').value;
+    const btn = document.getElementById('btnSaveEdit');
+    const form = document.getElementById('formEdit');
+    const formData = new FormData(form);
+    const payload  = {};
+    formData.forEach((v, k) => { if (v) payload[k] = v; });
 
-// ── Daftarkan Lansia Baru (dari dalam form kunjungan) ──────
-function openModalDaftarLansia(namaAwal = '') {
-    document.getElementById('autocompleteList').style.display = 'none';
-    document.getElementById('daftarNamaLengkap').value = namaAwal;
-    document.getElementById('daftarNik').value = '';
-    document.getElementById('daftarJK').value = '';
-    document.getElementById('daftarTglLahir').value = '';
-    document.getElementById('daftarNoHp').value = '';
-    openModal('modalDaftarLansia');
-    setTimeout(() => document.getElementById('daftarNamaLengkap').focus(), 200);
-}
-
-async function submitDaftarLansia() {
-    const nama = document.getElementById('daftarNamaLengkap').value.trim();
-    const nik  = document.getElementById('daftarNik').value.trim();
-    const jk   = document.getElementById('daftarJK').value;
-    const tgl  = document.getElementById('daftarTglLahir').value;
-    const hp   = document.getElementById('daftarNoHp').value.trim();
-
-    if (!nama || !nik || !jk || !tgl) { toast('Nama, NIK, JK, dan Tanggal Lahir wajib diisi','warning'); return; }
-    if (nik.length !== 16) { toast('NIK harus 16 digit','warning'); return; }
-
-    const btn = document.getElementById('btnSimpanDaftar');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res = await fetch('/lansia/api/lansia', {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
+        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
-            body: JSON.stringify({ nik, nama_lengkap:nama, jenis_kelamin:jk, tanggal_lahir:tgl, no_hp:hp||null }),
+            body: JSON.stringify(payload),
         });
         const data = await res.json();
+
         if (data.success) {
-            toast(`${nama} berhasil didaftarkan!`, 'success');
-            closeModal('modalDaftarLansia');
-            await loadLansia();
-            // Pilih otomatis lansia yang baru didaftarkan
-            const newId = data.data?.id;
-            if (newId) {
-                selectLansia(newId, nama);
-            } else {
-                document.getElementById('lansiaSearch').value = nama;
-            }
+            toast('Data berhasil diperbarui!', 'success');
+            closeModal('modalEdit');
+            loadLansia();
         } else {
-            toast(data.message || 'Gagal mendaftarkan lansia', 'error');
+            toast(data.message || 'Gagal menyimpan', 'error');
         }
-    } catch(e) { toast('Koneksi gagal', 'error'); }
-    finally { btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> Simpan & Pilih'; }
+    } catch (err) {
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+    }
 }
 
-document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+// ============================================================
+// HAPUS
+// ============================================================
+function confirmHapus(id, nama) {
+    hapusId = id;
+    document.getElementById('hapusNama').textContent = nama;
+    document.getElementById('btnKonfirmasiHapus').onclick = () => doHapus(id);
+    openModal('modalHapus');
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    loadLansia();
-    renderChecklist('checklistObat', DAFTAR_OBAT);
-    renderChecklist('checklistVitamin', DAFTAR_VITAMIN);
-    
-    // Set minimum tanggal kunjungan
-    const tanggalInput = document.getElementById('tanggal_kunjungan');
-    if (tanggalInput) {
-        tanggalInput.min = today();
-        // Validasi real-time saat user mengubah tanggal
-        tanggalInput.addEventListener('change', function() {
-            const selectedDate = new Date(this.value);
-            const todayDate = new Date(today());
-            if (selectedDate < todayDate) {
-                toast('Tanggal tidak boleh di masa lalu','warning');
-                this.value = today();
-            }
+async function doHapus(id) {
+    const btn = document.getElementById('btnKonfirmasiHapus');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+
+    try {
+        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin',
         });
+        const data = await res.json();
+
+        if (data.success) {
+            toast(data.message, 'success');
+            closeModal('modalHapus');
+            loadLansia();
+        } else {
+            toast(data.message || 'Gagal menghapus', 'error');
+        }
+    } catch (err) {
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-trash"></i> Ya, Hapus';
     }
+}
+
+// ============================================================
+// TAMBAH LANSIA BARU
+// ============================================================
+async function submitTambah(e) {
+    e.preventDefault();
+    const btn  = document.getElementById('btnTambah');
+    const form = document.getElementById('formTambah');
+    const fd   = new FormData(form);
+    const payload = {};
+    fd.forEach((v, k) => { if (v) payload[k] = v; });
+
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+    try {
+        const res  = await fetch('/lansia/api/kunjungan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            toast(data.message, 'success');
+            form.reset();
+            switchTab('tabel');
+            loadLansia();
+        } else {
+            toast(data.message || 'Gagal menyimpan', 'error');
+        }
+    } catch (err) {
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data Kunjungan';
+    }
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id)  { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+    });
 });
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    loadLansia();
+    loadLansiaSelect(); // Load daftar lansia untuk select
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'tambah') switchTab(tab);
+});
+
+// ============================================================
+// LOAD DAFTAR LANSIA UNTUK SELECT
+// ============================================================
+async function loadLansiaSelect() {
+    try {
+        const res = await fetch('/lansia/api/kunjungan?limit=500', {
+            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        });
+        const result = await res.json();
+        
+        if (!result.success) {
+            console.error('Failed to load lansia list');
+            return;
+        }
+        
+        const select = document.getElementById('selectLansia');
+        if (!select) return;
+        
+        select.innerHTML = '<option value="">-- Pilih Lansia --</option>';
+        result.data.forEach(l => {
+            const option = document.createElement('option');
+            option.value = l.id;
+            option.textContent = `${l.nama_lansia || 'Tanpa Nama'} - ${l.nik_lansia || 'Tanpa NIK'} (${l.usia || '-'})`;
+            option.dataset.nama = l.nama_lansia || '-';
+            option.dataset.nik = l.nik_lansia || '-';
+            option.dataset.usia = l.usia || '-';
+            option.dataset.jk = l.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Error loading lansia select:', err);
+    }
+}
+
+// ============================================================
+// LOAD INFO LANSIA TERPILIH
+// ============================================================
+function loadLansiaInfo(lansiaId) {
+    const select = document.getElementById('selectLansia');
+    const info = document.getElementById('lansiaInfo');
+    
+    if (!lansiaId || !select || !info) {
+        if (info) info.style.display = 'none';
+        return;
+    }
+    
+    const option = select.options[select.selectedIndex];
+    if (!option || !option.dataset.nama) {
+        info.style.display = 'none';
+        return;
+    }
+    
+    document.getElementById('infoNama').textContent = option.dataset.nama;
+    document.getElementById('infoNik').textContent = option.dataset.nik;
+    document.getElementById('infoUsia').textContent = option.dataset.usia;
+    document.getElementById('infoJK').textContent = option.dataset.jk;
+    
+    info.style.display = 'block';
+}
+
+// ============================================================
+// TOGGLE KELUHAN
+// ============================================================
+function toggleKeluhan(checkbox) {
+    const group = document.getElementById('groupKeluhan');
+    if (group) {
+        group.style.display = checkbox.checked ? 'block' : 'none';
+        if (!checkbox.checked) {
+            const textarea = group.querySelector('textarea');
+            if (textarea) textarea.value = '';
+        }
+    }
+}
+
+// ============================================================
+// TOGGLE KELUHAN KUNJUNGAN
+// ============================================================
+function toggleKeluhanKunjungan(checkbox) {
+    const group = document.getElementById('groupKeluhanKunjungan');
+    if (group) {
+        group.style.display = checkbox.checked ? 'block' : 'none';
+        if (!checkbox.checked) {
+            const textarea = group.querySelector('textarea');
+            if (textarea) textarea.value = '';
+        }
+    }
+}
+
+// ============================================================
+// OPEN KUNJUNGAN SELANJUTNYA
+// ============================================================
+async function openKunjunganSelanjutnya(id) {
+    try {
+        const res = await fetch(`/lansia/api/kunjungan/${id}`, {
+            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        
+        if (!data.success) {
+            toast('Gagal memuat data lansia', 'error');
+            return;
+        }
+        
+        const d = data.data;
+        
+        // Set ID
+        document.getElementById('kunjunganLansiaId').value = id;
+        
+        // Set info lansia (read-only display)
+        document.getElementById('kunjNama').textContent = d.nama_lansia || 'Tanpa Nama';
+        document.getElementById('kunjNik').textContent = d.nik_lansia || '-';
+        document.getElementById('kunjUsia').textContent = d.umur_display || '-';
+        document.getElementById('kunjJK').textContent = d.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+        
+        // Pre-fill form dengan data lansia saat ini (bisa diupdate)
+        document.getElementById('kunjNamaLengkap').value = d.nama_lansia || '';
+        document.getElementById('kunjNikLansia').value = d.nik_lansia || '';
+        document.getElementById('kunjAlamat').value = d.alamat_domisili || '';
+        document.getElementById('kunjRtRw').value = d.rt_rw || '';
+        document.getElementById('kunjNamaWali').value = d.nama_wali || '';
+        document.getElementById('kunjNikWali').value = d.nik_wali || '';
+        document.getElementById('kunjHpWali').value = d.hp_kontak_wali || '';
+        
+        // Reset form kunjungan
+        const form = document.getElementById('formKunjunganSelanjutnya');
+        const kunjunganFields = ['tanggal_kunjungan', 'berat_badan', 'tinggi_badan', 'tekanan_darah', 
+                                 'gula_darah', 'kolesterol', 'asam_urat', 'catatan_bidan'];
+        kunjunganFields.forEach(field => {
+            const input = form.querySelector(`[name="${field}"]`);
+            if (input && field !== 'tanggal_kunjungan') input.value = '';
+        });
+        
+        // Reset keluhan
+        form.querySelector('[name="ada_keluhan"]').checked = false;
+        form.querySelector('[name="keluhan"]').value = '';
+        document.getElementById('groupKeluhanKunjungan').style.display = 'none';
+        
+        // Reset obat dan vitamin
+        form.querySelectorAll('[name="obat_diberikan[]"] option').forEach(opt => opt.selected = false);
+        form.querySelectorAll('[name="vitamin_diberikan[]"] option').forEach(opt => opt.selected = false);
+        
+        openModal('modalKunjunganSelanjutnya');
+    } catch (err) {
+        console.error('Error loading lansia data:', err);
+        toast('Koneksi gagal', 'error');
+    }
+}
+
+// ============================================================
+// SUBMIT KUNJUNGAN SELANJUTNYA
+// ============================================================
+async function submitKunjunganSelanjutnya(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnKunjunganSelanjutnya');
+    const form = document.getElementById('formKunjunganSelanjutnya');
+    const lansiaId = document.getElementById('kunjunganLansiaId').value;
+    const fd = new FormData(form);
+    const payload = {};
+    
+    fd.forEach((v, k) => {
+        if (k.endsWith('[]')) {
+            if (!payload[k]) payload[k] = [];
+            if (v) payload[k].push(v);
+        } else {
+            if (v) payload[k] = v;
+        }
+    });
+    
+    // Convert array keys
+    if (payload['obat_diberikan[]']) {
+        payload['obat_diberikan'] = payload['obat_diberikan[]'];
+        delete payload['obat_diberikan[]'];
+    }
+    if (payload['vitamin_diberikan[]']) {
+        payload['vitamin_diberikan'] = payload['vitamin_diberikan[]'];
+        delete payload['vitamin_diberikan[]'];
+    }
+    
+    // Convert ada_keluhan to boolean
+    payload['ada_keluhan'] = payload['ada_keluhan'] === '1';
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    
+    try {
+        const res = await fetch(`/lansia/api/kunjungan-selanjutnya/${lansiaId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'Accept': 'application/json'
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            toast(data.message, 'success');
+            form.reset();
+            closeModal('modalKunjunganSelanjutnya');
+            loadLansia(); // Reload table
+        } else {
+            toast(data.message || 'Gagal menyimpan', 'error');
+        }
+    } catch (err) {
+        console.error('Error submitting kunjungan:', err);
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Kunjungan';
+    }
+}
 </script>
 @endsection
