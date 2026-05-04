@@ -12,7 +12,6 @@ use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\VaksinController;
 use App\Http\Controllers\Lansia\LansiaDashboardController;
-use App\Http\Controllers\Lansia\LansiaDataController;
 use App\Http\Controllers\Lansia\LansiaKunjunganController;
 use App\Http\Controllers\Lansia\LansiaLaporanController;
 use App\Http\Controllers\Lansia\LansiaJadwalController;
@@ -100,10 +99,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::get('/dashboard/stats', [LansiaDashboardController::class, 'stats']);
             
             // Data Lansia - Full CRUD
-            Route::post('/data/store', [LansiaDataController::class, 'store']);
-            Route::put('/data/{id}', [LansiaDataController::class, 'update']);
-            Route::delete('/data/{id}', [LansiaDataController::class, 'destroy']);
-            Route::get('/data/{id}/export-pdf', [LansiaDataController::class, 'exportPdf']);
+            Route::post('/data/store', [LansiaKunjunganController::class, 'store']);
+            Route::put('/data/{id}', [LansiaKunjunganController::class, 'update']);
+            Route::delete('/data/{id}', [LansiaKunjunganController::class, 'destroy']);
+            Route::get('/data/{id}/export-pdf', [LansiaKunjunganController::class, 'show']);
             
             // Kunjungan Lansia - Full CRUD
             Route::post('/kunjungan/store', [LansiaKunjunganController::class, 'store']);
@@ -170,8 +169,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::prefix('lansia')->group(function () {
             
             // Data Lansia - Read Only
-            Route::get('/data/list', [LansiaDataController::class, 'list']);
-            Route::get('/data/{id}', [LansiaDataController::class, 'show']);
+            Route::get('/data/list', [LansiaKunjunganController::class, 'list']);
+            Route::get('/data/{id}', [LansiaKunjunganController::class, 'show']);
             
             // Kunjungan Lansia - Read Only
             Route::get('/kunjungan/list', [LansiaKunjunganController::class, 'list']);

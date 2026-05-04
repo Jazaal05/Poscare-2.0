@@ -13,7 +13,6 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\VaksinController;
 use App\Http\Controllers\LansiaController;
 use App\Http\Controllers\Lansia\LansiaDashboardController;
-use App\Http\Controllers\Lansia\LansiaDataController;
 use App\Http\Controllers\Lansia\LansiaKunjunganController;
 use App\Http\Controllers\Lansia\LansiaLaporanController;
 use App\Http\Controllers\Lansia\LansiaJadwalController;
