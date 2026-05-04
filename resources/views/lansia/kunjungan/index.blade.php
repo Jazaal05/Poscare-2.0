@@ -862,7 +862,6 @@ function renderTable() {
             <td>
                 <div class="action-group">
                     <button class="action-btn -view" onclick="openDetail(${l.id})" title="Lihat Detail"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn" style="background:#10B981;color:white;" onclick="openKunjunganSelanjutnya(${l.id})" title="Kunjungan Selanjutnya"><i class="fas fa-notes-medical"></i></button>
                     <button class="action-btn -edit" onclick="openEdit(${l.id})" title="Edit"><i class="fas fa-edit"></i></button>
                     <button class="action-btn -delete" onclick="confirmHapus(${l.id}, '${(l.nama_lansia || 'Data').replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
                 </div>
