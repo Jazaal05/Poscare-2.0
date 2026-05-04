@@ -261,9 +261,114 @@
 
 {{-- TAB 2: TAMBAH DATA KUNJUNGAN --}}
 <div id="tab-tambah" class="tab-content">
-    <div class="card">
-        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#10B981;"></i> Tambah Data Kunjungan</h3>
-        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Catat kunjungan dan pemeriksaan kesehatan lansia.</p>
+    {{-- Sub-tab nav --}}
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <button id="subtab-btn-baru" class="btn btn-primary" onclick="switchSubTab('baru')" style="border-radius:8px 8px 0 0;">
+            <i class="fas fa-user-plus"></i> Daftarkan Lansia Baru
+        </button>
+        <button id="subtab-btn-kunjungan" class="btn btn-outline" onclick="switchSubTab('kunjungan')" style="border-radius:8px 8px 0 0;">
+            <i class="fas fa-notes-medical"></i> Kunjungan Lansia yang Sudah Ada
+        </button>
+    </div>
+
+    {{-- SUB-TAB A: DAFTARKAN LANSIA BARU --}}
+    <div id="subtab-baru" class="card">
+        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:4px;"><i class="fas fa-user-plus" style="color:#10B981;"></i> Daftarkan Lansia Baru</h3>
+        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Isi data pribadi lansia baru. Data kesehatan bisa diisi sekarang atau saat kunjungan pertama.</p>
+        <form id="formLansiaBaru" onsubmit="submitLansiaBaru(event)">
+            <div class="form-grid">
+                <div class="form-section-title"><i class="fas fa-id-card"></i> Data Pribadi</div>
+                <div class="form-group">
+                    <label>Nama Lengkap <span style="color:red">*</span></label>
+                    <input type="text" name="nama_lengkap" placeholder="Nama lengkap lansia" required maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>NIK Lansia</label>
+                    <input type="text" name="nik_lansia" placeholder="16 digit NIK" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir <span style="color:red">*</span></label>
+                    <input type="date" name="tgl_lahir" max="{{ date('Y-m-d', strtotime('-1 day')) }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Tempat Lahir</label>
+                    <input type="text" name="tempat_lahir" placeholder="Kota/kabupaten tempat lahir" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin <span style="color:red">*</span></label>
+                    <select name="jenis_kelamin" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-map-marker-alt"></i> Alamat</div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Alamat Domisili</label>
+                    <textarea name="alamat_domisili" placeholder="Alamat lengkap tempat tinggal" rows="2" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>RT/RW</label>
+                    <input type="text" name="rt_rw" placeholder="Contoh: 001/005" maxlength="10">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-users"></i> Data Keluarga</div>
+                <div class="form-group">
+                    <label>Nama Kepala Keluarga</label>
+                    <input type="text" name="nama_kk" placeholder="Nama KK" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>Nama Wali / Kontak Darurat</label>
+                    <input type="text" name="nama_wali" placeholder="Nama wali atau keluarga" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label>NIK Wali</label>
+                    <input type="text" name="nik_wali" placeholder="16 digit NIK wali" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>No HP Kontak Wali</label>
+                    <input type="text" name="hp_kontak_wali" placeholder="+62 atau 08..." maxlength="20">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Data Kesehatan Awal (Opsional)</div>
+                <div class="form-group">
+                    <label>Berat Badan (kg)</label>
+                    <input type="number" name="berat_badan" placeholder="Contoh: 65.5" step="0.1" min="30" max="150">
+                </div>
+                <div class="form-group">
+                    <label>Tinggi Badan (cm)</label>
+                    <input type="number" name="tinggi_badan" placeholder="Contoh: 160" step="0.1" min="100" max="200">
+                </div>
+                <div class="form-group">
+                    <label>Tekanan Darah (mmHg)</label>
+                    <input type="text" name="tekanan_darah" placeholder="Contoh: 120/80" maxlength="20">
+                    <small style="color:#64748B;font-size:12px;">Format: sistolik/diastolik</small>
+                </div>
+                <div class="form-group">
+                    <label>Gula Darah (mg/dL)</label>
+                    <input type="number" name="gula_darah" placeholder="Contoh: 95" step="0.1" min="50" max="500">
+                </div>
+                <div class="form-group">
+                    <label>Kolesterol (mg/dL)</label>
+                    <input type="number" name="kolesterol" placeholder="Contoh: 180" step="0.1" min="100" max="400">
+                </div>
+                <div class="form-group">
+                    <label>Asam Urat (mg/dL)</label>
+                    <input type="number" name="asam_urat" placeholder="Contoh: 5.5" step="0.1" min="1" max="15">
+                </div>
+            </div>
+            <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="reset" class="btn btn-outline"><i class="fas fa-undo"></i> Reset</button>
+                <button type="submit" class="btn btn-success" id="btnLansiaBaru"><i class="fas fa-user-plus"></i> Daftarkan Lansia</button>
+            </div>
+        </form>
+    </div>
+
+    {{-- SUB-TAB B: KUNJUNGAN LANSIA YANG SUDAH ADA --}}
+    <div id="subtab-kunjungan" class="card" style="display:none;">
+        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:4px;"><i class="fas fa-notes-medical" style="color:#246BCE;"></i> Catat Kunjungan</h3>
+        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Pilih lansia yang sudah terdaftar, lalu catat data kunjungan dan pemeriksaan kesehatannya.</p>
         <form id="formTambah" onsubmit="submitTambah(event)">
             <div class="form-grid">
                 <div class="form-section-title"><i class="fas fa-user-check"></i> Pilih Lansia</div>
@@ -987,8 +1092,64 @@ async function doHapus(id) {
 }
 
 // ============================================================
-// TAMBAH LANSIA BARU
+// SUB-TABS (di dalam tab Tambah)
 // ============================================================
+function switchSubTab(tab) {
+    const isBaru = tab === 'baru';
+    document.getElementById('subtab-baru').style.display      = isBaru ? 'block' : 'none';
+    document.getElementById('subtab-kunjungan').style.display = isBaru ? 'none'  : 'block';
+    document.getElementById('subtab-btn-baru').className      = 'btn ' + (isBaru ? 'btn-primary' : 'btn-outline');
+    document.getElementById('subtab-btn-kunjungan').className = 'btn ' + (isBaru ? 'btn-outline' : 'btn-primary');
+    document.getElementById('subtab-btn-baru').style.borderRadius      = '8px 8px 0 0';
+    document.getElementById('subtab-btn-kunjungan').style.borderRadius = '8px 8px 0 0';
+}
+
+// ============================================================
+// DAFTARKAN LANSIA BARU
+// ============================================================
+async function submitLansiaBaru(e) {
+    e.preventDefault();
+    const btn  = document.getElementById('btnLansiaBaru');
+    const form = document.getElementById('formLansiaBaru');
+    const fd   = new FormData(form);
+    const payload = {};
+    fd.forEach((v, k) => { if (v !== '') payload[k] = v; });
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendaftarkan...';
+
+    try {
+        const res  = await fetch('/lansia', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            toast('Lansia berhasil didaftarkan!', 'success');
+            form.reset();
+            loadLansia();
+            loadLansiaSelect();
+            // Pindah ke sub-tab kunjungan agar bisa langsung catat kunjungan
+            switchSubTab('kunjungan');
+        } else {
+            // Tampilkan error validasi jika ada
+            const msg = data.errors
+                ? Object.values(data.errors).flat().join(', ')
+                : (data.message || 'Gagal mendaftarkan lansia');
+            toast(msg, 'error');
+        }
+    } catch (err) {
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> Daftarkan Lansia';
+    }
+}
+
+
 async function submitTambah(e) {
     e.preventDefault();
     const btn  = document.getElementById('btnTambah');
