@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Lansia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class LansiaController extends Controller
 {
@@ -78,14 +76,6 @@ class LansiaController extends Controller
                 'message' => 'Gagal memuat data: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('lansia.create');
     }
 
     /**
@@ -177,15 +167,6 @@ class LansiaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        $lansia = Lansia::aktif()->findOrFail($id);
-        return view('lansia.edit', compact('lansia'));
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
@@ -249,116 +230,4 @@ class LansiaController extends Controller
         }
     }
 
-    /**
-     * Calculate status kesehatan
-     */
-    private function calculateStatusKesehatan($request)
-    {
-        $issues = [];
-
-        // Check tekanan darah
-        if ($request->filled('tekanan_darah')) {
-            list($sistolik, $diastolik) = explode('/', $request->tekanan_darah);
-            if ($sistolik >= 140 || $diastolik >= 90) {
-                $issues[] = 'Hipertensi';
-            }
-        }
-
-        // Check gula darah
-        if ($request->filled('gula_darah') && $request->gula_darah >= 126) {
-            $issues[] = 'Diabetes';
-        }
-
-        // Check kolesterol
-        if ($request->filled('kolesterol') && $request->kolesterol >= 240) {
-            $issues[] = 'Kolesterol Tinggi';
-        }
-
-        // Check asam urat
-        if ($request->filled('asam_urat')) {
-            $jk = $request->jenis_kelamin;
-            if (($jk == 'L' && $request->asam_urat >= 7) || ($jk == 'P' && $request->asam_urat >= 6)) {
-                $issues[] = 'Asam Urat Tinggi';
-            }
-        }
-
-        return empty($issues) ? 'Sehat' : implode(', ', $issues);
-    }
-
-    /**
-     * Calculate status kesehatan detail (JSON)
-     */
-    private function calculateStatusKesehatanDetail($request)
-    {
-        $detail = [];
-
-        // Tekanan darah
-        if ($request->filled('tekanan_darah')) {
-            list($sistolik, $diastolik) = explode('/', $request->tekanan_darah);
-            $kategori = 'Normal';
-            if ($sistolik >= 180 || $diastolik >= 120) $kategori = 'Krisis Hipertensi';
-            elseif ($sistolik >= 140 || $diastolik >= 90) $kategori = 'Hipertensi Stage 2';
-            elseif ($sistolik >= 130 || $diastolik >= 80) $kategori = 'Hipertensi Stage 1';
-            elseif ($sistolik >= 120) $kategori = 'Elevated';
-
-            $detail['tekanan_darah'] = [
-                'nilai' => $request->tekanan_darah,
-                'kategori' => $kategori
-            ];
-        }
-
-        // Gula darah
-        if ($request->filled('gula_darah')) {
-            $kategori = 'Normal';
-            if ($request->gula_darah >= 126) $kategori = 'Diabetes';
-            elseif ($request->gula_darah >= 100) $kategori = 'Prediabetes';
-
-            $detail['gula_darah'] = [
-                'nilai' => $request->gula_darah,
-                'kategori' => $kategori
-            ];
-        }
-
-        // Kolesterol
-        if ($request->filled('kolesterol')) {
-            $kategori = 'Normal';
-            if ($request->kolesterol >= 240) $kategori = 'Tinggi';
-            elseif ($request->kolesterol >= 200) $kategori = 'Borderline High';
-
-            $detail['kolesterol'] = [
-                'nilai' => $request->kolesterol,
-                'kategori' => $kategori
-            ];
-        }
-
-        // Asam urat
-        if ($request->filled('asam_urat')) {
-            $jk = $request->jenis_kelamin;
-            $kategori = 'Normal';
-            if (($jk == 'L' && $request->asam_urat >= 7) || ($jk == 'P' && $request->asam_urat >= 6)) {
-                $kategori = 'Tinggi';
-            }
-
-            $detail['asam_urat'] = [
-                'nilai' => $request->asam_urat,
-                'kategori' => $kategori
-            ];
-        }
-
-        // BMI
-        if ($request->filled(['berat_badan', 'tinggi_badan'])) {
-            $bmi = $request->berat_badan / (($request->tinggi_badan / 100) ** 2);
-            $kategori = 'Normal';
-            if ($bmi >= 30) $kategori = 'Obesitas';
-            elseif ($bmi >= 25) $kategori = 'Overweight';
-            elseif ($bmi < 18.5) $kategori = 'Underweight';
-
-            $detail['bmi'] = [
-                'nilai' => round($bmi, 2),
-                'kategori' => $kategori
-            ];
-        }
-
-        return json_encode($detail);
-    }
 }
