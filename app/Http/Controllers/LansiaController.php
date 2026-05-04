@@ -181,7 +181,7 @@ class LansiaController extends Controller
      */
     public function edit($id)
     {
-        $lansia = Lansia::where('is_deleted', 0)->findOrFail($id);
+        $lansia = Lansia::aktif()->findOrFail($id);
         return view('lansia.edit', compact('lansia'));
     }
 
@@ -247,7 +247,6 @@ class LansiaController extends Controller
                 'message' => 'Gagal menghapus data: ' . $e->getMessage()
             ], 500);
         }
-    }
     }
 
     /**
