@@ -103,27 +103,30 @@
         <form id="formJadwal" onsubmit="submitJadwal(event)">
             <input type="hidden" id="jadwalId">
             <div class="form-group">
-                <label>Judul Kegiatan <span style="color:red">*</span></label>
+                <label for="judulKegiatan">Judul Kegiatan <span style="color:red">*</span></label>
                 <input type="text" id="judulKegiatan" name="judul_kegiatan" placeholder="Contoh: Pemeriksaan Kesehatan Rutin" required>
             </div>
             <div class="form-group">
-                <label>Tanggal <span style="color:red">*</span></label>
+                <label for="tanggalKegiatan">Tanggal <span style="color:red">*</span></label>
                 <input type="date" id="tanggalKegiatan" name="tanggal_kegiatan" required>
             </div>
             <div class="form-group">
-                <label>Waktu Mulai <span style="color:red">*</span></label>
-                <input type="time" id="waktuMulai" name="waktu_mulai" required>
+                <label for="waktuMulai">Waktu Mulai <span style="color:red">*</span></label>
+                <input type="text" id="waktuMulai" name="waktu_mulai" required
+                    placeholder="Contoh: 08:00 atau 14:30"
+                    maxlength="5"
+                    pattern="^([01]\d|2[0-3]):[0-5]\d$"
+                    oninput="formatWaktuInput(this)"
+                    autocomplete="off"
+                    style="letter-spacing:2px;font-size:16px;font-family:monospace;">
+                <small style="color:#64748B;font-size:12px;">Format 24 jam: 00:00 – 23:59 WIB</small>
             </div>
             <div class="form-group">
-                <label>Waktu Selesai</label>
-                <input type="time" id="waktuSelesai" name="waktu_selesai">
-            </div>
-            <div class="form-group">
-                <label>Lokasi</label>
+                <label for="lokasi">Lokasi</label>
                 <input type="text" id="lokasi" name="lokasi" placeholder="Contoh: Posyandu Melati">
             </div>
             <div class="form-group">
-                <label>Keterangan</label>
+                <label for="keterangan">Keterangan</label>
                 <textarea id="keterangan" name="keterangan" rows="3" placeholder="Keterangan tambahan..."></textarea>
             </div>
             <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
@@ -156,6 +159,36 @@
 let currentDate = new Date();
 let allJadwal = [];
 let currentJadwalId = null;
+
+// ── Format waktu otomatis saat mengetik ──────────────────────
+function formatWaktuInput(input) {
+    // Hapus semua karakter selain angka
+    let val = input.value.replace(/\D/g, '');
+
+    // Batasi 4 digit
+    if (val.length > 4) val = val.slice(0, 4);
+
+    // Sisipkan titik dua setelah 2 digit pertama
+    if (val.length >= 3) {
+        val = val.slice(0, 2) + ':' + val.slice(2);
+    }
+
+    input.value = val;
+
+    // Validasi range saat sudah 5 karakter (HH:mm)
+    if (val.length === 5) {
+        const [hh, mm] = val.split(':').map(Number);
+        if (hh > 23 || mm > 59) {
+            input.style.borderColor = '#EF4444';
+            input.title = 'Jam harus 00-23, menit harus 00-59';
+        } else {
+            input.style.borderColor = '#10B981';
+            input.title = '';
+        }
+    } else {
+        input.style.borderColor = '';
+    }
+}
 
 function toast(msg, type = 'success') {
     const el = document.createElement('div');
@@ -217,11 +250,11 @@ function renderCalendar() {
         div.className = 'calendar-day' + (isToday ? ' today' : '');
         
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const events = allJadwal.filter(j => j.tanggal_kegiatan === dateStr);
+        const events = allJadwal.filter(j => (j.tanggal_kegiatan || j.tanggal) === dateStr);
         
         let html = `<div class="day-number">${day}</div>`;
         events.forEach(e => {
-            html += `<div class="event-item lansia" onclick="openDetail(${e.id})" title="${e.judul_kegiatan}">${e.judul_kegiatan}</div>`;
+            html += `<div class="event-item lansia" onclick="openDetail(${e.id})" title="${e.judul_kegiatan || e.nama_kegiatan}">${e.judul_kegiatan || e.nama_kegiatan}</div>`;
         });
         
         div.innerHTML = html;
@@ -253,10 +286,10 @@ function renderJadwalList() {
     
     container.innerHTML = allJadwal.map(j => `
         <div class="jadwal-card" onclick="openDetail(${j.id})">
-            <div class="jadwal-title">${j.judul_kegiatan}</div>
+            <div class="jadwal-title">${j.judul_kegiatan || j.nama_kegiatan || '-'}</div>
             <div class="jadwal-meta">
-                <span><i class="fas fa-calendar"></i> ${new Date(j.tanggal_kegiatan).toLocaleDateString('id-ID')}</span>
-                <span><i class="fas fa-clock"></i> ${j.waktu_mulai}${j.waktu_selesai ? ' - ' + j.waktu_selesai : ''}</span>
+                <span><i class="fas fa-calendar"></i> ${new Date((j.tanggal_kegiatan || j.tanggal) + 'T00:00:00').toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</span>
+                <span><i class="fas fa-clock"></i> ${(j.waktu_mulai || '').substring(0,5)} WIB</span>
                 ${j.lokasi ? `<span><i class="fas fa-map-marker-alt"></i> ${j.lokasi}</span>` : ''}
             </div>
         </div>
@@ -277,6 +310,9 @@ function openModalTambah(date = null) {
     document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus"></i> Tambah Jadwal';
     document.getElementById('formJadwal').reset();
     document.getElementById('jadwalId').value = '';
+    // Set minimum tanggal = hari ini
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('tanggalKegiatan').min = today;
     if (date) document.getElementById('tanggalKegiatan').value = date;
     document.getElementById('modalJadwal').classList.add('active');
 }
@@ -290,9 +326,19 @@ async function submitJadwal(e) {
     const id = document.getElementById('jadwalId').value;
     const btn = document.getElementById('btnSubmit');
     const form = document.getElementById('formJadwal');
+
+    // Validasi format waktu manual
+    const waktu = document.getElementById('waktuMulai').value;
+    const waktuRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+    if (!waktuRegex.test(waktu)) {
+        toast('Format waktu tidak valid. Gunakan format 24 jam, contoh: 08:00 atau 14:30', 'error');
+        document.getElementById('waktuMulai').focus();
+        return;
+    }
+
     const fd = new FormData(form);
-    const payload = { layanan: 'lansia' };
-    fd.forEach((v, k) => { if (v) payload[k] = v; });
+    const payload = {};
+    fd.forEach((v, k) => { if (v !== '') payload[k] = v; });
     
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
@@ -339,9 +385,9 @@ async function openDetail(id) {
             const j = data.data;
             document.getElementById('detailContent').innerHTML = `
                 <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div><strong>Judul:</strong> ${j.judul_kegiatan}</div>
-                    <div><strong>Tanggal:</strong> ${new Date(j.tanggal_kegiatan).toLocaleDateString('id-ID', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
-                    <div><strong>Waktu:</strong> ${j.waktu_mulai}${j.waktu_selesai ? ' - ' + j.waktu_selesai : ''}</div>
+                    <div><strong>Judul:</strong> ${j.judul_kegiatan || j.nama_kegiatan || '-'}</div>
+                    <div><strong>Tanggal:</strong> ${new Date(((j.tanggal_kegiatan || j.tanggal) + 'T00:00:00')).toLocaleDateString('id-ID', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
+                    <div><strong>Waktu:</strong> ${(j.waktu_mulai || '').substring(0,5)} WIB</div>
                     ${j.lokasi ? `<div><strong>Lokasi:</strong> ${j.lokasi}</div>` : ''}
                     ${j.keterangan ? `<div><strong>Keterangan:</strong> ${j.keterangan}</div>` : ''}
                 </div>
@@ -365,12 +411,14 @@ async function editFromDetail() {
     
     closeModalDetail();
     
+    const today = new Date().toISOString().split('T')[0];
     document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Jadwal';
     document.getElementById('jadwalId').value = jadwal.id;
-    document.getElementById('judulKegiatan').value = jadwal.judul_kegiatan;
-    document.getElementById('tanggalKegiatan').value = jadwal.tanggal_kegiatan;
-    document.getElementById('waktuMulai').value = jadwal.waktu_mulai;
-    document.getElementById('waktuSelesai').value = jadwal.waktu_selesai || '';
+    document.getElementById('judulKegiatan').value = jadwal.judul_kegiatan || jadwal.nama_kegiatan || '';
+    document.getElementById('tanggalKegiatan').min = today;
+    document.getElementById('tanggalKegiatan').value = jadwal.tanggal_kegiatan || jadwal.tanggal || '';
+    // Pastikan format HH:mm (potong detik jika ada)
+    document.getElementById('waktuMulai').value = (jadwal.waktu_mulai || '').substring(0, 5);
     document.getElementById('lokasi').value = jadwal.lokasi || '';
     document.getElementById('keterangan').value = jadwal.keterangan || '';
     document.getElementById('modalJadwal').classList.add('active');
