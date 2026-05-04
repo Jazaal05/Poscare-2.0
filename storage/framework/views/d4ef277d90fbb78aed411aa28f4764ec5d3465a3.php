@@ -1,8 +1,8 @@
-﻿@extends('layouts.lansia')
+﻿
 
-@section('title', 'Kunjungan Lansia')
+<?php $__env->startSection('title', 'Kunjungan Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
     .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 6px 24px rgba(16,24,40,0.06); margin-bottom:24px; }
@@ -179,9 +179,9 @@
     .action-btn.-delete { background:#FEECEF; color:#DC2626; }
     .action-btn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
 <div class="page-header" style="margin-bottom:20px;">
@@ -189,13 +189,13 @@
     <p style="font-size:14px;color:#64748B;"><i class="fas fa-calendar-check" style="color:#10B981;margin-right:6px;"></i> Kelola Data Kunjungan Lansia</p>
 </div>
 
-{{-- TABS --}}
+
 <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('tabel')"><i class="fas fa-table"></i> Kunjungan</button>
     <button class="tab-btn" onclick="switchTab('tambah')"><i class="fas fa-plus-circle"></i> Tambah Data Kunjungan</button>
 </div>
 
-{{-- TAB 1: TABEL DATA LANSIA --}}
+
 <div id="tab-tabel" class="tab-content active">
     <div class="card">
         <div class="search-bar">
@@ -259,7 +259,7 @@
     </div>
 </div>
 
-{{-- TAB 2: TAMBAH DATA KUNJUNGAN --}}
+
 <div id="tab-tambah" class="tab-content">
     <div class="card">
         <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#10B981;"></i> Tambah Data Kunjungan</h3>
@@ -275,7 +275,7 @@
                     <small style="color:#64748B;font-size:12px;">Pilih lansia yang akan diperiksa</small>
                 </div>
                 
-                {{-- Info Lansia Terpilih --}}
+                
                 <div id="lansiaInfo" style="grid-column:1/-1;display:none;background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:8px;">
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
                         <div><strong>Nama:</strong> <span id="infoNama">-</span></div>
@@ -288,7 +288,7 @@
                 <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Tanggal Kunjungan</div>
                 <div class="form-group">
                     <label>Tanggal Kunjungan <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                    <input type="date" name="tanggal_kunjungan" max="<?php echo e(date('Y-m-d')); ?>" value="<?php echo e(date('Y-m-d')); ?>" required>
                 </div>
 
                 <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
@@ -375,7 +375,7 @@
     </div>
 </div>
 
-{{-- MODAL DETAIL --}}
+
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box modal-lg">
         <div class="modal-header">
@@ -390,7 +390,7 @@
     </div>
 </div>
 
-{{-- MODAL EDIT --}}
+
 <div class="modal-overlay" id="modalEdit">
     <div class="modal-box">
         <div class="modal-header">
@@ -417,7 +417,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tanggal Lahir</label>
-                    <input type="date" id="editTanggalLahir" name="tgl_lahir" max="{{ date('Y-m-d') }}">
+                    <input type="date" id="editTanggalLahir" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>">
                 </div>
                 <div class="form-group">
                     <label>Tempat Lahir</label>
@@ -476,7 +476,7 @@
     </div>
 </div>
 
-{{-- MODAL KONFIRMASI HAPUS --}}
+
 <div class="modal-overlay" id="modalHapus">
     <div class="modal-box" style="max-width:420px;">
         <div class="modal-header">
@@ -491,7 +491,7 @@
     </div>
 </div>
 
-{{-- MODAL KUNJUNGAN SELANJUTNYA --}}
+
 <div class="modal-overlay" id="modalKunjunganSelanjutnya">
     <div class="modal-box modal-lg">
         <div class="modal-header">
@@ -501,7 +501,7 @@
         <form id="formKunjunganSelanjutnya" onsubmit="submitKunjunganSelanjutnya(event)">
             <input type="hidden" id="kunjunganLansiaId">
             
-            {{-- Info Lansia --}}
+            
             <div style="background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:20px;">
                 <h4 style="font-size:14px;font-weight:700;color:#065F46;margin-bottom:12px;"><i class="fas fa-user-circle"></i> Data Lansia</h4>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
@@ -513,7 +513,7 @@
             </div>
 
             <div class="form-grid">
-                {{-- Data yang bisa diupdate --}}
+                
                 <div class="form-section-title"><i class="fas fa-user-edit"></i> Update Data Lansia (Opsional)</div>
                 <div class="form-group">
                     <label>Nama Lengkap</label>
@@ -544,11 +544,11 @@
                     <input type="text" name="hp_kontak_wali" id="kunjHpWali" placeholder="+62...">
                 </div>
 
-                {{-- Data Kunjungan --}}
+                
                 <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Data Kunjungan</div>
                 <div class="form-group">
                     <label>Tanggal Kunjungan <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                    <input type="date" name="tanggal_kunjungan" max="<?php echo e(date('Y-m-d')); ?>" value="<?php echo e(date('Y-m-d')); ?>" required>
                 </div>
 
                 <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
@@ -633,9 +633,9 @@
         </form>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 // ============================================================
 // STATE
@@ -1262,4 +1262,6 @@ async function submitKunjunganSelanjutnya(e) {
     }
 }
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/kunjungan/index.blade.php ENDPATH**/ ?>

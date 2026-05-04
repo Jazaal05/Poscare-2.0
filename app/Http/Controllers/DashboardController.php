@@ -98,36 +98,46 @@ class DashboardController extends Controller
         $bulan       = now()->month;
         $tahun       = now()->year;
 
-        // Anak yang sudah imunisasi bulan ini
-        $immunizedThisMonth = Imunisasi::whereMonth('tanggal', $bulan)
-            ->whereYear('tanggal', $tahun)
-            ->distinct('anak_id')
+        // Hitung anak yang sudah pernah imunisasi (total keseluruhan, bukan hanya bulan ini)
+        $anakSudahImunisasi = DB::table('imunisasi')
+            ->whereNotNull('tanggal')
+            ->distinct()
             ->count('anak_id');
 
-        $needImmunization    = max(0, $totalAnak - $immunizedThisMonth);
+        // Anak yang imunisasi bulan ini saja (untuk informasi tambahan)
+        $immunizedThisMonth = DB::table('imunisasi')
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->whereNotNull('tanggal')
+            ->distinct()
+            ->count('anak_id');
+
+        $belumImunisasi = max(0, $totalAnak - $anakSudahImunisasi);
         $immunizationProgress = $totalAnak > 0
-            ? round(($immunizedThisMonth / $totalAnak) * 100)
+            ? round(($anakSudahImunisasi / $totalAnak) * 100)
             : 0;
 
-        // Detail per vaksin
+        // Detail per vaksin - hitung anak yang BELUM mendapat vaksin tertentu
         $vaccines    = MasterVaksin::all();
         $vaccineList = [];
 
         foreach ($vaccines as $vaccine) {
             $key = strtolower(str_replace([' ', '-'], '_', $vaccine->nama_vaksin));
 
-            $notVaccinated = Anak::aktif()
-                ->whereNotIn('id', function ($q) use ($vaccine) {
-                    $q->select('anak_id')
-                      ->from('imunisasi')
-                      ->where('master_vaksin_id', $vaccine->id);
-                })
-                ->count();
+            // Hitung anak yang sudah dapat vaksin ini
+            $vaccinated = DB::table('imunisasi')
+                ->where('master_vaksin_id', $vaccine->id)
+                ->whereNotNull('tanggal')
+                ->distinct()
+                ->count('anak_id');
+
+            $notVaccinated = max(0, $totalAnak - $vaccinated);
 
             $vaccineList[] = [
                 'key'           => $key,
                 'label'         => strtoupper($vaccine->nama_vaksin),
                 'not_vaccinated'=> $notVaccinated,
+                'vaccinated'    => $vaccinated,
                 'id'            => $vaccine->id,
             ];
         }
@@ -141,7 +151,8 @@ class DashboardController extends Controller
                 'progress_percent'    => $immunizationProgress,
                 'immunized_this_month'=> $immunizedThisMonth,
                 'total_anak'          => $totalAnak,
-                'need_immunization'   => $needImmunization,
+                'need_immunization'   => $belumImunisasi,
+                'anak_sudah_imunisasi'=> $anakSudahImunisasi,
                 'vaccine_list'        => $vaccineList,
             ],
             'need_attention'  => $needAttention,

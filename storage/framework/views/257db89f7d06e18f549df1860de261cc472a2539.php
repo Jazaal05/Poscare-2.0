@@ -1,7 +1,6 @@
-@extends('layouts.lansia')
-@section('title', 'Pengaturan Lansia')
+<?php $__env->startSection('title', 'Pengaturan Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body { background: linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
     .card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 6px 24px rgba(16,24,40,0.06); margin-bottom:24px; }
@@ -68,15 +67,15 @@
     @keyframes slideInRight { from{opacity:0;transform:translateX(100%)} to{opacity:1;transform:translateX(0)} }
     .toast-success { background:#10B981; } .toast-error { background:#EF4444; } .toast-warning { background:#F59E0B; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
-{{-- INFO POSYANDU --}}
+
 <div class="posyandu-header">
-    <h2><i class="fas fa-hospital"></i> {{ $posyanduNama }}</h2>
-    <p><i class="fas fa-map-marker-alt"></i> {{ $posyanduAlamat }}</p>
+    <h2><i class="fas fa-hospital"></i> <?php echo e($posyanduNama); ?></h2>
+    <p><i class="fas fa-map-marker-alt"></i> <?php echo e($posyanduAlamat); ?></p>
 </div>
 
 <div style="margin-bottom:20px;">
@@ -86,7 +85,7 @@
 
 <div class="cards-row">
 
-    {{-- CARD 1: PROFIL --}}
+    
     <div class="card">
         <div class="card-title"><i class="fas fa-user-circle" style="color:#10B981;"></i> Profil Saya</div>
         <form id="formProfil" onsubmit="submitProfil(event)">
@@ -108,7 +107,7 @@
         </form>
     </div>
 
-    {{-- CARD 2: GANTI PASSWORD VIA OTP --}}
+    
     <div class="card">
         <div class="card-title"><i class="fas fa-lock" style="color:#F59E0B;"></i> Ubah Kata Sandi</div>
 
@@ -117,7 +116,7 @@
             <span>Untuk keamanan, kami akan mengirimkan kode OTP ke email Anda untuk verifikasi perubahan kata sandi.</span>
         </div>
 
-        {{-- Step 1: Request OTP --}}
+        
         <div id="step1OTP">
             <div class="form-group">
                 <label>Email Anda</label>
@@ -131,7 +130,7 @@
             </button>
         </div>
 
-        {{-- Step 2: Verifikasi OTP + Password Baru --}}
+        
         <div id="step2OTP" style="display:none;">
             <div class="form-group">
                 <label>Kode OTP <span style="color:red">*</span></label>
@@ -159,8 +158,8 @@
 
 </div>
 
-{{-- CARD 3: MANAJEMEN PENGGUNA (admin only) --}}
-@if(Auth::user()->role === 'admin')
+
+<?php if(Auth::user()->role === 'admin'): ?>
 <div class="card">
     <div class="card-title" style="justify-content:space-between;">
         <span><i class="fas fa-users-cog" style="color:#10B981;"></i> Manajemen Pengguna</span>
@@ -183,7 +182,7 @@
         </table>
     </div>
 </div>
-@else
+<?php else: ?>
 <div class="card">
     <div class="access-denied">
         <i class="fas fa-lock" style="font-size:40px;color:#EF4444;margin-bottom:12px;display:block;"></i>
@@ -191,9 +190,9 @@
         <p style="color:#7F1D1D;font-size:14px;margin:0;">Fitur "Kelola Pengguna" hanya tersedia untuk Administrator.</p>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
-{{-- MODAL KONFIRMASI HAPUS USER --}}
+
 <div class="modal-overlay" id="modalHapusUser">
     <div class="modal-box">
         <div class="modal-header">
@@ -207,9 +206,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 let hapusUserId = null;
 
@@ -330,7 +329,7 @@ function backToStep1() {
 }
 
 // ── Manajemen pengguna (admin) ─────────────────────────────
-@if(Auth::user()->role === 'admin')
+<?php if(Auth::user()->role === 'admin'): ?>
 function roleBadge(role) {
     const map = { admin:'danger', kader:'info', petugas:'success', orangtua:'warning' };
     return `<span class="badge badge-${map[role]||'info'}">${role}</span>`;
@@ -352,7 +351,7 @@ async function loadUsers() {
             return;
         }
 
-        const currentId = {{ Auth::id() }};
+        const currentId = <?php echo e(Auth::id()); ?>;
         tbody.innerHTML = list.map((u, i) => `
             <tr>
                 <td>${i + 1}</td>
@@ -396,12 +395,14 @@ document.getElementById('btnKonfirmasiHapusUser').addEventListener('click', asyn
 });
 
 document.addEventListener('DOMContentLoaded', () => { loadCurrentUser(); loadUsers(); });
-@else
+<?php else: ?>
 document.addEventListener('DOMContentLoaded', loadCurrentUser);
-@endif
+<?php endif; ?>
 
 document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/pengaturan/index.blade.php ENDPATH**/ ?>

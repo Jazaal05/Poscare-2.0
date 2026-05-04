@@ -49,7 +49,7 @@ class LansiaKunjunganController extends Controller
                 'nama_lansia'       => $l->nama_lengkap ?: 'Tanpa Nama', // Fallback jika NULL
                 'nik_lansia'        => $l->nik_lansia ?: '-',
                 'jenis_kelamin'     => $l->jenis_kelamin,
-                'tanggal_lahir'     => $l->tanggal_lahir?->format('Y-m-d'),
+                'tanggal_lahir'     => $l->tgl_lahir?->format('Y-m-d'),
                 'tempat_lahir'      => $l->tempat_lahir ?: '-',
                 'usia'              => $l->umur_display ?: '-',
                 'berat_badan'       => $l->berat_badan,
@@ -83,7 +83,7 @@ class LansiaKunjunganController extends Controller
                 'nama_lansia'                 => $lansia->nama_lengkap,
                 'nik_lansia'                  => $lansia->nik_lansia,
                 'jenis_kelamin'               => $lansia->jenis_kelamin,
-                'tanggal_lahir'               => $lansia->tanggal_lahir?->format('Y-m-d'),
+                'tanggal_lahir'               => $lansia->tgl_lahir?->format('Y-m-d'),
                 'tempat_lahir'                => $lansia->tempat_lahir,
                 'umur_display'                => $lansia->umur_display,
                 'berat_badan'                 => $lansia->berat_badan,

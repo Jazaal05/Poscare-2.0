@@ -1,8 +1,8 @@
-﻿@extends('layouts.app')
+﻿
 
-@section('title', 'Data Anak')
+<?php $__env->startSection('title', 'Data Anak'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body { background: linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !important; }
     .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
@@ -157,9 +157,9 @@
     .action-btn.-delete { background:#FEECEF; color:#DC2626; }
     .action-btn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
 <div class="page-header" style="margin-bottom:20px;">
@@ -167,14 +167,14 @@
     <p class="page-subtitle"><i class="fas fa-shield-alt" style="color:#246BCE; margin-right:6px;"></i> Halaman Admin - Kelola data anak dan registrasi orang tua</p>
 </div>
 
-{{-- TABS --}}
+
 <div class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('tabel')"><i class="fas fa-table"></i> Tabel Data Anak</button>
     <button class="tab-btn" onclick="switchTab('registrasi')"><i class="fas fa-user-plus"></i> Registrasi Data Anak (Lengkap)</button>
     <button class="tab-btn" onclick="switchTab('tambah')"><i class="fas fa-plus-circle"></i> Tambah Data Anak (Orang Tua Existing)</button>
 </div>
 
-{{-- TAB 1: TABEL DATA ANAK --}}
+
 <div id="tab-tabel" class="tab-content active">
     <div class="card">
         <div class="search-bar">
@@ -235,7 +235,7 @@
     </div>
 </div>
 
-{{-- TAB 2: REGISTRASI LENGKAP --}}
+
 <div id="tab-registrasi" class="tab-content">
     <div class="card">
         <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:20px;"><i class="fas fa-user-plus" style="color:#246BCE;"></i> Registrasi Data Anak Lengkap dengan Data Orang Tua</h3>
@@ -301,7 +301,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tanggal Lahir <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_lahir" max="{{ date('Y-m-d') }}" required>
+                    <input type="date" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Tempat Lahir <span style="color:red">*</span></label>
@@ -338,7 +338,7 @@
     </div>
 </div>
 
-{{-- TAB 3: TAMBAH ANAK BARU --}}
+
 <div id="tab-tambah" class="tab-content">
     <div class="card">
         <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#246BCE;"></i> Tambah Data Anak (Anak ke-2, ke-3, dst)</h3>
@@ -378,7 +378,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tanggal Lahir <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_lahir" max="{{ date('Y-m-d') }}" required>
+                    <input type="date" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Tempat Lahir <span style="color:red">*</span></label>
@@ -424,7 +424,7 @@
     </div>
 </div>
 
-{{-- MODAL DETAIL --}}
+
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box modal-lg">
         <div class="modal-header">
@@ -439,7 +439,7 @@
     </div>
 </div>
 
-{{-- MODAL EDIT --}}
+
 <div class="modal-overlay" id="modalEdit">
     <div class="modal-box">
         <div class="modal-header">
@@ -467,7 +467,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tanggal Lahir <span style="color:red">*</span></label>
-                    <input type="date" id="editTanggalLahir" name="tanggal_lahir" max="{{ date('Y-m-d') }}" required>
+                    <input type="date" id="editTanggalLahir" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>" required>
                 </div>
                 <div class="form-group">
                     <label>Tempat Lahir <span style="color:red">*</span></label>
@@ -524,7 +524,7 @@
     </div>
 </div>
 
-{{-- MODAL KONFIRMASI HAPUS --}}
+
 <div class="modal-overlay" id="modalHapus">
     <div class="modal-box" style="max-width:420px;">
         <div class="modal-header">
@@ -538,9 +538,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 // ============================================================
 // STATE
@@ -577,7 +577,7 @@ async function loadAnak() {
     tbody.innerHTML = '<tr class="loading-row"><td colspan="15"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
 
     try {
-        const url = `{{ route('anak.list') }}?q=${encodeURIComponent(search)}&limit=200`;
+        const url = `<?php echo e(route('anak.list')); ?>?q=${encodeURIComponent(search)}&limit=200`;
         const res = await fetch(url, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
 
@@ -902,7 +902,7 @@ async function submitRegistrasi(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch('{{ route("anak.store") }}', {
+        const res  = await fetch('<?php echo e(route("anak.store")); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -939,7 +939,7 @@ document.getElementById('parentSearch').addEventListener('input', function() {
 
 async function searchParents(q) {
     try {
-        const res  = await fetch('{{ route("anak.parents") }}', {
+        const res  = await fetch('<?php echo e(route("anak.parents")); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1002,7 +1002,7 @@ async function submitTambah(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch('{{ route("anak.storeTambah") }}', {
+        const res  = await fetch('<?php echo e(route("anak.storeTambah")); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1048,4 +1048,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tab === 'tambah' || tab === 'registrasi') switchTab(tab);
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/anak/index.blade.php ENDPATH**/ ?>

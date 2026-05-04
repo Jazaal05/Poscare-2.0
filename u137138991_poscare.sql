@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Waktu pembuatan: 12 Apr 2026 pada 04.48
--- Versi server: 11.8.6-MariaDB-log
--- Versi PHP: 7.2.34
+-- Generation Time: May 01, 2026 at 03:42 PM
+-- Server version: 11.8.6-MariaDB-log
+-- PHP Version: 7.2.34
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `anak`
+-- Table structure for table `anak`
 --
 
 CREATE TABLE `anak` (
@@ -55,7 +55,7 @@ CREATE TABLE `anak` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `anak`
+-- Dumping data for table `anak`
 --
 
 INSERT INTO `anak` (`id`, `nik_anak`, `nama_anak`, `tanggal_lahir`, `tempat_lahir`, `jenis_kelamin`, `anak_ke`, `alamat_domisili`, `rt_rw`, `nama_kk`, `nama_ayah`, `nama_ibu`, `nik_ayah`, `nik_ibu`, `hp_kontak_ortu`, `berat_badan`, `tinggi_badan`, `lingkar_kepala`, `cara_ukur`, `user_id`, `status_gizi`, `status_gizi_detail`, `tanggal_penimbangan_terakhir`, `is_deleted`) VALUES
@@ -86,8 +86,8 @@ INSERT INTO `anak` (`id`, `nik_anak`, `nama_anak`, `tanggal_lahir`, `tempat_lahi
 (117, '8512875618773283', 'triyuwono', '2023-03-07', 'nganjuk', 'P', 1, 'JL sukomoro no 15', '002/021', 'irkham', 'irkham', 'bibi', '8273678363278362', '8612784976567826', '0346738246278', 20.00, 110.00, 47.00, NULL, 1, 'Beresiko Gizi Lebih', '{\"zscore\":{\"tbu\":5.06,\"bbu\":3.03,\"bbtb\":1.05,\"imtu\":1.05,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Beresiko Gizi Lebih\",\"imtu\":\"Beresiko Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Beresiko Gizi Lebih\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Beresiko Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"}}', '2025-12-03', 0),
 (118, '8518765674747238', 'Farhan', '2023-05-04', 'nganjuk', 'L', 1, 'Jl. Sukomoro 12', '002/012', 'Toni', 'Toni', 'nurhasannah', '8519187653781290', '8518237656782193', '0861341523451', 20.00, 100.00, 47.00, NULL, 1, 'Gizi Lebih', '{\"zscore\":{\"tbu\":2.25,\"bbu\":3.3,\"bbtb\":2.42,\"imtu\":2.42,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Lebih\",\"imtu\":\"Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Lebih\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"color\":\"#8B5CF6\",\"severity\":\"moderate\"}}', '2025-12-03', 0),
 (119, '8617367168736164', 'elsa', '2021-05-04', 'nganjuk', 'P', 1, 'JL. SUkomoro4114', '003/004', 'habibi', 'habibi', 'nita', '8518478934623547', '8519876535178347', '0872848264762', 20.00, 110.00, 54.00, NULL, 1, 'Beresiko Gizi Lebih', '{\"zscore\":{\"tbu\":1.27,\"bbu\":0.98,\"bbtb\":1.05,\"imtu\":1.05,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Beresiko Gizi Lebih\",\"imtu\":\"Beresiko Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Beresiko Gizi Lebih\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Beresiko Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"}}', '2025-12-03', 0),
-(120, '3518131005050008', 'Aulia Widya', '2024-03-12', 'nganjuk', 'P', 1, 'JL. Sukomro 14', '004/007', 'robert lewandowski', 'robert lewandowski', 'linda ayunda', '3518131005050006', '3518131005050001', '+62918381736135', 15.00, 100.00, 40.00, 'berbaring', 96, 'Gizi Baik', '{\"zscore\":{\"tbu\":5.43,\"bbu\":2.55,\"bbtb\":0.16,\"imtu\":0.16,\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-03', 0),
-(121, '3518131005050007', 'panji nugroho aditya', '2021-02-15', 'nganjuk', 'L', 1, 'JL. Sukomoro kab.Nganjuk NO.12', '012/015', 'michael', 'michael olise', 'suci nurhandayani', '3518131005050009', '3518131005050004', '+62876543233456', 20.00, 110.60, 45.00, 'berdiri', NULL, 'Gizi Baik', '{\"zscore\":{\"tbu\":0.66,\"bbu\":1.12,\"bbtb\":0.53,\"imtu\":0.53,\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-03', 0),
+(120, '3518131005050008', 'Aulia Widya', '2024-03-12', 'nganjuk', 'P', 1, 'JL. Sukomro 14', '004/007', 'robert lewandowski', 'robert lewandowski', 'linda ayunda', '3518131005050006', '3518131005050001', '+62918381736135', 13.00, 86.30, 45.00, 'berbaring', 96, 'Beresiko Gizi Lebih', '{\"zscore\":{\"tbu\":-0.56,\"bbu\":0.78,\"bbtb\":1.06,\"imtu\":1.06,\"lku\":null},\"overall_8\":{\"kategori\":\"Beresiko Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"}}', '2026-04-26', 0),
+(121, '3518131005050007', 'panji nugroho aditya', '2021-02-15', 'nganjuk', 'L', 1, 'JL. Sukomoro kab.Nganjuk NO.12', '012/015', 'michael', 'michael olise', 'suci nurhandayani', '3518131005050009', '3518131005050004', '+62876543233456', 20.00, 110.60, 45.00, 'berdiri', 97, 'Gizi Baik', '{\"zscore\":{\"tbu\":0.66,\"bbu\":1.12,\"bbtb\":0.53,\"imtu\":0.53,\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-03', 0),
 (123, '8516783765456787', 'tasya', '2025-05-04', 'nganjuk', 'P', 2, '678765423456789098765432455', '003/004', 'joni', 'joni', 'berina', '8518876587997678', '8518973657898756', '0828725678975', 12.00, 76.00, 48.00, NULL, 1, 'Obesitas', '{\"zscore\":{\"tbu\":3.77,\"bbu\":3.64,\"bbtb\":3.6,\"imtu\":3.6,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Obesitas\",\"imtu\":\"Obesitas\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Obesitas\",\"detail\":\"> +3 SD (WHO: obese)\",\"source\":\"BB\\/PB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Obesitas\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +3 SD (WHO: obese)\",\"color\":\"#7C3AED\",\"severity\":\"severe\"}}', '2025-12-03', 0),
 (124, '8572381472532463', 'wildan', '2025-05-05', 'nganjuk', 'L', 2, 'JL. Sukomoro kab.Nganjuk NO.12', '012/015', 'michael', 'michael', 'arda', '8513456789876543', '8516535763468656', '0876543233456', 12.00, 78.00, 45.00, NULL, 1, 'Gizi Lebih', '{\"zscore\":{\"tbu\":3.81,\"bbu\":3.49,\"bbtb\":2.78,\"imtu\":2.78,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Lebih\",\"imtu\":\"Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Lebih\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"source\":\"BB\\/PB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"color\":\"#8B5CF6\",\"severity\":\"moderate\"}}', '2025-12-03', 0),
 (126, '8517725427463874', 'yuki', '2021-04-08', 'nganjuk', 'L', 2, 'JL. Sukomoro', '003/012', 'dafa fehroza', 'dafa fehroza', 'devina lorenza', '8517721382386284', '8517824787813464', '0812317368172', 20.00, 100.00, 54.00, NULL, 1, 'Risiko Stunting', '{\"zscore\":{\"tbu\":-1.57,\"bbu\":1.22,\"bbtb\":2.42,\"imtu\":2.42,\"lku\":null},\"kategori\":{\"tbu\":\"Risiko Stunting\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Lebih\",\"imtu\":\"Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Risiko Stunting\",\"detail\":\"Band programatik (−2 s\\/d −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Lebih\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Risiko Stunting\",\"source\":\"TB\\/U\",\"detail\":\"Band programatik (−2 s\\/d −1 SD)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"}}', '2025-12-03', 0),
@@ -96,7 +96,7 @@ INSERT INTO `anak` (`id`, `nik_anak`, `nama_anak`, `tanggal_lahir`, `tempat_lahi
 (131, '8337681648618468', 'jonathan', '2025-02-22', 'nganjuk', 'P', 1, 'JL sukomro', '003/023', 'aufa', 'aufa', 'reva', '8724623452387542', '8724367864632874', '0764734714324', 12.00, 98.70, 45.00, NULL, 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":12.74,\"bbu\":2.91,\"bbtb\":-2.49,\"imtu\":-2.49,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-04', 0),
 (132, '8274385453248735', 'Geonvani', '2022-02-04', 'nganjuk', 'L', 1, 'JL. SUkomoto', '003/004', 'yogi', 'yogi', 'elsa', '3265872515275678', '8126487654715547', '+62258742562646', 20.00, 105.30, 45.00, 'berdiri', 1, 'Beresiko Gizi Lebih', '{\"zscore\":{\"tbu\":0.94,\"bbu\":1.88,\"bbtb\":1.45,\"imtu\":1.45,\"lku\":null},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Beresiko Gizi Lebih\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Beresiko Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"},\"flags\":{\"stunting\":false,\"wasting\":false,\"risk_over\":true,\"overweight\":false,\"obesity\":false}}', '2025-12-04', 0),
 (134, '8278466238648368', 'cherlin', '2025-02-04', 'Ngajjuk', 'P', 2, 'JL sukomro', '003/023', 'aufa', 'aufa', 'reva', '8724623452387542', '8724367864632874', '0764734714324', 15.00, 82.70, 43.00, 'berdiri', 1, 'Obesitas', '{\"zscore\":{\"tbu\":5.22,\"bbu\":4.45,\"bbtb\":3.95,\"imtu\":3.95,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Obesitas\",\"imtu\":\"Obesitas\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Obesitas\",\"detail\":\"> +3 SD (WHO: obese)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Obesitas\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +3 SD (WHO: obese)\",\"color\":\"#7C3AED\",\"severity\":\"severe\"}}', '2025-12-04', 0),
-(135, '8673246785458154', 'Maradona Messian', '2022-02-22', 'nganjuk', 'L', 2, 'JL. Sukomro 14', '004/007', 'robert lewandowski', 'robert lewandowski', 'linda ayunda', '3518131005050006', '3518131005050001', '+62918381736135', 21.00, 108.00, 46.00, 'berdiri', 96, 'Beresiko Gizi Lebih', '{\"zscore\":{\"tbu\":1.71,\"bbu\":2.3,\"bbtb\":1.53,\"imtu\":1.53,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Beresiko Gizi Lebih\",\"imtu\":\"Beresiko Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Beresiko Gizi Lebih\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Beresiko Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +1 s\\/d ≤ +2 SD (at risk)\",\"color\":\"#F59E0B\",\"severity\":\"risk\"}}', '2025-12-04', 0),
+(135, '8673246785458154', 'Maradona Messian', '2022-02-22', 'nganjuk', 'L', 2, 'JL. Sukomro 14', '004/007', 'robert lewandowski', 'robert lewandowski', 'linda ayunda', '3518131005050006', '3518131005050001', '+62918381736135', 13.00, 87.00, 46.00, 'berdiri', 96, 'Stunting', '{\"zscore\":{\"tbu\":-4.09,\"bbu\":-1.77,\"bbtb\":0.24,\"imtu\":0.24,\"lku\":null},\"overall_8\":{\"kategori\":\"Stunting\",\"source\":\"TB\\/U\",\"detail\":\"Sangat Pendek (Severely Stunted)\",\"color\":\"#DC2626\",\"severity\":\"severe\"}}', '2026-04-26', 0),
 (136, '8127486126491294', 'Valentino Rossi', '2024-02-12', 'nganjuk', 'P', 2, 'Jl. Sukomoro', '004/032', 'egi saputro', 'egi saputro', 'dinda', '9384587387572656', '7246784676723645', '0872356216487', 13.00, 98.00, 45.00, 'berbaring', 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":4.34,\"bbu\":1.32,\"bbtb\":-1.16,\"imtu\":-1.16,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"source\":\"BB\\/PB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-04', 0),
 (137, '8687124618648126', 'herdanue', '2023-04-04', 'nganjuk', 'L', 1, 'JL. Sukomro', '003/006', 'beni hartono', 'beni hartono', 'joish valrasari', '8174824896491266', '8512754715471576', '0435247657734', 19.00, 109.00, 45.00, 'berdiri', 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":4.69,\"bbu\":2.76,\"bbtb\":0.19,\"imtu\":0.19,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"−2 s\\/d ≤ +1 SD (normal)\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-04', 0),
 (138, '8627451725471547', 'lalala', '2024-02-20', 'nganjuk', 'L', 1, 'JL. Sukomoro', '002/003', 'rahmdani', 'ghofir', 'erika', '8287467641545184', '8723856235628753', '0371289481646', 16.00, 87.70, 45.00, 'berdiri', 1, 'Obesitas', '{\"zscore\":{\"tbu\":0.98,\"bbu\":2.82,\"bbtb\":3.41,\"imtu\":3.41,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Obesitas\",\"imtu\":\"Obesitas\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Obesitas\",\"detail\":\"> +3 SD (WHO: obese)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Obesitas\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +3 SD (WHO: obese)\",\"color\":\"#7C3AED\",\"severity\":\"severe\"}}', '2025-12-04', 0),
@@ -104,43 +104,45 @@ INSERT INTO `anak` (`id`, `nik_anak`, `nama_anak`, `tanggal_lahir`, `tempat_lahi
 (140, '8517263761725375', 'joseph', '2025-02-12', 'nganjuk', 'L', 2, 'JL Sukomoro NO.19', '004/015', 'suharto', 'suharto', 'georgina', '8723816918626471', '8581237894714793', '0721678587357', 12.00, 98.00, 45.00, 'berbaring', 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":10.73,\"bbu\":2.58,\"bbtb\":-2.29,\"imtu\":-2.29,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"source\":\"BB\\/PB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-04', 0),
 (141, '8182461481275414', 'edi', '2024-02-21', 'nganjuk', 'L', 1, 'JL. Sukomor 19', '003/004', 'sayuti', 'sayuti', 'melin', '2756265168668656', '8263468235686858', '0325587265628', 12.00, 105.70, 41.00, 'berdiri', 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":7.21,\"bbu\":0.27,\"bbtb\":-3.8,\"imtu\":-3.8,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-05', 0),
 (142, '8742684552573453', 'deaf', '2023-05-04', 'nganjuk', 'P', 1, 'JL. Sukomro', '065/007', 'sujito', 'sujito', 'paniem', '3274861252183658', '3765723567528568', '0543465314647', 12.00, 100.00, 45.00, 'berdiri', 1, 'Gizi Baik', '{\"zscore\":{\"tbu\":2.58,\"bbu\":-0.61,\"bbtb\":-3.29,\"imtu\":-3.29,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Baik\",\"imtu\":\"Gizi Baik\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Baik\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Baik\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"Catatan: z < −2 di proporsi → cek wasting\",\"color\":\"#10B981\",\"severity\":null}}', '2025-12-08', 0),
-(143, '8274862425164752', 'dewa', '2022-02-12', 'nganjuk', 'L', 2, 'JL. Sukomro', '065/007', 'sujito', 'sujito', 'paniem', '3274861252183658', '3765723567528568', '0543465314647', 20.00, 100.00, 45.00, 'berdiri', 1, 'Gizi Lebih', '{\"zscore\":{\"tbu\":-0.39,\"bbu\":1.89,\"bbtb\":2.42,\"imtu\":2.42,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Lebih\",\"imtu\":\"Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Lebih\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"color\":\"#8B5CF6\",\"severity\":\"moderate\"}}', '2025-12-08', 0);
+(143, '8274862425164752', 'dewa', '2022-02-12', 'nganjuk', 'L', 2, 'JL. Sukomro', '065/007', 'sujito', 'sujito', 'paniem', '3274861252183658', '3765723567528568', '0543465314647', 20.00, 100.00, 45.00, 'berdiri', 1, 'Gizi Lebih', '{\"zscore\":{\"tbu\":-0.39,\"bbu\":1.89,\"bbtb\":2.42,\"imtu\":2.42,\"lku\":null},\"kategori\":{\"tbu\":\"Normal\",\"bbu\":\"Normal\",\"bbtb\":\"Gizi Lebih\",\"imtu\":\"Gizi Lebih\"},\"axis\":{\"tbu\":{\"label\":\"Normal\",\"detail\":\"TB\\/U normal (≥ −1 SD)\"},\"bbu\":{\"label\":\"Normal\",\"detail\":\"BB\\/U normal (≥ −1 SD)\"},\"adiposity\":{\"label\":\"Gizi Lebih\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"source\":\"BB\\/TB\"},\"lku\":null},\"overall_8\":{\"kategori\":\"Gizi Lebih\",\"source\":\"BB\\/TB|IMT\\/U\",\"detail\":\"> +2 s\\/d ≤ +3 SD (overweight)\",\"color\":\"#8B5CF6\",\"severity\":\"moderate\"}}', '2025-12-08', 0),
+(145, '3518130101230001', 'Anak Test', '2023-01-01', NULL, 'L', 1, NULL, NULL, NULL, NULL, 'Siti Test', NULL, '3518136505800001', NULL, NULL, NULL, NULL, NULL, 98, 'Belum diukur', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `edukasi_content`
+-- Table structure for table `edukasi_content`
 --
 
 CREATE TABLE `edukasi_content` (
   `id` int(11) NOT NULL,
-  `platform` enum('youtube','tiktok','article','facebook','instagram') NOT NULL,
+  `platform` enum('youtube','tiktok','article') NOT NULL,
   `url` text NOT NULL,
   `title` varchar(255) NOT NULL,
-  `category` enum('gizi','tumbuh-kembang','kesehatan','imunisasi','tips','kesehatan-lansia','pola-hidup-sehat','pencegahan-penyakit','gizi-lansia','tips-lansia') NOT NULL,
+  `category` enum('gizi','tumbuh-kembang','kesehatan','imunisasi','tips') NOT NULL,
   `thumbnail` text DEFAULT NULL,
   `duration` varchar(50) DEFAULT NULL,
-  `penulis_id` int(11) DEFAULT NULL
+  `penulis_id` int(11) DEFAULT NULL,
+  `layanan` enum('balita','lansia') NOT NULL DEFAULT 'balita'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `edukasi_content`
+-- Dumping data for table `edukasi_content`
 --
 
-INSERT INTO `edukasi_content` (`id`, `platform`, `url`, `title`, `category`, `thumbnail`, `duration`, `penulis_id`) VALUES
-(13, 'youtube', 'https://youtu.be/-c2CCTPNXbI?si=QoDe8Yqi28x8cqhc', 'makanan sehat untuk anak', 'gizi', 'https://youtu.be/-c2CCTPNXbI?si=QoDe8Yqi28x8cqhc', '5:14', NULL),
-(16, 'youtube', 'https://youtu.be/xJ26EcRdTnQ?si=uyEgNmfC1tUCCsxp', 'Makanan bergizi murah', 'gizi', 'https://youtu.be/xJ26EcRdTnQ?si=uyEgNmfC1tUCCsxp', '3:39', NULL),
-(24, 'youtube', 'https://youtu.be/qIjYs-uvdy0?si=noQYprqkb78VlSAW', 'Mencerdaskan generasi melalui makan', 'gizi', 'https://youtu.be/qIjYs-uvdy0?si=noQYprqkb78VlSAW', '', NULL),
-(25, 'youtube', 'https://youtu.be/pUKoHGbPJ34?si=zReOaUH6qhSZI1Uw', 'Parenting - Pengasuhan anak usia dini di era', 'tips', 'https://img.youtube.com/vi/pUKoHGbPJ34/maxresdefault.jpg', '', NULL),
-(28, 'youtube', 'https://youtu.be/Aq5u1XAls3c?si=wTiAR-sExRUYfojw', 'Tumbuh Kembang dan Gizi Anak Serta Masalah Gizi Buruk dan Stunting', 'gizi', 'https://img.youtube.com/vi/Aq5u1XAls3c/maxresdefault.jpg', '', NULL),
-(29, 'youtube', 'https://youtu.be/wiuLfH8IgS4?si=f_F8Nwhy9wvPjw92', 'Keterampilan bayi dan Balita', 'tumbuh-kembang', 'https://img.youtube.com/vi/wiuLfH8IgS4/maxresdefault.jpg', '', NULL),
-(34, 'youtube', 'https://youtu.be/snHW62berwk?si=oem9fF77LWQ_hvEp', 'Yuk Ibu! Cegah Anak Stunting dengan Rutin Membawa Bayi/Balita ke Posyandu', 'tumbuh-kembang', 'https://img.youtube.com/vi/snHW62berwk/maxresdefault.jpg', '', NULL),
-(35, 'youtube', 'https://youtu.be/JJ646i08QAA?si=s32tl7HRk-UBAs3-', 'GIZI SEIMBANG ITU PENTING - Riko The Series Season 03 - Episode 4', 'gizi', 'https://img.youtube.com/vi/JJ646i08QAA/maxresdefault.jpg', '', NULL);
+INSERT INTO `edukasi_content` (`id`, `platform`, `url`, `title`, `category`, `thumbnail`, `duration`, `penulis_id`, `layanan`) VALUES
+(13, 'youtube', 'https://youtu.be/-c2CCTPNXbI?si=QoDe8Yqi28x8cqhc', 'makanan sehat untuk anak', 'gizi', 'https://youtu.be/-c2CCTPNXbI?si=QoDe8Yqi28x8cqhc', '5:14', NULL, 'balita'),
+(16, 'youtube', 'https://youtu.be/xJ26EcRdTnQ?si=uyEgNmfC1tUCCsxp', 'Makanan bergizi murah', 'gizi', 'https://youtu.be/xJ26EcRdTnQ?si=uyEgNmfC1tUCCsxp', '3:39', NULL, 'balita'),
+(24, 'youtube', 'https://youtu.be/qIjYs-uvdy0?si=noQYprqkb78VlSAW', 'Mencerdaskan generasi melalui makan', 'gizi', 'https://youtu.be/qIjYs-uvdy0?si=noQYprqkb78VlSAW', '', NULL, 'balita'),
+(25, 'youtube', 'https://youtu.be/pUKoHGbPJ34?si=zReOaUH6qhSZI1Uw', 'Parenting - Pengasuhan anak usia dini di era', 'tips', 'https://img.youtube.com/vi/pUKoHGbPJ34/maxresdefault.jpg', '', NULL, 'balita'),
+(28, 'youtube', 'https://youtu.be/Aq5u1XAls3c?si=wTiAR-sExRUYfojw', 'Tumbuh Kembang dan Gizi Anak Serta Masalah Gizi Buruk dan Stunting', 'gizi', 'https://img.youtube.com/vi/Aq5u1XAls3c/maxresdefault.jpg', '', NULL, 'balita'),
+(29, 'youtube', 'https://youtu.be/wiuLfH8IgS4?si=f_F8Nwhy9wvPjw92', 'Keterampilan bayi dan Balita', 'tumbuh-kembang', 'https://img.youtube.com/vi/wiuLfH8IgS4/maxresdefault.jpg', '', NULL, 'balita'),
+(34, 'youtube', 'https://youtu.be/snHW62berwk?si=oem9fF77LWQ_hvEp', 'Yuk Ibu! Cegah Anak Stunting dengan Rutin Membawa Bayi/Balita ke Posyandu', 'tumbuh-kembang', 'https://img.youtube.com/vi/snHW62berwk/maxresdefault.jpg', '', NULL, 'balita'),
+(35, 'youtube', 'https://youtu.be/JJ646i08QAA?si=s32tl7HRk-UBAs3-', 'GIZI SEIMBANG ITU PENTING - Riko The Series Season 03 - Episode 4', 'gizi', 'https://img.youtube.com/vi/JJ646i08QAA/maxresdefault.jpg', '', NULL, 'balita');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `imunisasi`
+-- Table structure for table `imunisasi`
 --
 
 CREATE TABLE `imunisasi` (
@@ -152,7 +154,7 @@ CREATE TABLE `imunisasi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `imunisasi`
+-- Dumping data for table `imunisasi`
 --
 
 INSERT INTO `imunisasi` (`id`, `anak_id`, `master_vaksin_id`, `tanggal`, `umur_bulan`) VALUES
@@ -204,7 +206,7 @@ INSERT INTO `imunisasi` (`id`, `anak_id`, `master_vaksin_id`, `tanggal`, `umur_b
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `jadwal`
+-- Table structure for table `jadwal`
 --
 
 CREATE TABLE `jadwal` (
@@ -220,19 +222,104 @@ CREATE TABLE `jadwal` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `jadwal`
+-- Dumping data for table `jadwal`
 --
 
 INSERT INTO `jadwal` (`id`, `nama_kegiatan`, `jenis_kegiatan`, `tanggal`, `waktu_mulai`, `lokasi`, `keterangan`, `status`, `created_by`) VALUES
 (49, 'Imunisasi Polio', 'Imunisasi', '2025-12-14', '09:30:00', 'Posyandu Kenanga di Ds. Bagorwetan 2', 'sehat', 'Terjadwal', 1),
 (50, 'posyandu rutinan', 'Penimbangan', '2025-12-04', '12:00:00', 'Posyandu Sedap Malam di Ds. Bagorwetan 1', 'bawa buku kms', 'Terjadwal', NULL),
 (52, 'Imunisasi Polio', 'Imunisasi', '2025-12-10', '08:20:00', 'Posyandu Sedap Malam di Ds. Bagorwetan 1', '', 'Terjadwal', 1),
-(54, 'Pemeriksaan secara teliti', 'Penimbangan', '2025-12-10', '10:08:00', 'Posyandu Kenanga di Ds. Bagorwetan 2', 'bawa buku', 'Terjadwal', NULL);
+(54, 'Pemeriksaan secara teliti', 'Penimbangan', '2025-12-10', '10:08:00', 'Posyandu Kenanga di Ds. Bagorwetan 2', 'bawa buku', 'Terjadwal', NULL),
+(58, 'Imunisasi BCG', 'Imunisasi', '2026-04-26', '09:42:00', 'Posyandu Kenanga di Ds. Bagorwetan 2', 'tes notifikasi', 'Terjadwal', 1),
+(59, 'Imunisasi DPT HB HIB', 'Imunisasi', '2026-04-28', '09:47:00', 'Posyandu Anggrek di Dsn. Padasan', 'tes notif part 2', 'Terjadwal', 1),
+(61, 'posyandu khusus', 'Penimbangan', '2026-04-26', '09:07:00', 'Posyandu Teratai di Dsn. Ngronggo', 'posyandu khusus sangar tes notifikasi', 'Terjadwal', NULL),
+(62, 'Imunisasi BCG', 'Imunisasi', '2026-04-30', '10:10:00', 'Posyandu Sedap Malam di Ds. Bagorwetan 1', 'anjay sangar boss', 'Terjadwal', 1),
+(65, 'posyandu khusus bapak bapak', 'Penimbangan', '2026-04-27', '08:20:00', 'Posyandu Teratai di Dsn. Ngronggo', 'membawa buku bermaterai 10.000', 'Terjadwal', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `laporan`
+-- Table structure for table `kbm_reference`
+--
+
+CREATE TABLE `kbm_reference` (
+  `id` int(11) NOT NULL,
+  `umur_bulan` int(11) NOT NULL COMMENT 'Umur dalam bulan (0-60)',
+  `kbm_gram` int(11) NOT NULL COMMENT 'Kenaikan Berat Minimal dalam gram',
+  `keterangan` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Referensi Kenaikan Berat Minimal per umur';
+
+--
+-- Dumping data for table `kbm_reference`
+--
+
+INSERT INTO `kbm_reference` (`id`, `umur_bulan`, `kbm_gram`, `keterangan`) VALUES
+(1, 0, 600, 'Bulan pertama: minimal naik 600g'),
+(2, 1, 900, 'Bulan 1-2: minimal naik 900g'),
+(3, 2, 900, 'Bulan 2-3: minimal naik 900g'),
+(4, 3, 800, 'Bulan 3-4: minimal naik 800g'),
+(5, 4, 800, 'Bulan 4-5: minimal naik 800g'),
+(6, 5, 700, 'Bulan 5-6: minimal naik 700g'),
+(7, 6, 700, 'Bulan 6-7: minimal naik 700g'),
+(8, 7, 600, 'Bulan 7-8: minimal naik 600g'),
+(9, 8, 600, 'Bulan 8-9: minimal naik 600g'),
+(10, 9, 500, 'Bulan 9-10: minimal naik 500g'),
+(11, 10, 500, 'Bulan 10-11: minimal naik 500g'),
+(12, 11, 500, 'Bulan 11-12: minimal naik 500g'),
+(13, 12, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(14, 13, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(15, 14, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(16, 15, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(17, 16, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(18, 17, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(19, 18, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(20, 19, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(21, 20, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(22, 21, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(23, 22, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(24, 23, 400, 'Bulan 12-24: minimal naik 400g/bulan'),
+(25, 24, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(26, 25, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(27, 26, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(28, 27, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(29, 28, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(30, 29, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(31, 30, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(32, 31, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(33, 32, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(34, 33, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(35, 34, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(36, 35, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(37, 36, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(38, 37, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(39, 38, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(40, 39, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(41, 40, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(42, 41, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(43, 42, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(44, 43, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(45, 44, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(46, 45, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(47, 46, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(48, 47, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(49, 48, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(50, 49, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(51, 50, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(52, 51, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(53, 52, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(54, 53, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(55, 54, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(56, 55, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(57, 56, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(58, 57, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(59, 58, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(60, 59, 300, 'Bulan 24-60: minimal naik 300g/bulan'),
+(61, 60, 300, 'Bulan 24-60: minimal naik 300g/bulan');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `laporan`
 --
 
 CREATE TABLE `laporan` (
@@ -249,7 +336,7 @@ CREATE TABLE `laporan` (
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `master_vaksin`
+-- Table structure for table `master_vaksin`
 --
 
 CREATE TABLE `master_vaksin` (
@@ -262,7 +349,7 @@ CREATE TABLE `master_vaksin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `master_vaksin`
+-- Dumping data for table `master_vaksin`
 --
 
 INSERT INTO `master_vaksin` (`id`, `nama_vaksin`, `usia_standar_bulan`, `usia_minimal_bulan`, `keterangan`, `usia_maksimal_bulan`) VALUES
@@ -275,7 +362,66 @@ INSERT INTO `master_vaksin` (`id`, `nama_vaksin`, `usia_standar_bulan`, `usia_mi
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `riwayat_pengukuran`
+-- Table structure for table `notifikasi`
+--
+
+CREATE TABLE `notifikasi` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `pesan` text NOT NULL,
+  `tipe` varchar(50) DEFAULT 'jadwal',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `is_read` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `notifikasi`
+--
+
+INSERT INTO `notifikasi` (`id`, `judul`, `pesan`, `tipe`, `created_at`, `is_read`) VALUES
+(1, '💉 Jadwal Imunisasi Baru!', 'Imunisasi BCG - 26/04/2026 pukul 09:42 di Posyandu Kenanga di Ds. Bagorwetan 2', 'imunisasi', '2026-04-25 07:40:58', 1),
+(2, '💉 Jadwal Imunisasi Baru!', 'Imunisasi DPT HB HIB - 28/04/2026 pukul 09:47 di Posyandu Anggrek di Dsn. Padasan', 'imunisasi', '2026-04-25 07:42:02', 1),
+(3, '📅 Jadwal Posyandu Baru!', 'posyandu khusus - 26/04/2026 pukul 09:07 di Posyandu Teratai di Dsn. Ngronggo', 'jadwal', '2026-04-25 07:56:27', 1),
+(4, '💉 Jadwal Imunisasi Baru!', 'Imunisasi Campak - 30/04/2026 pukul 10:10 di Posyandu Sedap Malam di Ds. Bagorwetan 1', 'imunisasi', '2026-04-25 08:06:12', 1),
+(5, '📅 Jadwal Posyandu Baru!', 'posyandu rock and roll - 28/04/2026 pukul 08:18 di Posyandu Kenanga di Ds. Bagorwetan 2', 'jadwal', '2026-04-25 08:13:56', 1),
+(6, '📅 Jadwal Posyandu Diperbarui', 'posyandu rock and roll - 28/04/2026 pukul 10:20 di Posyandu Kenanga di Ds. Bagorwetan 2', 'jadwal', '2026-04-25 08:14:27', 1),
+(7, '📅 Jadwal Dibatalkan', 'posyandu rock and roll - 28/04/2026 pukul 10:20:00 di Posyandu Kenanga di Ds. Bagorwetan 2', 'jadwal', '2026-04-25 08:15:03', 1),
+(8, '💉 Jadwal Imunisasi Baru!', 'Imunisasi Polio - 29/04/2026 pukul 08:20 di Posyandu Teratai di Dsn. Ngronggo', 'imunisasi', '2026-04-25 08:16:02', 1),
+(9, '💉 Jadwal Dibatalkan', 'Imunisasi DPT HB HIB - 29/04/2026 pukul 08:20:00 di Posyandu Teratai di Dsn. Ngronggo', 'imunisasi', '2026-04-25 08:16:39', 1),
+(10, '📅 Jadwal Posyandu Baru!', 'posyandu khusus bapak bapak - 27/04/2026 pukul 08:20 di Posyandu Teratai di Dsn. Ngronggo', 'jadwal', '2026-04-26 09:24:20', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `penimbangan`
+--
+
+CREATE TABLE `penimbangan` (
+  `id` int(11) NOT NULL,
+  `anak_id` int(11) NOT NULL COMMENT 'FK ke tabel anak',
+  `tanggal_ukur` date NOT NULL COMMENT 'Tanggal penimbangan',
+  `umur_bulan` int(11) NOT NULL COMMENT 'Umur anak saat ditimbang (bulan)',
+  `bb_kg` decimal(5,2) DEFAULT NULL COMMENT 'Berat badan dalam kg',
+  `tb_cm` decimal(5,2) DEFAULT NULL COMMENT 'Tinggi badan dalam cm',
+  `lk_cm` decimal(5,2) DEFAULT NULL COMMENT 'Lingkar kepala dalam cm',
+  `cara_ukur` enum('berbaring','berdiri') DEFAULT 'berbaring' COMMENT 'Cara pengukuran TB',
+  `status_gizi` varchar(100) DEFAULT NULL COMMENT 'Kategori status gizi: Gizi Baik, Gizi Kurang, dll',
+  `zscore_bbu` decimal(5,2) DEFAULT NULL COMMENT 'Z-score BB/U (Berat Badan menurut Umur)',
+  `zscore_tbu` decimal(5,2) DEFAULT NULL COMMENT 'Z-score TB/U (Tinggi Badan menurut Umur)',
+  `zscore_bbtb` decimal(5,2) DEFAULT NULL COMMENT 'Z-score BB/TB (Berat Badan menurut Tinggi Badan)',
+  `status_nt` char(1) DEFAULT NULL COMMENT 'Status Naik/Tidak: N = Naik, T = Tidak Naik',
+  `kbm_gram` int(11) DEFAULT NULL COMMENT 'Kenaikan Berat Minimal (gram) sesuai umur',
+  `kenaikan_bb_gram` int(11) DEFAULT NULL COMMENT 'Kenaikan berat badan aktual (gram) dari bulan lalu',
+  `catatan` text DEFAULT NULL COMMENT 'Catatan tambahan dari bidan/petugas',
+  `user_id` int(11) DEFAULT NULL COMMENT 'ID petugas yang input data',
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Riwayat penimbangan anak untuk grafik KMS';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `riwayat_pengukuran`
 --
 
 CREATE TABLE `riwayat_pengukuran` (
@@ -302,7 +448,7 @@ CREATE TABLE `riwayat_pengukuran` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Riwayat Pengukuran Antropometri & Status Gizi WHO 2006';
 
 --
--- Dumping data untuk tabel `riwayat_pengukuran`
+-- Dumping data for table `riwayat_pengukuran`
 --
 
 INSERT INTO `riwayat_pengukuran` (`id`, `anak_id`, `tanggal_ukur`, `umur_hari`, `umur_bulan`, `bb_kg`, `tb_pb_cm`, `lk_cm`, `cara_ukur`, `imt`, `z_tbu`, `z_bbu`, `z_bbtb`, `z_imtu`, `kat_tbu`, `kat_bbu`, `kat_bbtb`, `kat_imtu`, `overall_8`, `overall_source`) VALUES
@@ -401,12 +547,18 @@ INSERT INTO `riwayat_pengukuran` (`id`, `anak_id`, `tanggal_ukur`, `umur_hari`, 
 (131, 140, '2025-12-04', 295, 9.72, 12.00, 98.00, 45.00, 'berbaring', 12.49, 10.730, 2.580, -2.290, -2.290, 'Normal', 'Normal', 'Gizi Baik', 'Gizi Baik', 'Gizi Baik', 'WHO-2006'),
 (132, 141, '2025-12-05', 653, 21.46, 12.00, 105.70, 41.00, 'berdiri', 10.74, 7.210, 0.270, -3.800, -3.800, 'Normal', 'Normal', 'Gizi Baik', 'Gizi Baik', 'Gizi Baik', 'WHO-2006'),
 (133, 142, '2025-12-08', 949, 31.13, 12.00, 100.00, 45.00, 'berdiri', 12.00, 2.580, -0.610, -3.290, -3.290, 'Normal', 'Normal', 'Gizi Baik', 'Gizi Baik', 'Gizi Baik', 'WHO-2006'),
-(134, 143, '2025-12-08', 1395, 45.85, 20.00, 100.00, 45.00, 'berdiri', 20.00, -0.390, 1.890, 2.420, 2.420, 'Normal', 'Normal', 'Gizi Lebih', 'Gizi Lebih', 'Gizi Lebih', 'WHO-2006');
+(134, 143, '2025-12-08', 1395, 45.85, 20.00, 100.00, 45.00, 'berdiri', 20.00, -0.390, 1.890, 2.420, 2.420, 'Normal', 'Normal', 'Gizi Lebih', 'Gizi Lebih', 'Gizi Lebih', 'WHO-2006'),
+(136, 120, '2025-12-03', 631, 20.73, 15.00, 100.00, 40.00, 'berbaring', 15.00, 5.430, 2.550, 0.160, 0.160, 'Normal', 'Normal', 'Gizi Baik', 'Gizi Baik', 'Gizi Baik', 'BB/TB|IMT/U'),
+(137, 120, '2026-04-26', 775, 25.46, 13.00, 87.00, 45.00, 'berbaring', 17.18, -0.340, 0.780, 0.880, 0.880, 'Normal', 'Normal', 'Gizi Baik', 'Gizi Baik', 'Gizi Baik', 'BB/TB|IMT/U'),
+(138, 120, '2026-04-26', 775, 25.46, 13.00, 86.30, 45.00, 'berbaring', 17.46, -0.560, 0.780, 1.060, 1.060, 'Normal', 'Normal', 'Beresiko Gizi Lebih', 'Beresiko Gizi Lebih', 'Beresiko Gizi Lebih', 'BB/TB|IMT/U'),
+(139, 135, '2025-12-04', 1381, 45.37, 21.00, 108.00, 46.00, 'berdiri', 18.00, 1.710, 2.300, 1.530, 1.530, 'Normal', 'Normal', 'Beresiko Gizi Lebih', 'Beresiko Gizi Lebih', 'Beresiko Gizi Lebih', 'BB/TB|IMT/U'),
+(140, 135, '2026-04-26', 1524, 50.07, 13.00, 87.00, 46.00, 'berdiri', 17.18, -4.090, -1.770, 0.240, 0.240, 'Stunting', 'Beresiko Gizi Kurang', 'Gizi Baik', 'Gizi Baik', 'Stunting', 'TB/U'),
+(141, 135, '2026-04-26', 1524, 50.07, 13.00, 87.00, 46.00, 'berdiri', 17.18, -4.090, -1.770, 0.240, 0.240, 'Stunting', 'Beresiko Gizi Kurang', 'Gizi Baik', 'Gizi Baik', 'Stunting', 'TB/U');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -420,29 +572,132 @@ CREATE TABLE `users` (
   `role` enum('admin','kader','petugas','orangtua') DEFAULT 'orangtua',
   `profile_image_url` varchar(255) DEFAULT NULL,
   `reset_otp_code` varchar(10) DEFAULT NULL COMMENT 'Kode OTP 6 digit untuk reset password',
-  `reset_otp_expires_at` datetime DEFAULT NULL COMMENT 'Waktu kadaluwarsa OTP (biasanya 10 menit dari request)'
+  `reset_otp_expires_at` datetime DEFAULT NULL COMMENT 'Waktu kadaluwarsa OTP (biasanya 10 menit dari request)',
+  `fcm_token` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `users`
+-- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `email`, `no_telp`, `nik`, `role`, `profile_image_url`, `reset_otp_code`, `reset_otp_expires_at`) VALUES
-(1, 'admin', '$2y$10$sOD6L8rHuxi3szm2dabNCey/HzcWvpyVehj2CQaR8AWy6WPuFsyJq', NULL, 'poscarenganjuk@gmail.com', NULL, NULL, 'admin', NULL, '195232', '2025-12-08 08:59:32'),
-(81, 'yuli', '$2y$10$O9aoXfqWUYOmlPXEqVKeLeCRXSs/6lU8721MNpTRGFSaX0pAU7g66', 'yuli', 'aldopann06@gmail.com', '0853350079652', '8512948586378290', 'orangtua', NULL, NULL, NULL),
-(83, 'ortu_0123456789000987', '$2y$10$3VPONTjTmopr5bGRAGn6Mu8atUq377hJtc4lFAd65IepRYZPqS/Xi', 'Diah', NULL, NULL, '0123456789000987', 'orangtua', NULL, NULL, NULL),
-(84, 'budi', '$2y$10$gIJjzPpfvX29qfBos37tA.wMZD74c8VnxSPDbnHaJWkfeyU1RuY8q', 'budi', 'budijhshsk', '085434643464(', '9876543123456789', 'orangtua', NULL, NULL, NULL),
-(85, 'ortu_8598765443456789', '$2y$10$Zv145jm.yqX.G./.iDSWa./KUOCgrwz8T.sJUeuGkhkDIJAKf/3wq', 'bela', NULL, NULL, '8598765443456789', 'orangtua', NULL, NULL, NULL),
-(96, 'linda12345', '$2y$10$L79EWQgZJDPmyN4vQIFFy.aYmjin0fY8.WZYuyooY5dPIufUYkHUS', 'LINDA AYUNDA', 'linda@gmail.com', '089501220201', '3518131005050001', 'orangtua', 'https://poscare.pbltifnganjuk.com/uploads/profile_images/96_1774765561.jpg', NULL, NULL);
+INSERT INTO `users` (`id`, `username`, `password`, `nama_lengkap`, `email`, `no_telp`, `nik`, `role`, `profile_image_url`, `reset_otp_code`, `reset_otp_expires_at`, `fcm_token`) VALUES
+(1, 'admin', '$2y$10$sOD6L8rHuxi3szm2dabNCey/HzcWvpyVehj2CQaR8AWy6WPuFsyJq', NULL, 'poscarenganjuk@gmail.com', NULL, NULL, 'admin', NULL, '195232', '2025-12-08 08:59:32', NULL),
+(81, 'yuli', '$2y$10$O9aoXfqWUYOmlPXEqVKeLeCRXSs/6lU8721MNpTRGFSaX0pAU7g66', 'yuli', 'aldopann06@gmail.com', '0853350079652', '8512948586378290', 'orangtua', NULL, NULL, NULL, NULL),
+(83, 'ortu_0123456789000987', '$2y$10$3VPONTjTmopr5bGRAGn6Mu8atUq377hJtc4lFAd65IepRYZPqS/Xi', 'Diah', NULL, NULL, '0123456789000987', 'orangtua', NULL, NULL, NULL, NULL),
+(84, 'budi', '$2y$10$gIJjzPpfvX29qfBos37tA.wMZD74c8VnxSPDbnHaJWkfeyU1RuY8q', 'budi', 'budijhshsk', '085434643464(', '9876543123456789', 'orangtua', NULL, NULL, NULL, NULL),
+(85, 'ortu_8598765443456789', '$2y$10$Zv145jm.yqX.G./.iDSWa./KUOCgrwz8T.sJUeuGkhkDIJAKf/3wq', 'bela', NULL, NULL, '8598765443456789', 'orangtua', NULL, NULL, NULL, NULL),
+(96, 'linda12345', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'LINDA AYUNDAA', 'linda@gmail.com', '089501220201', '3518131005050001', 'orangtua', 'https://poscare.pbltifnganjuk.com/uploads/profile_images/96_1777035932.jpg', NULL, NULL, 'fYem_xT0Sx6n2UO5WLff0w:APA91bGNvvsP7hWeo2a3cxUMYQdYk7dWMrS93TX1lYSlqizg4OU3OzCUI9krDyHjGHpeFBTjo_qyJOf8-1k7OUK46ZNT0oE3_2VRRJFABg9He7ANuXFTm-g'),
+(97, 'febri_yugas', '$2y$10$rOuDIHArLYkRLdOLmk.7FOVnXJBoqN9DbDijnOSG9QoG8gNt8O/XO', 'ferbiani nur hasanah', 'febri@gmail.com', '089504020102', '3518131005050004', 'orangtua', NULL, NULL, NULL, 'fYem_xT0Sx6n2UO5WLff0w:APA91bGNvvsP7hWeo2a3cxUMYQdYk7dWMrS93TX1lYSlqizg4OU3OzCUI9krDyHjGHpeFBTjo_qyJOf8-1k7OUK46ZNT0oE3_2VRRJFABg9He7ANuXFTm-g'),
+(98, 'sitiTest', '$2y$10$Je2HMZnN0F1qZQtRDG3e/eYXXa.Z9kTB4tQ3ZhKMEFEjOGERYb/lK', 'Siti Test', 'siti@gmail.com', '081234567890', '3518136505800001', 'orangtua', NULL, NULL, NULL, 'fYem_xT0Sx6n2UO5WLff0w:APA91bGNvvsP7hWeo2a3cxUMYQdYk7dWMrS93TX1lYSlqizg4OU3OzCUI9krDyHjGHpeFBTjo_qyJOf8-1k7OUK46ZNT0oE3_2VRRJFABg9He7ANuXFTm-g');
 
 -- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `v_anak_lengkap`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_anak_lengkap` (
+`id` int(11)
+,`nik_anak` varchar(16)
+,`nama_anak` varchar(100)
+,`tanggal_lahir` date
+,`tempat_lahir` varchar(100)
+,`jenis_kelamin` enum('L','P')
+,`anak_ke` int(11)
+,`alamat_domisili` text
+,`nama_kk` varchar(100)
+,`nama_ayah` varchar(100)
+,`nama_ibu` varchar(100)
+,`nik_ayah` varchar(16)
+,`nik_ibu` varchar(16)
+,`hp_kontak_ortu` varchar(15)
+,`umur_bulan` bigint(21)
+,`umur_tahun` decimal(21,0)
+,`user_id` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `who_zscore_bbu`
+--
+
+CREATE TABLE `who_zscore_bbu` (
+  `id` int(11) NOT NULL,
+  `jenis_kelamin` enum('L','P') NOT NULL,
+  `z_score` decimal(3,1) NOT NULL,
+  `usia_bulan` int(11) NOT NULL,
+  `berat_badan_kg` decimal(5,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `who_zscore_bbu`
+--
+
+INSERT INTO `who_zscore_bbu` (`id`, `jenis_kelamin`, `z_score`, `usia_bulan`, `berat_badan_kg`) VALUES
+(1, 'L', -3.0, 0, 2.20),
+(2, 'L', -2.0, 0, 2.50),
+(3, 'L', 2.0, 0, 4.40),
+(4, 'L', -3.0, 6, 5.70),
+(5, 'L', -2.0, 6, 6.60),
+(6, 'L', 2.0, 6, 9.20),
+(7, 'L', -3.0, 12, 7.20),
+(8, 'L', -2.0, 12, 8.30),
+(9, 'L', 2.0, 12, 11.70),
+(10, 'L', -3.0, 24, 9.00),
+(11, 'L', -2.0, 24, 10.30),
+(12, 'L', 2.0, 24, 14.90),
+(13, 'L', -3.0, 36, 10.50),
+(14, 'L', -2.0, 36, 12.00),
+(15, 'L', 2.0, 36, 17.20),
+(16, 'L', -3.0, 48, 11.70),
+(17, 'L', -2.0, 48, 13.50),
+(18, 'L', 2.0, 48, 19.50),
+(19, 'L', -3.0, 60, 12.80),
+(20, 'L', -2.0, 60, 14.80),
+(21, 'L', 2.0, 60, 21.50),
+(22, 'P', -3.0, 0, 2.10),
+(23, 'P', -2.0, 0, 2.40),
+(24, 'P', 2.0, 0, 4.20),
+(25, 'P', -3.0, 6, 5.30),
+(26, 'P', -2.0, 6, 6.10),
+(27, 'P', 2.0, 6, 8.60),
+(28, 'P', -3.0, 12, 6.70),
+(29, 'P', -2.0, 12, 7.70),
+(30, 'P', 2.0, 12, 10.90),
+(31, 'P', -3.0, 24, 8.40),
+(32, 'P', -2.0, 24, 9.60),
+(33, 'P', 2.0, 24, 13.90),
+(34, 'P', -3.0, 36, 9.80),
+(35, 'P', -2.0, 36, 11.20),
+(36, 'P', 2.0, 36, 16.10),
+(37, 'P', -3.0, 48, 11.00),
+(38, 'P', -2.0, 48, 12.50),
+(39, 'P', 2.0, 48, 18.20),
+(40, 'P', -3.0, 60, 12.00),
+(41, 'P', -2.0, 60, 13.70),
+(42, 'P', 2.0, 60, 20.10),
+(43, 'L', 0.0, 0, 3.30),
+(44, 'L', 0.0, 6, 7.90),
+(45, 'L', 0.0, 12, 9.60),
+(46, 'L', 0.0, 24, 12.20),
+(47, 'L', 0.0, 36, 14.30),
+(48, 'L', 0.0, 48, 16.30),
+(49, 'L', 0.0, 60, 18.10),
+(50, 'P', 0.0, 0, 3.20),
+(51, 'P', 0.0, 6, 7.30),
+(52, 'P', 0.0, 12, 8.90),
+(53, 'P', 0.0, 24, 11.50),
+(54, 'P', 0.0, 36, 13.40),
+(55, 'P', 0.0, 48, 15.30),
+(56, 'P', 0.0, 60, 17.10);
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `anak`
+-- Indexes for table `anak`
 --
 ALTER TABLE `anak`
   ADD PRIMARY KEY (`id`),
@@ -454,14 +709,14 @@ ALTER TABLE `anak`
   ADD KEY `idx_is_deleted` (`is_deleted`);
 
 --
--- Indeks untuk tabel `edukasi_content`
+-- Indexes for table `edukasi_content`
 --
 ALTER TABLE `edukasi_content`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_edukasi_content_penulis` (`penulis_id`);
 
 --
--- Indeks untuk tabel `imunisasi`
+-- Indexes for table `imunisasi`
 --
 ALTER TABLE `imunisasi`
   ADD PRIMARY KEY (`id`),
@@ -470,7 +725,7 @@ ALTER TABLE `imunisasi`
   ADD KEY `fk_imunisasi_master` (`master_vaksin_id`);
 
 --
--- Indeks untuk tabel `jadwal`
+-- Indexes for table `jadwal`
 --
 ALTER TABLE `jadwal`
   ADD PRIMARY KEY (`id`),
@@ -479,21 +734,42 @@ ALTER TABLE `jadwal`
   ADD KEY `idx_status` (`status`);
 
 --
--- Indeks untuk tabel `laporan`
+-- Indexes for table `kbm_reference`
+--
+ALTER TABLE `kbm_reference`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_umur` (`umur_bulan`);
+
+--
+-- Indexes for table `laporan`
 --
 ALTER TABLE `laporan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `created_by` (`created_by`);
 
 --
--- Indeks untuk tabel `master_vaksin`
+-- Indexes for table `master_vaksin`
 --
 ALTER TABLE `master_vaksin`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nama_vaksin` (`nama_vaksin`);
 
 --
--- Indeks untuk tabel `riwayat_pengukuran`
+-- Indexes for table `notifikasi`
+--
+ALTER TABLE `notifikasi`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `penimbangan`
+--
+ALTER TABLE `penimbangan`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_anak_tanggal` (`anak_id`,`tanggal_ukur`),
+  ADD KEY `idx_tanggal` (`tanggal_ukur`);
+
+--
+-- Indexes for table `riwayat_pengukuran`
 --
 ALTER TABLE `riwayat_pengukuran`
   ADD PRIMARY KEY (`id`),
@@ -504,7 +780,7 @@ ALTER TABLE `riwayat_pengukuran`
   ADD KEY `idx_status_kategori` (`overall_8`,`tanggal_ukur`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -515,126 +791,143 @@ ALTER TABLE `users`
   ADD KEY `idx_email` (`email`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- Indexes for table `who_zscore_bbu`
+--
+ALTER TABLE `who_zscore_bbu`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_standard_unique` (`jenis_kelamin`,`z_score`,`usia_bulan`);
+
+--
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `anak`
+-- AUTO_INCREMENT for table `anak`
 --
 ALTER TABLE `anak`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
--- AUTO_INCREMENT untuk tabel `edukasi_content`
+-- AUTO_INCREMENT for table `edukasi_content`
 --
 ALTER TABLE `edukasi_content`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
--- AUTO_INCREMENT untuk tabel `imunisasi`
+-- AUTO_INCREMENT for table `imunisasi`
 --
 ALTER TABLE `imunisasi`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
 
 --
--- AUTO_INCREMENT untuk tabel `jadwal`
+-- AUTO_INCREMENT for table `jadwal`
 --
 ALTER TABLE `jadwal`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
--- AUTO_INCREMENT untuk tabel `laporan`
+-- AUTO_INCREMENT for table `kbm_reference`
+--
+ALTER TABLE `kbm_reference`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT for table `laporan`
 --
 ALTER TABLE `laporan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT untuk tabel `master_vaksin`
+-- AUTO_INCREMENT for table `master_vaksin`
 --
 ALTER TABLE `master_vaksin`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
--- AUTO_INCREMENT untuk tabel `riwayat_pengukuran`
+-- AUTO_INCREMENT for table `notifikasi`
 --
-ALTER TABLE `riwayat_pengukuran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+ALTER TABLE `notifikasi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `penimbangan`
+--
+ALTER TABLE `penimbangan`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `riwayat_pengukuran`
+--
+ALTER TABLE `riwayat_pengukuran`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=142;
+
+--
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+
+--
+-- AUTO_INCREMENT for table `who_zscore_bbu`
+--
+ALTER TABLE `who_zscore_bbu`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 -- --------------------------------------------------------
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Structure for view `v_anak_lengkap`
+--
+DROP TABLE IF EXISTS `v_anak_lengkap`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`u137138991_poscare`@`127.0.0.1` SQL SECURITY DEFINER VIEW `v_anak_lengkap`  AS SELECT `a`.`id` AS `id`, `a`.`nik_anak` AS `nik_anak`, `a`.`nama_anak` AS `nama_anak`, `a`.`tanggal_lahir` AS `tanggal_lahir`, `a`.`tempat_lahir` AS `tempat_lahir`, `a`.`jenis_kelamin` AS `jenis_kelamin`, `a`.`anak_ke` AS `anak_ke`, `a`.`alamat_domisili` AS `alamat_domisili`, `a`.`nama_kk` AS `nama_kk`, `a`.`nama_ayah` AS `nama_ayah`, `a`.`nama_ibu` AS `nama_ibu`, `a`.`nik_ayah` AS `nik_ayah`, `a`.`nik_ibu` AS `nik_ibu`, `a`.`hp_kontak_ortu` AS `hp_kontak_ortu`, timestampdiff(MONTH,`a`.`tanggal_lahir`,curdate()) AS `umur_bulan`, floor(timestampdiff(MONTH,`a`.`tanggal_lahir`,curdate()) / 12) AS `umur_tahun`, `a`.`user_id` AS `user_id` FROM `anak` AS `a` ;
+
+--
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `anak`
+-- Constraints for table `anak`
 --
 ALTER TABLE `anak`
   ADD CONSTRAINT `fk_anak_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Ketidakleluasaan untuk tabel `edukasi_content`
+-- Constraints for table `edukasi_content`
 --
 ALTER TABLE `edukasi_content`
   ADD CONSTRAINT `fk_edukasi_content_penulis` FOREIGN KEY (`penulis_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Ketidakleluasaan untuk tabel `imunisasi`
+-- Constraints for table `imunisasi`
 --
 ALTER TABLE `imunisasi`
   ADD CONSTRAINT `fk_imunisasi_anak` FOREIGN KEY (`anak_id`) REFERENCES `anak` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_imunisasi_master_final` FOREIGN KEY (`master_vaksin_id`) REFERENCES `master_vaksin` (`id`);
 
 --
--- Ketidakleluasaan untuk tabel `jadwal`
+-- Constraints for table `jadwal`
 --
 ALTER TABLE `jadwal`
   ADD CONSTRAINT `fk_jadwal_created_by_final` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Ketidakleluasaan untuk tabel `laporan`
+-- Constraints for table `laporan`
 --
 ALTER TABLE `laporan`
   ADD CONSTRAINT `fk_laporan_created_by_final` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Ketidakleluasaan untuk tabel `riwayat_pengukuran`
+-- Constraints for table `penimbangan`
+--
+ALTER TABLE `penimbangan`
+  ADD CONSTRAINT `fk_penimbangan_anak` FOREIGN KEY (`anak_id`) REFERENCES `anak` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `riwayat_pengukuran`
 --
 ALTER TABLE `riwayat_pengukuran`
   ADD CONSTRAINT `fk_riwayat_pengukuran_anak` FOREIGN KEY (`anak_id`) REFERENCES `anak` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-DELIMITER $$
---
--- Event
---
-CREATE DEFINER=`u137138991_poscare`@`127.0.0.1` EVENT `update_status_gizi_daily` ON SCHEDULE EVERY 1 DAY STARTS '2025-11-20 23:09:44' ON COMPLETION NOT PRESERVE ENABLE DO UPDATE anak a
-INNER JOIN (
-    SELECT 
-        anak_id,
-        overall_8,
-        bb_kg, tb_pb_cm, lk_cm,
-        tanggal_ukur
-    FROM riwayat_pengukuran r1
-    WHERE tanggal_ukur = (
-        SELECT MAX(tanggal_ukur) 
-        FROM riwayat_pengukuran r2 
-        WHERE r2.anak_id = r1.anak_id
-    )
-) latest ON a.id = latest.anak_id
-SET 
-    a.status_gizi = latest.overall_8,
-    a.berat_badan = latest.bb_kg,
-    a.tinggi_badan = latest.tb_pb_cm,
-    a.lingkar_kepala = latest.lk_cm,
-    a.tanggal_penimbangan_terakhir = latest.tanggal_ukur$$
-
-DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

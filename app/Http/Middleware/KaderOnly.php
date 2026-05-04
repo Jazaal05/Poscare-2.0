@@ -23,8 +23,9 @@ class KaderOnly
 
         $user = auth()->user();
         
-        // Hanya kader yang bisa akses website
-        if ($user->role !== 'kader') {
+        // Hanya kader/admin yang bisa akses website
+        // admin dan kader adalah sama (admin = kader, kader = admin)
+        if (!in_array($user->role, ['kader', 'admin'])) {
             auth()->logout();
             return redirect()->route('login')->with('error', 'Akses ditolak. Website ini hanya untuk Kader/Admin. Orangtua silakan gunakan aplikasi mobile.');
         }

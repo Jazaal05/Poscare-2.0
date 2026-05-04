@@ -1,8 +1,8 @@
-@extends('layouts.app')
 
-@section('title', 'Dashboard')
 
-@section('styles')
+<?php $__env->startSection('title', 'Dashboard'); ?>
+
+<?php $__env->startSection('styles'); ?>
 <style>
     @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
     @keyframes shimmer { 0% { background-position:-1000px 0; } 100% { background-position:1000px 0; } }
@@ -79,22 +79,22 @@
     .vaccine-name { font-size:13px; font-weight:700; color:#1E3A5F; margin-bottom:2px; }
     .vaccine-count { font-size:11px; color:#64748B; font-weight:500; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
-{{-- Header --}}
+<?php $__env->startSection('content'); ?>
+
 <div class="page-header">
-    <h1 class="page-title">Selamat Datang, {{ ucfirst(Auth::user()->nama_lengkap ?? Auth::user()->username) }}!</h1>
+    <h1 class="page-title">Selamat Datang, <?php echo e(ucfirst(Auth::user()->nama_lengkap ?? Auth::user()->username)); ?>!</h1>
     <p class="page-subtitle">Beranda PosCare - Sistem Informasi Digital Posyandu</p>
 </div>
 
-{{-- Kartu Statistik --}}
+
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-header">
             <div class="stat-icon blue"><i class="fas fa-baby"></i></div>
             <div class="stat-content">
-                <div class="stat-value" id="totalAnak">{{ $stats['total_anak'] }}</div>
+                <div class="stat-value" id="totalAnak"><?php echo e($stats['total_anak']); ?></div>
                 <div class="stat-label">Total Anak</div>
             </div>
         </div>
@@ -103,7 +103,7 @@
         <div class="stat-header">
             <div class="stat-icon green"><i class="fas fa-heart-pulse"></i></div>
             <div class="stat-content">
-                <div class="stat-value" id="giziBaik">{{ $stats['gizi_baik'] }}</div>
+                <div class="stat-value" id="giziBaik"><?php echo e($stats['gizi_baik']); ?></div>
                 <div class="stat-label">Gizi Baik</div>
             </div>
         </div>
@@ -112,7 +112,7 @@
         <div class="stat-header">
             <div class="stat-icon orange"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="stat-content">
-                <div class="stat-value" id="stunting">{{ $stats['risiko_stunting'] }}</div>
+                <div class="stat-value" id="stunting"><?php echo e($stats['risiko_stunting']); ?></div>
                 <div class="stat-label">Resiko Stunting</div>
             </div>
         </div>
@@ -121,35 +121,35 @@
         <div class="stat-header">
             <div class="stat-icon purple"><i class="fas fa-calendar-check"></i></div>
             <div class="stat-content">
-                <div class="stat-value" id="jadwalBulanIni">{{ $stats['jadwal_bulan_ini'] }}</div>
+                <div class="stat-value" id="jadwalBulanIni"><?php echo e($stats['jadwal_bulan_ini']); ?></div>
                 <div class="stat-label">Total Jadwal</div>
             </div>
         </div>
     </div>
 </div>
 
-{{-- Aksi Cepat --}}
+
 <h2 class="card-title" style="margin-bottom:20px;">Aksi Cepat</h2>
 <div class="quick-actions">
-    <a href="{{ route('anak.index') }}?tab=tambah" class="action-btn">
+    <a href="<?php echo e(route('anak.index')); ?>?tab=tambah" class="action-btn">
         <i class="fas fa-user-plus"></i>
         <span>Tambah Data Anak</span>
     </a>
-    <a href="{{ route('jadwal.index') }}?action=buat" class="action-btn">
+    <a href="<?php echo e(route('jadwal.index')); ?>?action=buat" class="action-btn">
         <i class="fas fa-calendar-plus"></i>
         <span>Buat Jadwal</span>
     </a>
-    <a href="{{ route('laporan.index') }}?action=ekspor" class="action-btn">
+    <a href="<?php echo e(route('laporan.index')); ?>?action=ekspor" class="action-btn">
         <i class="fas fa-file-export"></i>
         <span>Ekspor Laporan</span>
     </a>
-    <a href="{{ route('edukasi.index') }}?action=tambah" class="action-btn">
+    <a href="<?php echo e(route('edukasi.index')); ?>?action=tambah" class="action-btn">
         <i class="fas fa-book-medical"></i>
         <span>Konten Edukasi</span>
     </a>
 </div>
 
-{{-- Grid Grafik & Notifikasi --}}
+
 <div class="dashboard-grid">
     <div class="chart-container">
         <h2 class="card-title">Grafik Status Gizi</h2>
@@ -177,9 +177,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 let statusGiziChart = null;
@@ -200,7 +200,7 @@ function animateCounter(id, target) {
 // Muat statistik dari API Laravel
 async function loadDashboardStats() {
     try {
-        const response = await fetch('{{ route("dashboard.stats") }}', {
+        const response = await fetch('<?php echo e(route("dashboard.stats")); ?>', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -332,4 +332,6 @@ function renderVaccineList(vaccineList) {
 // Jalankan saat halaman siap
 document.addEventListener('DOMContentLoaded', loadDashboardStats);
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/dashboard/index.blade.php ENDPATH**/ ?>

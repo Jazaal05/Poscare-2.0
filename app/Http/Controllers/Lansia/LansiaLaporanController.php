@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Lansia;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lansia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class LansiaLaporanController extends Controller
 {
@@ -13,169 +18,137 @@ class LansiaLaporanController extends Controller
         return view('lansia.laporan.index');
     }
 
-    public function list(Request $request)
+    // ── API: Statistik untuk dashboard laporan ────────────────
+    public function stats()
     {
-        $start    = $request->get('start_date');
-        $end      = $request->get('end_date');
-        $category = $request->get('category', 'lansia');
-        $data     = $this->fetchData($category, $start, $end);
-        return response()->json(['success' => true, 'data' => $data, 'total' => count($data)]);
+        $totalLansia = Lansia::aktif()->count();
+        $totalLaki   = Lansia::aktif()->where('jenis_kelamin', 'L')->count();
+        $totalPerempuan = Lansia::aktif()->where('jenis_kelamin', 'P')->count();
+        $rataUsia    = round(Lansia::aktif()->get()->avg(fn($l) => $l->umur) ?? 0, 1);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_lansia'   => $totalLansia,
+                'total_laki'     => $totalLaki,
+                'total_perempuan'=> $totalPerempuan,
+                'rata_usia'      => $rataUsia,
+            ],
+        ]);
     }
 
+    // ── API: Export ke Excel ───────────────────────────────────
     public function exportExcel(Request $request)
     {
-        $request->validate([
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'category'   => 'nullable|in:lansia,kunjungan,tidak_normal',
-        ]);
+        $query = Lansia::aktif();
 
-        $category = $request->get('category', 'lansia');
-        $data     = $this->fetchData($category, $request->start_date, $request->end_date);
-        $headers  = $this->getHeaders($category);
-        $catMap   = ['lansia' => 'Data_Lansia', 'kunjungan' => 'Data_Kunjungan', 'tidak_normal' => 'Kondisi_Tidak_Normal'];
-        $fileName = "PosCare_Lansia_{$catMap[$category]}_{$request->start_date}_{$request->end_date}.xlsx";
+        // Filter berdasarkan tanggal pemeriksaan terakhir
+        if ($request->has('tanggal_mulai') && $request->tanggal_mulai) {
+            $query->where('tanggal_pemeriksaan_terakhir', '>=', $request->tanggal_mulai);
+        }
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet       = $spreadsheet->getActiveSheet();
-        $sheet->setTitle(ucfirst($category));
+        if ($request->has('tanggal_akhir') && $request->tanggal_akhir) {
+            $query->where('tanggal_pemeriksaan_terakhir', '<=', $request->tanggal_akhir);
+        }
 
-        $headerStyle = [
-            'font'      => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill'      => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '065F46']],
-            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+        // Filter berdasarkan jenis kelamin
+        if ($request->has('jenis_kelamin') && $request->jenis_kelamin) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
+        $data = $query->orderBy('nama_lengkap')->get();
+
+        // Buat spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set judul
+        $sheet->setCellValue('A1', 'LAPORAN DATA LANSIA');
+        $sheet->mergeCells('A1:T1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Set info tanggal export
+        $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d/m/Y H:i:s'));
+        $sheet->mergeCells('A2:T2');
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Set header tabel
+        $headers = [
+            'No', 'Nama Lengkap', 'NIK', 'Jenis Kelamin', 'Tanggal Lahir', 'Tempat Lahir', 
+            'Usia', 'Alamat', 'RT/RW', 'Nama KK', 'Nama Wali', 'NIK Wali', 'No HP Wali',
+            'Berat Badan (kg)', 'Tinggi Badan (cm)', 'BMI', 'Tekanan Darah', 
+            'Gula Darah (mg/dL)', 'Kolesterol (mg/dL)', 'Asam Urat (mg/dL)', 
+            'Status Kesehatan', 'Tanggal Pemeriksaan'
         ];
 
-        foreach ($headers as $i => $h) {
-            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1);
-            $sheet->setCellValue("{$col}1", $h);
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . '4', $header);
+            $col++;
+        }
+
+        // Style header
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '10B981']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+        ];
+        $sheet->getStyle('A4:V4')->applyFromArray($headerStyle);
+
+        // Set data
+        $row = 5;
+        $no = 1;
+        foreach ($data as $lansia) {
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $lansia->nama_lengkap);
+            $sheet->setCellValue('C' . $row, $lansia->nik_lansia ?: '-');
+            $sheet->setCellValue('D' . $row, $lansia->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan');
+            $sheet->setCellValue('E' . $row, $lansia->tanggal_lahir ? $lansia->tanggal_lahir->format('d/m/Y') : '-');
+            $sheet->setCellValue('F' . $row, $lansia->tempat_lahir ?: '-');
+            $sheet->setCellValue('G' . $row, $lansia->umur . ' tahun');
+            $sheet->setCellValue('H' . $row, $lansia->alamat_domisili ?: '-');
+            $sheet->setCellValue('I' . $row, $lansia->rt_rw ?: '-');
+            $sheet->setCellValue('J' . $row, $lansia->nama_kk ?: '-');
+            $sheet->setCellValue('K' . $row, $lansia->nama_wali ?: '-');
+            $sheet->setCellValue('L' . $row, $lansia->nik_wali ?: '-');
+            $sheet->setCellValue('M' . $row, $lansia->hp_kontak_wali ?: '-');
+            $sheet->setCellValue('N' . $row, $lansia->berat_badan ?: '-');
+            $sheet->setCellValue('O' . $row, $lansia->tinggi_badan ?: '-');
+            $sheet->setCellValue('P' . $row, $lansia->bmi ?: '-');
+            $sheet->setCellValue('Q' . $row, $lansia->tekanan_darah ?: '-');
+            $sheet->setCellValue('R' . $row, $lansia->gula_darah ?: '-');
+            $sheet->setCellValue('S' . $row, $lansia->kolesterol ?: '-');
+            $sheet->setCellValue('T' . $row, $lansia->asam_urat ?: '-');
+            $sheet->setCellValue('U' . $row, $lansia->status_kesehatan ?: 'Belum diperiksa');
+            $sheet->setCellValue('V' . $row, $lansia->tanggal_pemeriksaan_terakhir ? $lansia->tanggal_pemeriksaan_terakhir->format('d/m/Y') : '-');
+
+            $row++;
+        }
+
+        // Style data
+        $dataStyle = [
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['rgb' => 'CCCCCC']]],
+            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+        ];
+        $sheet->getStyle('A4:V' . ($row - 1))->applyFromArray($dataStyle);
+
+        // Auto size columns
+        foreach (range('A', 'V') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
-        $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(count($headers));
-        $sheet->getStyle("A1:{$lastCol}1")->applyFromArray($headerStyle);
-        $sheet->freezePane('A2');
-        $sheet->setAutoFilter("A1:{$lastCol}1");
 
-        $rowNum = 2;
-        $num    = 1;
-        foreach ($data as $row) {
-            $cells = $this->buildRow($category, (array) $row, $num++);
-            foreach ($cells as $i => $val) {
-                $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1);
-                $sheet->setCellValue("{$col}{$rowNum}", $val);
-            }
-            // Zebra striping
-            if ($rowNum % 2 === 0) {
-                $sheet->getStyle("A{$rowNum}:{$lastCol}{$rowNum}")
-                    ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()->setRGB('F0FDF4');
-            }
-            $rowNum++;
-        }
+        // Set row height
+        $sheet->getRowDimension('1')->setRowHeight(30);
+        $sheet->getRowDimension('4')->setRowHeight(25);
 
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        return response()->stream(fn() => $writer->save('php://output'), 200, [
-            'Content-Type'        => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
-            'Cache-Control'       => 'max-age=0',
-        ]);
-    }
+        // Generate file
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'Laporan_Lansia_' . date('Y-m-d_His') . '.xlsx';
+        $tempFile = tempnam(sys_get_temp_dir(), $filename);
+        $writer->save($tempFile);
 
-    private function fetchData(string $category, ?string $start, ?string $end): array
-    {
-        switch ($category) {
-            case 'kunjungan':
-                $q = DB::table('kunjungan_lansia as k')
-                    ->join('lansia as l', 'k.lansia_id', '=', 'l.id')
-                    ->select([
-                        'l.nama_lengkap', 'l.nik', 'l.jenis_kelamin',
-                        'k.tanggal_kunjungan', 'k.berat_badan',
-                        'k.tekanan_darah', 'k.status_tensi',
-                        'k.gula_darah', 'k.status_gula',
-                        'k.kolesterol', 'k.status_kolesterol',
-                        'k.asam_urat', 'k.status_asam_urat',
-                        'k.ada_keluhan', 'k.keluhan',
-                        'k.obat_diberikan', 'k.vitamin_diberikan',
-                        'k.catatan_bidan',
-                    ])
-                    ->where('l.is_deleted', false);
-                if ($start && $end) $q->whereBetween('k.tanggal_kunjungan', [$start, $end]);
-                return $q->orderBy('k.tanggal_kunjungan', 'desc')->get()->toArray();
-
-            case 'tidak_normal':
-                $q = DB::table('kunjungan_lansia as k')
-                    ->join('lansia as l', 'k.lansia_id', '=', 'l.id')
-                    ->select([
-                        'l.nama_lengkap', 'l.nik', 'l.no_hp', 'l.alamat',
-                        'k.tanggal_kunjungan',
-                        'k.tekanan_darah', 'k.status_tensi',
-                        'k.gula_darah', 'k.status_gula',
-                        'k.kolesterol', 'k.status_kolesterol',
-                        'k.asam_urat', 'k.status_asam_urat',
-                        'k.keluhan', 'k.obat_diberikan',
-                    ])
-                    ->where('l.is_deleted', false)
-                    ->where(function ($q) {
-                        $q->whereIn('k.status_tensi', ['hipertensi1', 'hipertensi2'])
-                          ->orWhereIn('k.status_gula', ['tinggi', 'sangat_tinggi'])
-                          ->orWhere('k.status_kolesterol', 'tinggi')
-                          ->orWhere('k.status_asam_urat', 'tinggi');
-                    });
-                if ($start && $end) $q->whereBetween('k.tanggal_kunjungan', [$start, $end]);
-                return $q->orderBy('k.tanggal_kunjungan', 'desc')->get()->toArray();
-
-            default: // lansia
-                $q = DB::table('lansia as l')
-                    ->select(['l.nik', 'l.nama_lengkap', 'l.jenis_kelamin', 'l.tanggal_lahir',
-                              'l.tempat_lahir', 'l.alamat', 'l.rt_rw', 'l.no_hp',
-                              'l.nama_wali', 'l.hubungan_wali',
-                              DB::raw('TIMESTAMPDIFF(YEAR, l.tanggal_lahir, CURDATE()) as umur')])
-                    ->where('l.is_deleted', false);
-                return $q->orderBy('l.nama_lengkap')->get()->toArray();
-        }
-    }
-
-    private function getHeaders(string $category): array
-    {
-        return match ($category) {
-            'kunjungan'    => ['No','Nama','NIK','JK','Tgl Kunjungan','BB (kg)','Tensi','Status Tensi','GD (mg/dL)','Status GD','Kol (mg/dL)','Status Kol','AU (mg/dL)','Status AU','Ada Keluhan','Keluhan','Obat','Vitamin','Catatan'],
-            'tidak_normal' => ['No','Nama','NIK','No HP','Alamat','Tgl Kunjungan','Tensi','Status Tensi','GD','Status GD','Kol','Status Kol','AU','Status AU','Keluhan','Obat'],
-            default        => ['No','Nama Lengkap','NIK','JK','Tgl Lahir','Umur','Tempat Lahir','Alamat','RT/RW','No HP','Nama Wali','Hub. Wali'],
-        };
-    }
-
-    private function buildRow(string $category, array $r, int $num): array
-    {
-        $decodeJson = fn($v) => is_string($v) ? implode(', ', json_decode($v, true) ?? []) : '-';
-
-        return match ($category) {
-            'kunjungan' => [
-                $num, $r['nama_lengkap']??'-', $r['nik']??'-', $r['jenis_kelamin']??'-',
-                $r['tanggal_kunjungan']??'-', $r['berat_badan']??'-',
-                $r['tekanan_darah']??'-', $r['status_tensi']??'-',
-                $r['gula_darah']??'-', $r['status_gula']??'-',
-                $r['kolesterol']??'-', $r['status_kolesterol']??'-',
-                $r['asam_urat']??'-', $r['status_asam_urat']??'-',
-                ($r['ada_keluhan'] ? 'Ya' : 'Tidak'), $r['keluhan']??'-',
-                $decodeJson($r['obat_diberikan']??null),
-                $decodeJson($r['vitamin_diberikan']??null),
-                $r['catatan_bidan']??'-',
-            ],
-            'tidak_normal' => [
-                $num, $r['nama_lengkap']??'-', $r['nik']??'-', $r['no_hp']??'-', $r['alamat']??'-',
-                $r['tanggal_kunjungan']??'-',
-                $r['tekanan_darah']??'-', $r['status_tensi']??'-',
-                $r['gula_darah']??'-', $r['status_gula']??'-',
-                $r['kolesterol']??'-', $r['status_kolesterol']??'-',
-                $r['asam_urat']??'-', $r['status_asam_urat']??'-',
-                $r['keluhan']??'-', $decodeJson($r['obat_diberikan']??null),
-            ],
-            default => [
-                $num, $r['nama_lengkap']??'-', $r['nik']??'-', $r['jenis_kelamin']??'-',
-                $r['tanggal_lahir']??'-', $r['umur']??'-', $r['tempat_lahir']??'-',
-                $r['alamat']??'-', $r['rt_rw']??'-', $r['no_hp']??'-',
-                $r['nama_wali']??'-', $r['hubungan_wali']??'-',
-            ],
-        };
+        return response()->download($tempFile, $filename)->deleteFileAfterSend(true);
     }
 }

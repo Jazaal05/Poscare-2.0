@@ -11,20 +11,25 @@ class Jadwal extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'judul_kegiatan',
         'nama_kegiatan',
         'jenis_kegiatan',
         'tanggal',
+        'tanggal_kegiatan',
         'waktu_mulai',
+        'waktu_selesai',
         'lokasi',
         'keterangan',
         'status',
         'layanan',
+        'dibuat_oleh',
         'created_by',
         'is_posted',
     ];
 
     protected $casts = [
         'tanggal' => 'date',
+        'tanggal_kegiatan' => 'date',
     ];
 
     // =====================

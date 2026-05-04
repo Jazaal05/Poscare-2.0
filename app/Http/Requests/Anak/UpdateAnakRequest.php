@@ -25,6 +25,7 @@ class UpdateAnakRequest extends FormRequest
             'jenis_kelamin'                => 'sometimes|in:L,P',
             'tanggal_lahir'                => 'sometimes|date|before_or_equal:today',
             'tempat_lahir'                 => 'sometimes|string|max:100',
+            'anak_ke'                      => 'sometimes|integer|min:1|max:20',
             'nama_ibu'                     => 'sometimes|string|min:3|max:100',
             'nik_ibu'                      => 'sometimes|digits:16',
             'nama_ayah'                    => 'sometimes|string|max:100',

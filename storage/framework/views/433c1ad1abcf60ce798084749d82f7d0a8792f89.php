@@ -1,37 +1,38 @@
-@extends('layouts.lansia')
-@section('title', 'Pengaturan Lansia')
 
-@section('styles')
+
+<?php $__env->startSection('title', 'Pengaturan'); ?>
+
+<?php $__env->startSection('styles'); ?>
 <style>
-    body { background: linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
+    body { background: linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !important; }
     .card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 6px 24px rgba(16,24,40,0.06); margin-bottom:24px; }
-    .page-title { font-size:28px; font-weight:700; color:#065F46; margin-bottom:4px; }
+    .page-title { font-size:28px; font-weight:700; color:#1E3A5F; margin-bottom:4px; }
     .page-subtitle { font-size:14px; color:#64748B; margin-bottom:24px; }
 
     /* Info posyandu */
-    .posyandu-header { background:linear-gradient(135deg,#10B981,#059669); border-radius:16px; padding:28px; margin-bottom:24px; color:#fff; text-align:center; }
+    .posyandu-header { background:linear-gradient(135deg,#246BCE,#1E5AB8); border-radius:16px; padding:28px; margin-bottom:24px; color:#fff; text-align:center; }
     .posyandu-header h2 { font-size:22px; font-weight:700; margin:0 0 6px; }
     .posyandu-header p  { font-size:14px; opacity:0.9; margin:0; }
 
     /* Grid */
     .cards-row { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
     @media(max-width:768px){ .cards-row{ grid-template-columns:1fr; } }
-    .card-title { font-size:18px; font-weight:700; color:#065F46; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #E5E7EB; display:flex; align-items:center; gap:10px; }
+    .card-title { font-size:18px; font-weight:700; color:#1E3A5F; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #E5E7EB; display:flex; align-items:center; gap:10px; }
 
     /* Form */
     .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
     .form-group label { font-size:13px; font-weight:600; color:#374151; }
     .form-group input { padding:10px 14px; border:2px solid #E5E7EB; border-radius:8px; font-size:14px; transition:all 0.2s; width:100%; box-sizing:border-box; }
-    .form-group input:focus { outline:none; border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
+    .form-group input:focus { outline:none; border-color:#246BCE; box-shadow:0 0 0 3px rgba(36,107,206,0.1); }
     .form-group input[readonly] { background:#F8FAFC; color:#94A3B8; cursor:not-allowed; }
     .otp-input { text-align:center; font-size:24px; letter-spacing:8px; font-weight:700; }
 
     /* Buttons */
     .btn { padding:10px 20px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px; }
-    .btn-primary { background:#10B981; color:#fff; width:100%; justify-content:center; } .btn-primary:hover { background:#059669; }
+    .btn-primary { background:#246BCE; color:#fff; width:100%; justify-content:center; } .btn-primary:hover { background:#1D58A8; }
     .btn-secondary { background:#64748B; color:#fff; width:100%; justify-content:center; margin-top:8px; } .btn-secondary:hover { background:#475569; }
     .btn-danger  { background:#EF4444; color:#fff; } .btn-danger:hover  { background:#DC2626; }
-    .btn-outline { background:transparent; border:2px solid #10B981; color:#10B981; } .btn-outline:hover { background:#10B981; color:#fff; }
+    .btn-outline { background:transparent; border:2px solid #246BCE; color:#246BCE; } .btn-outline:hover { background:#246BCE; color:#fff; }
     .btn-sm { padding:5px 10px; font-size:12px; }
 
     /* Badges */
@@ -39,12 +40,11 @@
     .badge-info    { background:#DBEAFE; color:#1E40AF; }
     .badge-warning { background:#FEF3C7; color:#92400E; }
     .badge-success { background:#D1FAE5; color:#065F46; }
-    .badge-danger  { background:#FEE2E2; color:#991B1B; }
 
     /* Table */
     .table-wrapper { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; font-size:14px; }
-    thead th { background:#F8FAFC; padding:12px 16px; text-align:left; font-weight:600; color:#065F46; border-bottom:2px solid #E5E7EB; white-space:nowrap; }
+    thead th { background:#F8FAFC; padding:12px 16px; text-align:left; font-weight:600; color:#4A6FA3; border-bottom:2px solid #E5E7EB; white-space:nowrap; }
     tbody td { padding:12px 16px; border-bottom:1px solid #F1F5F9; color:#374151; vertical-align:middle; }
     tbody tr:hover { background:#F8FAFC; }
 
@@ -54,12 +54,12 @@
     .modal-box { background:#fff; border-radius:20px; padding:28px; width:90%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s ease; }
     @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:2px solid #E5E7EB; }
-    .modal-title { font-size:18px; font-weight:700; color:#065F46; }
+    .modal-title { font-size:18px; font-weight:700; color:#1E3A5F; }
     .modal-close { background:none; border:none; font-size:24px; color:#9CA3AF; cursor:pointer; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
     .modal-close:hover { background:#FEE2E2; color:#EF4444; }
 
     /* Info box */
-    .info-box { background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#065F46; display:flex; align-items:flex-start; gap:8px; }
+    .info-box { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:10px; padding:12px 16px; margin-bottom:16px; font-size:13px; color:#1E40AF; display:flex; align-items:flex-start; gap:8px; }
     .access-denied { background:#FEF2F2; border:2px solid #EF4444; border-radius:12px; padding:24px; text-align:center; }
 
     /* Toast */
@@ -68,27 +68,27 @@
     @keyframes slideInRight { from{opacity:0;transform:translateX(100%)} to{opacity:1;transform:translateX(0)} }
     .toast-success { background:#10B981; } .toast-error { background:#EF4444; } .toast-warning { background:#F59E0B; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
-{{-- INFO POSYANDU --}}
+
 <div class="posyandu-header">
-    <h2><i class="fas fa-hospital"></i> {{ $posyanduNama }}</h2>
-    <p><i class="fas fa-map-marker-alt"></i> {{ $posyanduAlamat }}</p>
+    <h2><i class="fas fa-hospital"></i> <?php echo e($posyanduNama); ?></h2>
+    <p><i class="fas fa-map-marker-alt"></i> <?php echo e($posyanduAlamat); ?></p>
 </div>
 
 <div style="margin-bottom:20px;">
-    <h1 class="page-title"><i class="fas fa-cog" style="color:#10B981;"></i> Pengaturan Lansia</h1>
+    <h1 class="page-title"><i class="fas fa-cog" style="color:#246BCE;"></i> Pengaturan</h1>
     <p class="page-subtitle">Kelola profil dan keamanan akun Anda</p>
 </div>
 
 <div class="cards-row">
 
-    {{-- CARD 1: PROFIL --}}
+    
     <div class="card">
-        <div class="card-title"><i class="fas fa-user-circle" style="color:#10B981;"></i> Profil Saya</div>
+        <div class="card-title"><i class="fas fa-user-circle" style="color:#246BCE;"></i> Profil Saya</div>
         <form id="formProfil" onsubmit="submitProfil(event)">
             <div class="form-group">
                 <label>Nama Lengkap</label>
@@ -108,7 +108,7 @@
         </form>
     </div>
 
-    {{-- CARD 2: GANTI PASSWORD VIA OTP --}}
+    
     <div class="card">
         <div class="card-title"><i class="fas fa-lock" style="color:#F59E0B;"></i> Ubah Kata Sandi</div>
 
@@ -117,7 +117,7 @@
             <span>Untuk keamanan, kami akan mengirimkan kode OTP ke email Anda untuk verifikasi perubahan kata sandi.</span>
         </div>
 
-        {{-- Step 1: Request OTP --}}
+        
         <div id="step1OTP">
             <div class="form-group">
                 <label>Email Anda</label>
@@ -131,7 +131,7 @@
             </button>
         </div>
 
-        {{-- Step 2: Verifikasi OTP + Password Baru --}}
+        
         <div id="step2OTP" style="display:none;">
             <div class="form-group">
                 <label>Kode OTP <span style="color:red">*</span></label>
@@ -159,11 +159,11 @@
 
 </div>
 
-{{-- CARD 3: MANAJEMEN PENGGUNA (admin only) --}}
-@if(Auth::user()->role === 'admin')
+
+<?php if(Auth::user()->role === 'admin'): ?>
 <div class="card">
     <div class="card-title" style="justify-content:space-between;">
-        <span><i class="fas fa-users-cog" style="color:#10B981;"></i> Manajemen Pengguna</span>
+        <span><i class="fas fa-users-cog" style="color:#246BCE;"></i> Manajemen Pengguna</span>
         <button class="btn btn-outline btn-sm" onclick="loadUsers()"><i class="fas fa-sync-alt"></i> Refresh</button>
     </div>
     <div class="table-wrapper">
@@ -183,7 +183,7 @@
         </table>
     </div>
 </div>
-@else
+<?php else: ?>
 <div class="card">
     <div class="access-denied">
         <i class="fas fa-lock" style="font-size:40px;color:#EF4444;margin-bottom:12px;display:block;"></i>
@@ -191,9 +191,9 @@
         <p style="color:#7F1D1D;font-size:14px;margin:0;">Fitur "Kelola Pengguna" hanya tersedia untuk Administrator.</p>
     </div>
 </div>
-@endif
+<?php endif; ?>
 
-{{-- MODAL KONFIRMASI HAPUS USER --}}
+
 <div class="modal-overlay" id="modalHapusUser">
     <div class="modal-box">
         <div class="modal-header">
@@ -207,9 +207,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 let hapusUserId = null;
 
@@ -228,7 +228,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('active')
 // ── Load profil ────────────────────────────────────────────
 async function loadCurrentUser() {
     try {
-        const res  = await fetch('/lansia/api/pengaturan/current-user', {
+        const res  = await fetch('<?php echo e(route("pengaturan.currentUser")); ?>', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -249,7 +249,7 @@ async function submitProfil(e) {
     const btn = document.getElementById('btnSaveProfil');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/profil', {
+        const res  = await fetch('<?php echo e(route("pengaturan.profil")); ?>', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -271,7 +271,7 @@ async function requestOTP() {
     const btn = document.getElementById('btnRequestOTP');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/request-otp', {
+        const res  = await fetch('<?php echo e(route("pengaturan.requestOtp")); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -300,7 +300,7 @@ async function verifikasiOTP() {
     const btn = document.getElementById('btnVerifikasiOTP');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/verifikasi-otp', {
+        const res  = await fetch('<?php echo e(route("pengaturan.verifikasiOtp")); ?>', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -330,7 +330,7 @@ function backToStep1() {
 }
 
 // ── Manajemen pengguna (admin) ─────────────────────────────
-@if(Auth::user()->role === 'admin')
+<?php if(Auth::user()->role === 'admin'): ?>
 function roleBadge(role) {
     const map = { admin:'danger', kader:'info', petugas:'success', orangtua:'warning' };
     return `<span class="badge badge-${map[role]||'info'}">${role}</span>`;
@@ -340,7 +340,7 @@ async function loadUsers() {
     const tbody = document.getElementById('usersTableBody');
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#9CA3AF;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/users', {
+        const res  = await fetch('<?php echo e(route("pengaturan.users")); ?>', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -352,13 +352,13 @@ async function loadUsers() {
             return;
         }
 
-        const currentId = {{ Auth::id() }};
+        const currentId = <?php echo e(Auth::id()); ?>;
         tbody.innerHTML = list.map((u, i) => `
             <tr>
                 <td>${i + 1}</td>
                 <td>
                     <strong>${u.username || '-'}</strong>
-                    ${u.id === currentId ? '<span class="badge badge-success" style="margin-left:6px;font-size:10px;">Anda</span>' : ''}
+                    ${u.id === currentId ? '<span class="badge badge-info" style="margin-left:6px;font-size:10px;">Anda</span>' : ''}
                 </td>
                 <td>${u.email || '-'}</td>
                 <td>${roleBadge(u.role)}</td>
@@ -383,7 +383,7 @@ document.getElementById('btnKonfirmasiHapusUser').addEventListener('click', asyn
     const btn = document.getElementById('btnKonfirmasiHapusUser');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     try {
-        const res  = await fetch(`/lansia/api/pengaturan/users/${hapusUserId}`, {
+        const res  = await fetch(`/api/pengaturan/users/${hapusUserId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
@@ -396,12 +396,14 @@ document.getElementById('btnKonfirmasiHapusUser').addEventListener('click', asyn
 });
 
 document.addEventListener('DOMContentLoaded', () => { loadCurrentUser(); loadUsers(); });
-@else
+<?php else: ?>
 document.addEventListener('DOMContentLoaded', loadCurrentUser);
-@endif
+<?php endif; ?>
 
 document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/pengaturan/index.blade.php ENDPATH**/ ?>

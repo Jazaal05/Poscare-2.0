@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('nama_lengkap', 100);
-            $table->enum('role', ['kader', 'orangtua'])->default('orangtua');
+            $table->enum('role', ['admin', 'kader', 'orangtua'])->default('orangtua');
             $table->string('no_telp', 15)->nullable();
             $table->string('nik', 16)->nullable();
             $table->rememberToken();

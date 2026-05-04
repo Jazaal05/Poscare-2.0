@@ -1,8 +1,8 @@
-﻿@extends('layouts.lansia')
+﻿
 
-@section('title', 'Kunjungan Lansia')
+<?php $__env->startSection('title', 'Data Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
     .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 6px 24px rgba(16,24,40,0.06); margin-bottom:24px; }
@@ -179,23 +179,23 @@
     .action-btn.-delete { background:#FEECEF; color:#DC2626; }
     .action-btn:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
 <div class="page-header" style="margin-bottom:20px;">
-    <h1 style="font-size:28px;font-weight:700;color:#065F46;margin-bottom:4px;">Kunjungan Lansia</h1>
-    <p style="font-size:14px;color:#64748B;"><i class="fas fa-calendar-check" style="color:#10B981;margin-right:6px;"></i> Kelola Data Kunjungan Lansia</p>
+    <h1 style="font-size:28px;font-weight:700;color:#065F46;margin-bottom:4px;">Data Lansia</h1>
+    <p style="font-size:14px;color:#64748B;"><i class="fas fa-users" style="color:#10B981;margin-right:6px;"></i> Kelola Data Lansia Terpadu</p>
 </div>
 
-{{-- TABS --}}
+
 <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('tabel')"><i class="fas fa-table"></i> Kunjungan</button>
-    <button class="tab-btn" onclick="switchTab('tambah')"><i class="fas fa-plus-circle"></i> Tambah Data Kunjungan</button>
+    <button class="tab-btn active" onclick="switchTab('tabel')"><i class="fas fa-table"></i> Tabel Data Lansia</button>
+    <button class="tab-btn" onclick="switchTab('tambah')"><i class="fas fa-plus-circle"></i> Tambah Data Lansia</button>
 </div>
 
-{{-- TAB 1: TABEL DATA LANSIA --}}
+
 <div id="tab-tabel" class="tab-content active">
     <div class="card">
         <div class="search-bar">
@@ -259,39 +259,66 @@
     </div>
 </div>
 
-{{-- TAB 2: TAMBAH DATA KUNJUNGAN --}}
+
 <div id="tab-tambah" class="tab-content">
     <div class="card">
-        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#10B981;"></i> Tambah Data Kunjungan</h3>
-        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Catat kunjungan dan pemeriksaan kesehatan lansia.</p>
+        <h3 style="font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:8px;"><i class="fas fa-plus-circle" style="color:#246BCE;"></i> Tambah Data Lansia</h3>
+        <p style="font-size:13px;color:#64748B;margin-bottom:20px;">Tambahkan data lansia baru dengan informasi kesehatan lengkap.</p>
         <form id="formTambah" onsubmit="submitTambah(event)">
             <div class="form-grid">
-                <div class="form-section-title"><i class="fas fa-user-check"></i> Pilih Lansia</div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Pilih Lansia <span style="color:red">*</span></label>
-                    <select name="lansia_id" id="selectLansia" required onchange="loadLansiaInfo(this.value)">
-                        <option value="">-- Pilih Lansia --</option>
-                    </select>
-                    <small style="color:#64748B;font-size:12px;">Pilih lansia yang akan diperiksa</small>
-                </div>
-                
-                {{-- Info Lansia Terpilih --}}
-                <div id="lansiaInfo" style="grid-column:1/-1;display:none;background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:8px;">
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
-                        <div><strong>Nama:</strong> <span id="infoNama">-</span></div>
-                        <div><strong>NIK:</strong> <span id="infoNik">-</span></div>
-                        <div><strong>Usia:</strong> <span id="infoUsia">-</span></div>
-                        <div><strong>Jenis Kelamin:</strong> <span id="infoJK">-</span></div>
-                    </div>
-                </div>
-
-                <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Tanggal Kunjungan</div>
+                <div class="form-section-title"><i class="fas fa-user"></i> Data Pribadi Lansia</div>
                 <div class="form-group">
-                    <label>Tanggal Kunjungan <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                    <label>Nama Lansia <span style="color:red">*</span></label>
+                    <input type="text" name="nama_lansia" placeholder="Nama lengkap lansia" required>
+                </div>
+                <div class="form-group">
+                    <label>NIK Lansia</label>
+                    <input type="text" name="nik_lansia" placeholder="16 digit NIK lansia" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin <span style="color:red">*</span></label>
+                    <select name="jenis_kelamin" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir <span style="color:red">*</span></label>
+                    <input type="date" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label>Tempat Lahir</label>
+                    <input type="text" name="tempat_lahir" placeholder="Kota/kabupaten lahir">
+                </div>
+                <div class="form-group" style="grid-column:1/-1">
+                    <label>Alamat Domisili</label>
+                    <textarea name="alamat_domisili" placeholder="Alamat lengkap" rows="2" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>RT/RW</label>
+                    <input type="text" name="rt_rw" placeholder="001/005" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label>Nama Kepala Keluarga</label>
+                    <input type="text" name="nama_kk" placeholder="Nama KK">
                 </div>
 
-                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
+                <div class="form-section-title"><i class="fas fa-users"></i> Data Wali</div>
+                <div class="form-group">
+                    <label>Nama Wali</label>
+                    <input type="text" name="nama_wali" placeholder="Nama wali/keluarga">
+                </div>
+                <div class="form-group">
+                    <label>NIK Wali</label>
+                    <input type="text" name="nik_wali" placeholder="16 digit NIK wali" maxlength="16">
+                </div>
+                <div class="form-group">
+                    <label>No HP Kontak Wali</label>
+                    <input type="text" name="hp_kontak_wali" placeholder="+62...">
+                </div>
+
+                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Data Kesehatan</div>
                 <div class="form-group">
                     <label>Berat Badan (kg)</label>
                     <input type="number" name="berat_badan" placeholder="Contoh: 65.5" step="0.1" min="30" max="150">
@@ -305,8 +332,6 @@
                     <input type="text" name="tekanan_darah" placeholder="Contoh: 120/80" maxlength="20">
                     <small style="color:#64748B;font-size:12px;">Format: sistolik/diastolik (contoh: 120/80)</small>
                 </div>
-
-                <div class="form-section-title"><i class="fas fa-vial"></i> Pemeriksaan Darah</div>
                 <div class="form-group">
                     <label>Gula Darah (mg/dL)</label>
                     <input type="number" name="gula_darah" placeholder="Contoh: 95" step="0.1" min="50" max="500">
@@ -319,63 +344,16 @@
                     <label>Asam Urat (mg/dL)</label>
                     <input type="number" name="asam_urat" placeholder="Contoh: 5.5" step="0.1" min="1" max="15">
                 </div>
-
-                <div class="form-section-title"><i class="fas fa-notes-medical"></i> Keluhan & Pengobatan</div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" name="ada_keluhan" value="1" onchange="toggleKeluhan(this)">
-                        <span>Ada Keluhan</span>
-                    </label>
-                </div>
-                <div class="form-group" style="grid-column:1/-1;display:none;" id="groupKeluhan">
-                    <label>Keluhan</label>
-                    <textarea name="keluhan" placeholder="Jelaskan keluhan yang dialami..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Obat Diberikan</label>
-                    <select name="obat_diberikan[]" multiple style="height:120px;">
-                        <option value="Paracetamol">Paracetamol</option>
-                        <option value="Amlodipin">Amlodipin</option>
-                        <option value="Metformin">Metformin</option>
-                        <option value="Captopril">Captopril</option>
-                        <option value="Simvastatin">Simvastatin</option>
-                        <option value="Antasida">Antasida</option>
-                        <option value="Asam Mefenamat">Asam Mefenamat</option>
-                        <option value="Glibenklamid">Glibenklamid</option>
-                        <option value="Furosemid">Furosemid</option>
-                        <option value="Lisinopril">Lisinopril</option>
-                    </select>
-                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Vitamin Diberikan</label>
-                    <select name="vitamin_diberikan[]" multiple style="height:100px;">
-                        <option value="Vitamin C">Vitamin C</option>
-                        <option value="Vitamin D">Vitamin D</option>
-                        <option value="Vitamin B12">Vitamin B12</option>
-                        <option value="Kalsium">Kalsium</option>
-                        <option value="Asam Folat">Asam Folat</option>
-                        <option value="Zinc">Zinc</option>
-                        <option value="Vitamin E">Vitamin E</option>
-                        <option value="Omega-3">Omega-3</option>
-                        <option value="Multivitamin">Multivitamin</option>
-                    </select>
-                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Catatan Bidan/Kader</label>
-                    <textarea name="catatan_bidan" placeholder="Catatan tambahan..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
             </div>
             <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
                 <button type="reset" class="btn btn-outline"><i class="fas fa-undo"></i> Reset Form</button>
-                <button type="submit" class="btn btn-primary" id="btnTambah"><i class="fas fa-save"></i> Simpan Data Kunjungan</button>
+                <button type="submit" class="btn btn-primary" id="btnTambah"><i class="fas fa-save"></i> Simpan Data Lansia</button>
             </div>
         </form>
     </div>
 </div>
 
-{{-- MODAL DETAIL --}}
+
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box modal-lg">
         <div class="modal-header">
@@ -390,7 +368,7 @@
     </div>
 </div>
 
-{{-- MODAL EDIT --}}
+
 <div class="modal-overlay" id="modalEdit">
     <div class="modal-box">
         <div class="modal-header">
@@ -417,7 +395,7 @@
                 </div>
                 <div class="form-group">
                     <label>Tanggal Lahir</label>
-                    <input type="date" id="editTanggalLahir" name="tgl_lahir" max="{{ date('Y-m-d') }}">
+                    <input type="date" id="editTanggalLahir" name="tanggal_lahir" max="<?php echo e(date('Y-m-d')); ?>">
                 </div>
                 <div class="form-group">
                     <label>Tempat Lahir</label>
@@ -476,7 +454,7 @@
     </div>
 </div>
 
-{{-- MODAL KONFIRMASI HAPUS --}}
+
 <div class="modal-overlay" id="modalHapus">
     <div class="modal-box" style="max-width:420px;">
         <div class="modal-header">
@@ -490,152 +468,9 @@
         </div>
     </div>
 </div>
+<?php $__env->stopSection(); ?>
 
-{{-- MODAL KUNJUNGAN SELANJUTNYA --}}
-<div class="modal-overlay" id="modalKunjunganSelanjutnya">
-    <div class="modal-box modal-lg">
-        <div class="modal-header">
-            <h3 class="modal-title" style="color:#10B981;"><i class="fas fa-notes-medical"></i> Kunjungan Selanjutnya</h3>
-            <button class="modal-close" onclick="closeModal('modalKunjunganSelanjutnya')">&times;</button>
-        </div>
-        <form id="formKunjunganSelanjutnya" onsubmit="submitKunjunganSelanjutnya(event)">
-            <input type="hidden" id="kunjunganLansiaId">
-            
-            {{-- Info Lansia --}}
-            <div style="background:#F0FDF4;border:2px solid #10B981;border-radius:8px;padding:16px;margin-bottom:20px;">
-                <h4 style="font-size:14px;font-weight:700;color:#065F46;margin-bottom:12px;"><i class="fas fa-user-circle"></i> Data Lansia</h4>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;font-size:13px;">
-                    <div><strong>Nama:</strong> <span id="kunjNama">-</span></div>
-                    <div><strong>NIK:</strong> <span id="kunjNik">-</span></div>
-                    <div><strong>Usia:</strong> <span id="kunjUsia">-</span></div>
-                    <div><strong>Jenis Kelamin:</strong> <span id="kunjJK">-</span></div>
-                </div>
-            </div>
-
-            <div class="form-grid">
-                {{-- Data yang bisa diupdate --}}
-                <div class="form-section-title"><i class="fas fa-user-edit"></i> Update Data Lansia (Opsional)</div>
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" id="kunjNamaLengkap" placeholder="Nama lengkap lansia">
-                </div>
-                <div class="form-group">
-                    <label>NIK Lansia</label>
-                    <input type="text" name="nik_lansia" id="kunjNikLansia" placeholder="16 digit NIK" maxlength="16">
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Alamat Domisili</label>
-                    <textarea name="alamat_domisili" id="kunjAlamat" placeholder="Alamat lengkap" rows="2" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>RT/RW</label>
-                    <input type="text" name="rt_rw" id="kunjRtRw" placeholder="001/005" maxlength="10">
-                </div>
-                <div class="form-group">
-                    <label>Nama Wali</label>
-                    <input type="text" name="nama_wali" id="kunjNamaWali" placeholder="Nama wali/keluarga">
-                </div>
-                <div class="form-group">
-                    <label>NIK Wali</label>
-                    <input type="text" name="nik_wali" id="kunjNikWali" placeholder="16 digit NIK wali" maxlength="16">
-                </div>
-                <div class="form-group">
-                    <label>No HP Kontak Wali</label>
-                    <input type="text" name="hp_kontak_wali" id="kunjHpWali" placeholder="+62...">
-                </div>
-
-                {{-- Data Kunjungan --}}
-                <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Data Kunjungan</div>
-                <div class="form-group">
-                    <label>Tanggal Kunjungan <span style="color:red">*</span></label>
-                    <input type="date" name="tanggal_kunjungan" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
-                </div>
-
-                <div class="form-section-title"><i class="fas fa-heartbeat"></i> Pengukuran Fisik</div>
-                <div class="form-group">
-                    <label>Berat Badan (kg)</label>
-                    <input type="number" name="berat_badan" placeholder="Contoh: 65.5" step="0.1" min="30" max="150">
-                </div>
-                <div class="form-group">
-                    <label>Tinggi Badan (cm)</label>
-                    <input type="number" name="tinggi_badan" placeholder="Contoh: 160" step="0.1" min="100" max="200">
-                </div>
-                <div class="form-group">
-                    <label>Tekanan Darah (mmHg)</label>
-                    <input type="text" name="tekanan_darah" placeholder="Contoh: 120/80" maxlength="20">
-                </div>
-
-                <div class="form-section-title"><i class="fas fa-vial"></i> Pemeriksaan Darah</div>
-                <div class="form-group">
-                    <label>Gula Darah (mg/dL)</label>
-                    <input type="number" name="gula_darah" placeholder="Contoh: 95" step="0.1" min="50" max="500">
-                </div>
-                <div class="form-group">
-                    <label>Kolesterol (mg/dL)</label>
-                    <input type="number" name="kolesterol" placeholder="Contoh: 180" step="0.1" min="100" max="400">
-                </div>
-                <div class="form-group">
-                    <label>Asam Urat (mg/dL)</label>
-                    <input type="number" name="asam_urat" placeholder="Contoh: 5.5" step="0.1" min="1" max="15">
-                </div>
-
-                <div class="form-section-title"><i class="fas fa-notes-medical"></i> Keluhan & Pengobatan</div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label style="display:flex;align-items:center;gap:8px;">
-                        <input type="checkbox" name="ada_keluhan" value="1" onchange="toggleKeluhanKunjungan(this)">
-                        <span>Ada Keluhan</span>
-                    </label>
-                </div>
-                <div class="form-group" style="grid-column:1/-1;display:none;" id="groupKeluhanKunjungan">
-                    <label>Keluhan</label>
-                    <textarea name="keluhan" placeholder="Jelaskan keluhan yang dialami..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Obat Diberikan</label>
-                    <select name="obat_diberikan[]" multiple style="height:120px;">
-                        <option value="Paracetamol">Paracetamol</option>
-                        <option value="Amlodipin">Amlodipin</option>
-                        <option value="Metformin">Metformin</option>
-                        <option value="Captopril">Captopril</option>
-                        <option value="Simvastatin">Simvastatin</option>
-                        <option value="Antasida">Antasida</option>
-                        <option value="Asam Mefenamat">Asam Mefenamat</option>
-                        <option value="Glibenklamid">Glibenklamid</option>
-                        <option value="Furosemid">Furosemid</option>
-                        <option value="Lisinopril">Lisinopril</option>
-                    </select>
-                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Vitamin Diberikan</label>
-                    <select name="vitamin_diberikan[]" multiple style="height:100px;">
-                        <option value="Vitamin C">Vitamin C</option>
-                        <option value="Vitamin D">Vitamin D</option>
-                        <option value="Vitamin B12">Vitamin B12</option>
-                        <option value="Kalsium">Kalsium</option>
-                        <option value="Asam Folat">Asam Folat</option>
-                        <option value="Zinc">Zinc</option>
-                        <option value="Vitamin E">Vitamin E</option>
-                        <option value="Omega-3">Omega-3</option>
-                        <option value="Multivitamin">Multivitamin</option>
-                    </select>
-                    <small style="color:#64748B;font-size:12px;">Tahan Ctrl (Windows) atau Cmd (Mac) untuk pilih lebih dari satu</small>
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Catatan Bidan/Kader</label>
-                    <textarea name="catatan_bidan" placeholder="Catatan tambahan..." rows="3" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
-            </div>
-            <div style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;">
-                <button type="button" class="btn btn-outline" onclick="closeModal('modalKunjunganSelanjutnya')">Batal</button>
-                <button type="submit" class="btn btn-primary" id="btnKunjunganSelanjutnya"><i class="fas fa-save"></i> Simpan Kunjungan</button>
-            </div>
-        </form>
-    </div>
-</div>
-@endsection
-
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 // ============================================================
 // STATE
@@ -672,32 +507,19 @@ async function loadLansia() {
     tbody.innerHTML = '<tr class="loading-row"><td colspan="18"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
 
     try {
-        const url = `/lansia/api/kunjungan?q=${encodeURIComponent(search)}&limit=200`;
-        console.log('Fetching lansia data from:', url);
-        
+        const url = `/api/lansia/list?q=${encodeURIComponent(search)}&limit=200`;
         const res = await fetch(url, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
-        console.log('Response status:', res.status, res.statusText);
-        
         const data = await res.json();
-        console.log('Response data:', data);
 
-        if (!data.success) { 
-            console.error('API returned success=false:', data.message);
-            toast(data.message || 'Gagal memuat data', 'error'); 
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-exclamation-triangle"></i> ' + (data.message || 'Gagal memuat data') + '</td></tr>';
-            return; 
-        }
+        if (!data.success) { toast(data.message || 'Gagal memuat data', 'error'); return; }
 
         allLansia = data.data;
-        console.log('Total lansia loaded:', allLansia.length);
-        
         const tc = document.getElementById('totalCount');
         if (tc) tc.textContent = allLansia.length;
         currentPage = 1;
         renderTable();
     } catch (e) {
-        console.error('Error loading lansia:', e);
-        tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data: ' + e.message + '</td></tr>';
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="18"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data</td></tr>';
     }
 }
 
@@ -738,7 +560,7 @@ function renderTable() {
     tbody.innerHTML = page.map((l) => `
         <tr id="row-${l.id}">
             <td>${l.id}</td>
-            <td class="nama-lansia-cell"><strong>${l.nama_lansia || '-'}</strong></td>
+            <td class="nama-lansia-cell"><strong>${l.nama_lansia}</strong></td>
             <td><code style="font-size:12px;">${l.nik_lansia || '-'}</code></td>
             <td>${jkBadge(l.jenis_kelamin)}</td>
             <td>${l.tanggal_lahir ? new Date(l.tanggal_lahir).toLocaleDateString('id-ID') : '-'}</td>
@@ -757,9 +579,8 @@ function renderTable() {
             <td>
                 <div class="action-group">
                     <button class="action-btn -view" onclick="openDetail(${l.id})" title="Lihat Detail"><i class="fas fa-eye"></i></button>
-                    <button class="action-btn" style="background:#10B981;color:white;" onclick="openKunjunganSelanjutnya(${l.id})" title="Kunjungan Selanjutnya"><i class="fas fa-notes-medical"></i></button>
                     <button class="action-btn -edit" onclick="openEdit(${l.id})" title="Edit"><i class="fas fa-edit"></i></button>
-                    <button class="action-btn -delete" onclick="confirmHapus(${l.id}, '${(l.nama_lansia || 'Data').replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn -delete" onclick="confirmHapus(${l.id}, '${l.nama_lansia.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
                 </div>
             </td>
         </tr>
@@ -825,7 +646,7 @@ async function openDetail(id) {
     openModal('modalDetail');
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const res  = await fetch(`/api/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
@@ -928,7 +749,7 @@ async function submitEdit(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+        const res  = await fetch(`/api/lansia/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -965,7 +786,7 @@ async function doHapus(id) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+        const res  = await fetch(`/api/lansia/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1000,7 +821,7 @@ async function submitTambah(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch('/lansia/api/kunjungan', {
+        const res  = await fetch('/lansia', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1019,7 +840,7 @@ async function submitTambah(e) {
     } catch (err) {
         toast('Koneksi gagal', 'error');
     } finally {
-        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data Kunjungan';
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Data Lansia';
     }
 }
 
@@ -1040,226 +861,11 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
     loadLansia();
-    loadLansiaSelect(); // Load daftar lansia untuk select
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
     if (tab === 'tambah') switchTab(tab);
 });
-
-// ============================================================
-// LOAD DAFTAR LANSIA UNTUK SELECT
-// ============================================================
-async function loadLansiaSelect() {
-    try {
-        const res = await fetch('/lansia/api/kunjungan?limit=500', {
-            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
-            credentials: 'same-origin'
-        });
-        const result = await res.json();
-        
-        if (!result.success) {
-            console.error('Failed to load lansia list');
-            return;
-        }
-        
-        const select = document.getElementById('selectLansia');
-        if (!select) return;
-        
-        select.innerHTML = '<option value="">-- Pilih Lansia --</option>';
-        result.data.forEach(l => {
-            const option = document.createElement('option');
-            option.value = l.id;
-            option.textContent = `${l.nama_lansia || 'Tanpa Nama'} - ${l.nik_lansia || 'Tanpa NIK'} (${l.usia || '-'})`;
-            option.dataset.nama = l.nama_lansia || '-';
-            option.dataset.nik = l.nik_lansia || '-';
-            option.dataset.usia = l.usia || '-';
-            option.dataset.jk = l.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
-            select.appendChild(option);
-        });
-    } catch (err) {
-        console.error('Error loading lansia select:', err);
-    }
-}
-
-// ============================================================
-// LOAD INFO LANSIA TERPILIH
-// ============================================================
-function loadLansiaInfo(lansiaId) {
-    const select = document.getElementById('selectLansia');
-    const info = document.getElementById('lansiaInfo');
-    
-    if (!lansiaId || !select || !info) {
-        if (info) info.style.display = 'none';
-        return;
-    }
-    
-    const option = select.options[select.selectedIndex];
-    if (!option || !option.dataset.nama) {
-        info.style.display = 'none';
-        return;
-    }
-    
-    document.getElementById('infoNama').textContent = option.dataset.nama;
-    document.getElementById('infoNik').textContent = option.dataset.nik;
-    document.getElementById('infoUsia').textContent = option.dataset.usia;
-    document.getElementById('infoJK').textContent = option.dataset.jk;
-    
-    info.style.display = 'block';
-}
-
-// ============================================================
-// TOGGLE KELUHAN
-// ============================================================
-function toggleKeluhan(checkbox) {
-    const group = document.getElementById('groupKeluhan');
-    if (group) {
-        group.style.display = checkbox.checked ? 'block' : 'none';
-        if (!checkbox.checked) {
-            const textarea = group.querySelector('textarea');
-            if (textarea) textarea.value = '';
-        }
-    }
-}
-
-// ============================================================
-// TOGGLE KELUHAN KUNJUNGAN
-// ============================================================
-function toggleKeluhanKunjungan(checkbox) {
-    const group = document.getElementById('groupKeluhanKunjungan');
-    if (group) {
-        group.style.display = checkbox.checked ? 'block' : 'none';
-        if (!checkbox.checked) {
-            const textarea = group.querySelector('textarea');
-            if (textarea) textarea.value = '';
-        }
-    }
-}
-
-// ============================================================
-// OPEN KUNJUNGAN SELANJUTNYA
-// ============================================================
-async function openKunjunganSelanjutnya(id) {
-    try {
-        const res = await fetch(`/lansia/api/kunjungan/${id}`, {
-            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
-            credentials: 'same-origin'
-        });
-        const data = await res.json();
-        
-        if (!data.success) {
-            toast('Gagal memuat data lansia', 'error');
-            return;
-        }
-        
-        const d = data.data;
-        
-        // Set ID
-        document.getElementById('kunjunganLansiaId').value = id;
-        
-        // Set info lansia (read-only display)
-        document.getElementById('kunjNama').textContent = d.nama_lansia || 'Tanpa Nama';
-        document.getElementById('kunjNik').textContent = d.nik_lansia || '-';
-        document.getElementById('kunjUsia').textContent = d.umur_display || '-';
-        document.getElementById('kunjJK').textContent = d.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
-        
-        // Pre-fill form dengan data lansia saat ini (bisa diupdate)
-        document.getElementById('kunjNamaLengkap').value = d.nama_lansia || '';
-        document.getElementById('kunjNikLansia').value = d.nik_lansia || '';
-        document.getElementById('kunjAlamat').value = d.alamat_domisili || '';
-        document.getElementById('kunjRtRw').value = d.rt_rw || '';
-        document.getElementById('kunjNamaWali').value = d.nama_wali || '';
-        document.getElementById('kunjNikWali').value = d.nik_wali || '';
-        document.getElementById('kunjHpWali').value = d.hp_kontak_wali || '';
-        
-        // Reset form kunjungan
-        const form = document.getElementById('formKunjunganSelanjutnya');
-        const kunjunganFields = ['tanggal_kunjungan', 'berat_badan', 'tinggi_badan', 'tekanan_darah', 
-                                 'gula_darah', 'kolesterol', 'asam_urat', 'catatan_bidan'];
-        kunjunganFields.forEach(field => {
-            const input = form.querySelector(`[name="${field}"]`);
-            if (input && field !== 'tanggal_kunjungan') input.value = '';
-        });
-        
-        // Reset keluhan
-        form.querySelector('[name="ada_keluhan"]').checked = false;
-        form.querySelector('[name="keluhan"]').value = '';
-        document.getElementById('groupKeluhanKunjungan').style.display = 'none';
-        
-        // Reset obat dan vitamin
-        form.querySelectorAll('[name="obat_diberikan[]"] option').forEach(opt => opt.selected = false);
-        form.querySelectorAll('[name="vitamin_diberikan[]"] option').forEach(opt => opt.selected = false);
-        
-        openModal('modalKunjunganSelanjutnya');
-    } catch (err) {
-        console.error('Error loading lansia data:', err);
-        toast('Koneksi gagal', 'error');
-    }
-}
-
-// ============================================================
-// SUBMIT KUNJUNGAN SELANJUTNYA
-// ============================================================
-async function submitKunjunganSelanjutnya(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnKunjunganSelanjutnya');
-    const form = document.getElementById('formKunjunganSelanjutnya');
-    const lansiaId = document.getElementById('kunjunganLansiaId').value;
-    const fd = new FormData(form);
-    const payload = {};
-    
-    fd.forEach((v, k) => {
-        if (k.endsWith('[]')) {
-            if (!payload[k]) payload[k] = [];
-            if (v) payload[k].push(v);
-        } else {
-            if (v) payload[k] = v;
-        }
-    });
-    
-    // Convert array keys
-    if (payload['obat_diberikan[]']) {
-        payload['obat_diberikan'] = payload['obat_diberikan[]'];
-        delete payload['obat_diberikan[]'];
-    }
-    if (payload['vitamin_diberikan[]']) {
-        payload['vitamin_diberikan'] = payload['vitamin_diberikan[]'];
-        delete payload['vitamin_diberikan[]'];
-    }
-    
-    // Convert ada_keluhan to boolean
-    payload['ada_keluhan'] = payload['ada_keluhan'] === '1';
-    
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-    
-    try {
-        const res = await fetch(`/lansia/api/kunjungan-selanjutnya/${lansiaId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': CSRF_TOKEN,
-                'Accept': 'application/json'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify(payload),
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            toast(data.message, 'success');
-            form.reset();
-            closeModal('modalKunjunganSelanjutnya');
-            loadLansia(); // Reload table
-        } else {
-            toast(data.message || 'Gagal menyimpan', 'error');
-        }
-    } catch (err) {
-        console.error('Error submitting kunjungan:', err);
-        toast('Koneksi gagal', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Kunjungan';
-    }
-}
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/index.blade.php ENDPATH**/ ?>

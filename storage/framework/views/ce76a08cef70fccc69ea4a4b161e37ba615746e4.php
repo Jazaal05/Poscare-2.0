@@ -1,7 +1,6 @@
-@extends('layouts.lansia')
-@section('title', 'Laporan Lansia')
+<?php $__env->startSection('title', 'Laporan Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body { background:linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
     .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
@@ -52,9 +51,9 @@
     .loading-spinner { font-size:48px; color:#10B981; margin-bottom:16px; animation:spin 1s linear infinite; }
     @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-box">
@@ -69,7 +68,7 @@
     <p class="page-subtitle"><i class="fas fa-file-excel" style="color:#10B981;margin-right:6px;"></i> Export dan Laporan Data Lansia</p>
 </div>
 
-{{-- STATISTIK RINGKAS --}}
+
 <div class="card">
     <h3 style="font-size:18px;font-weight:700;color:#065F46;margin-bottom:20px;"><i class="fas fa-chart-bar"></i> Statistik Data Lansia</h3>
     <div class="stats-grid">
@@ -92,7 +91,7 @@
     </div>
 </div>
 
-{{-- EXPORT EXCEL --}}
+
 <div class="card">
     <div class="export-card">
         <div class="export-title">
@@ -108,11 +107,11 @@
             <div class="filter-grid">
                 <div class="form-group">
                     <label>Tanggal Mulai</label>
-                    <input type="date" id="filterTanggalMulai" max="{{ date('Y-m-d') }}">
+                    <input type="date" id="filterTanggalMulai" max="<?php echo e(date('Y-m-d')); ?>">
                 </div>
                 <div class="form-group">
                     <label>Tanggal Akhir</label>
-                    <input type="date" id="filterTanggalAkhir" max="{{ date('Y-m-d') }}">
+                    <input type="date" id="filterTanggalAkhir" max="<?php echo e(date('Y-m-d')); ?>">
                 </div>
                 <div class="form-group">
                     <label>Jenis Kelamin</label>
@@ -156,9 +155,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 function toast(msg, type = 'success') {
     const el = document.createElement('div');
@@ -289,4 +288,6 @@ function resetFilter() {
 
 document.addEventListener('DOMContentLoaded', loadStats);
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/laporan/index.blade.php ENDPATH**/ ?>

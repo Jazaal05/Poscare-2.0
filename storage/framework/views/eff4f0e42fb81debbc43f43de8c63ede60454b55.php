@@ -1,7 +1,6 @@
-@extends('layouts.lansia')
-@section('title', 'Jadwal Lansia')
+<?php $__env->startSection('title', 'Jadwal Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body { background:linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
     .container { max-width:1340px; margin:0 auto; padding:16px 20px; }
@@ -53,9 +52,9 @@
     .jadwal-title { font-weight:700; color:#065F46; margin-bottom:4px; }
     .jadwal-meta { font-size:12px; color:#64748B; display:flex; gap:12px; flex-wrap:wrap; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
 <div class="page-header">
@@ -93,7 +92,7 @@
     </div>
 </div>
 
-{{-- MODAL TAMBAH/EDIT --}}
+
 <div class="modal-overlay" id="modalJadwal">
     <div class="modal-box">
         <div class="modal-header">
@@ -134,7 +133,7 @@
     </div>
 </div>
 
-{{-- MODAL DETAIL --}}
+
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box">
         <div class="modal-header">
@@ -149,9 +148,9 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 let currentDate = new Date();
 let allJadwal = [];
@@ -402,4 +401,6 @@ async function hapusFromDetail() {
 
 document.addEventListener('DOMContentLoaded', loadJadwal);
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/jadwal/index.blade.php ENDPATH**/ ?>

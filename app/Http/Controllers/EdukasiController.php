@@ -44,6 +44,9 @@ class EdukasiController extends Controller
             'layanan'   => 'nullable|in:balita,lansia',
         ]);
 
+        // Validasi platform dan URL harus sesuai
+        $this->validatePlatformUrl($data['platform'], $data['url']);
+
         // Auto-fetch info jika title atau thumbnail kosong
         if (empty($data['title']) || empty($data['thumbnail'])) {
             $fetched = $this->fetchContentInfo($data['platform'], $data['url']);
@@ -105,8 +108,54 @@ class EdukasiController extends Controller
             'category'  => 'sometimes|in:gizi,tumbuh-kembang,kesehatan,imunisasi,tips,kesehatan-lansia,pola-hidup-sehat,pencegahan-penyakit,gizi-lansia,tips-lansia',
             'thumbnail' => 'nullable|url',
         ]);
+
+        // Validasi platform dan URL harus sesuai jika keduanya ada
+        if (isset($data['platform']) && isset($data['url'])) {
+            $this->validatePlatformUrl($data['platform'], $data['url']);
+        } elseif (isset($data['platform'])) {
+            $this->validatePlatformUrl($data['platform'], $item->url);
+        } elseif (isset($data['url'])) {
+            $this->validatePlatformUrl($item->platform, $data['url']);
+        }
+
         $item->update($data);
         return response()->json(['success' => true, 'message' => 'Konten berhasil diperbarui!']);
+    }
+
+    // =============================================
+    // PRIVATE: Validate platform and URL match
+    // =============================================
+    private function validatePlatformUrl(string $platform, string $url): void
+    {
+        $patterns = [
+            'youtube'   => '/(?:youtube\.com|youtu\.be)/i',
+            'tiktok'    => '/tiktok\.com/i',
+            'facebook'  => '/facebook\.com|fb\.watch/i',
+            'instagram' => '/instagram\.com/i',
+        ];
+
+        // Artikel tidak perlu validasi khusus
+        if ($platform === 'article') {
+            return;
+        }
+
+        // Cek apakah URL sesuai dengan platform
+        if (isset($patterns[$platform]) && !preg_match($patterns[$platform], $url)) {
+            $platformNames = [
+                'youtube'   => 'YouTube',
+                'tiktok'    => 'TikTok',
+                'facebook'  => 'Facebook',
+                'instagram' => 'Instagram',
+            ];
+            
+            throw new \Illuminate\Validation\ValidationException(
+                validator([], []),
+                response()->json([
+                    'success' => false,
+                    'message' => "Platform {$platformNames[$platform]} tidak sesuai dengan URL yang dimasukkan. Pastikan URL berasal dari {$platformNames[$platform]}.",
+                ], 422)
+            );
+        }
     }
 
     // =============================================

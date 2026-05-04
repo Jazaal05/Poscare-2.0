@@ -1,9 +1,10 @@
-@extends('layouts.lansia')
-@section('title', 'Edukasi Lansia')
 
-@section('styles')
+
+<?php $__env->startSection('title', 'Edukasi'); ?>
+
+<?php $__env->startSection('styles'); ?>
 <style>
-    body { background: linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
+    body { background: linear-gradient(135deg,#E8F4FF 0%,#D4E9FF 50%,#C5E2FF 100%) !important; }
 
     /* ── Tab Nav ── */
     .tab-nav-top { display:flex; gap:0; margin-bottom:28px; background:#fff; border-radius:12px;
@@ -11,8 +12,8 @@
     .tab-nav-top .tab-btn { flex:1; padding:14px 20px; border:none; background:none; font-size:14px;
                             font-weight:600; color:#64748B; cursor:pointer; transition:all 0.2s;
                             display:inline-flex; align-items:center; justify-content:center; gap:8px; }
-    .tab-nav-top .tab-btn.active { background:#10B981; color:#fff; }
-    .tab-nav-top .tab-btn:hover:not(.active) { background:#F1F5F9; color:#10B981; }
+    .tab-nav-top .tab-btn.active { background:#246BCE; color:#fff; }
+    .tab-nav-top .tab-btn:hover:not(.active) { background:#F1F5F9; color:#246BCE; }
     .tab-content { display:none; } .tab-content.active { display:block; }
 
     /* ── Konten Edukasi Grid ── */
@@ -29,38 +30,37 @@
     .pb-tiktok    { background:#000; color:#fff; }
     .pb-facebook  { background:#1877F2; color:#fff; }
     .pb-instagram { background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color:#fff; }
-    .pb-article   { background:#10B981; color:#fff; }
+    .pb-article   { background:#246BCE; color:#fff; }
 
     .edu-card-body { padding:14px 16px; flex:1; display:flex; flex-direction:column; gap:8px; }
     .edu-cat-label { font-size:11px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; }
-    .edu-card-title { font-size:14px; font-weight:700; color:#065F46; line-height:1.4;
+    .edu-card-title { font-size:14px; font-weight:700; color:#1E3A5F; line-height:1.4;
                       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .edu-card-date { font-size:12px; color:#94A3B8; display:flex; align-items:center; gap:5px; margin-top:auto; }
     .btn-open { display:flex; align-items:center; justify-content:center; gap:7px; padding:9px 14px;
-                background:#10B981; color:#fff; border:none; border-radius:8px; font-size:13px;
+                background:#246BCE; color:#fff; border:none; border-radius:8px; font-size:13px;
                 font-weight:600; cursor:pointer; text-decoration:none; transition:all 0.2s; margin-top:10px; }
-    .btn-open:hover { background:#059669; transform:translateY(-1px); }
+    .btn-open:hover { background:#1D58A8; transform:translateY(-1px); }
 
     /* ── Kelola Konten ── */
     .kelola-card { background:#fff; border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(16,24,40,0.06); margin-bottom:24px; }
-    .kelola-title { font-size:1.15rem; font-weight:700; color:#065F46; margin-bottom:20px;
+    .kelola-title { font-size:1.15rem; font-weight:700; color:#1E3A5F; margin-bottom:20px;
                     display:flex; align-items:center; gap:10px; }
-    .kelola-title i { color:#10B981; }
+    .kelola-title i { color:#246BCE; }
 
     /* Form tambah konten */
     .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
     .form-group label { font-size:13px; font-weight:600; color:#374151; }
     .form-group input, .form-group select, .form-group textarea {
-        padding:10px 14px; border:2px solid #E5E7EB; border-radius:8px; font-size:14px;
+        padding:10px 14px; border:1px solid #E2E8F0; border-radius:8px; font-size:14px;
         transition:all 0.2s; width:100%; box-sizing:border-box; background:#fff; }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        outline:none; border-color:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,0.1); }
+        outline:none; border-color:#246BCE; box-shadow:0 0 0 3px rgba(36,107,206,0.1); }
     .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     @media(max-width:768px){ .form-grid{ grid-template-columns:1fr; } }
-    .platform-hint { font-size:12px; color:#64748B; margin-top:4px; display:flex; align-items:start; gap:5px; line-height:1.5; }
-    .platform-hint.warn { color:#F59E0B; background:#FEF3C7; padding:8px 12px; border-radius:6px; border:1px solid #FCD34D; }
-    .platform-hint.info { color:#10B981; }
-    .platform-hint.error { color:#EF4444; background:#FEE2E2; padding:8px 12px; border-radius:6px; border:1px solid #FCA5A5; }
+    .platform-hint { font-size:12px; color:#64748B; margin-top:4px; display:flex; align-items:center; gap:5px; }
+    .platform-hint.warn { color:#F59E0B; }
+    .platform-hint.info { color:#246BCE; }
 
     /* Daftar konten di kelola */
     .konten-list-item { display:flex; align-items:center; gap:14px; padding:14px 0;
@@ -72,10 +72,10 @@
                                    display:flex; align-items:center; justify-content:center;
                                    font-size:20px; flex-shrink:0; }
     .konten-info { flex:1; min-width:0; }
-    .konten-title { font-size:14px; font-weight:600; color:#065F46;
+    .konten-title { font-size:14px; font-weight:600; color:#1E3A5F;
                     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .konten-meta { font-size:12px; color:#64748B; margin-top:2px; }
-    .konten-url { font-size:11px; color:#10B981; white-space:nowrap; overflow:hidden;
+    .konten-url { font-size:11px; color:#246BCE; white-space:nowrap; overflow:hidden;
                   text-overflow:ellipsis; display:block; max-width:300px; }
     .konten-actions { display:flex; gap:6px; flex-shrink:0; }
 
@@ -83,18 +83,18 @@
     .btn { padding:8px 16px; border:none; border-radius:8px; font-size:13px; font-weight:600;
            cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:6px; }
     .btn:hover { transform:translateY(-1px); }
-    .btn-primary { background:#10B981; color:#fff; } .btn-primary:hover { background:#059669; }
-    .btn-success { background:#059669; color:#fff; } .btn-success:hover { background:#047857; }
+    .btn-primary { background:#246BCE; color:#fff; } .btn-primary:hover { background:#1D58A8; }
+    .btn-success { background:#10B981; color:#fff; } .btn-success:hover { background:#059669; }
     .btn-danger  { background:#EF4444; color:#fff; } .btn-danger:hover  { background:#DC2626; }
-    .btn-outline { background:transparent; border:2px solid #10B981; color:#10B981; }
-    .btn-outline:hover { background:#10B981; color:#fff; }
+    .btn-outline { background:transparent; border:2px solid #246BCE; color:#246BCE; }
+    .btn-outline:hover { background:#246BCE; color:#fff; }
     .btn-sm { padding:5px 10px; font-size:12px; }
 
     /* Filter */
     .filter-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:20px; }
     .filter-group { display:flex; flex-direction:column; gap:5px; }
     .filter-group label { font-size:12px; font-weight:600; color:#374151; }
-    .filter-group select { padding:8px 12px; border:2px solid #E5E7EB; border-radius:8px; font-size:13px; }
+    .filter-group select { padding:8px 12px; border:1px solid #E2E8F0; border-radius:8px; font-size:13px; }
 
     /* Toast */
     #toast { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
@@ -108,24 +108,24 @@
     .empty-state i { font-size:3rem; margin-bottom:12px; display:block; }
     .loading-center { text-align:center; padding:40px; color:#9CA3AF; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
-{{-- Tab Nav --}}
+
 <div class="tab-nav-top">
     <button class="tab-btn active" id="tabBtnKonten" onclick="switchTab('konten')">
         <i class="fas fa-play-circle"></i> Konten Edukasi
     </button>
-    @if(Auth::user()->role === 'admin')
+    <?php if(Auth::user()->role === 'admin'): ?>
     <button class="tab-btn" id="tabBtnKelola" onclick="switchTab('kelola')">
         <i class="fas fa-cog"></i> Kelola Konten
     </button>
-    @endif
+    <?php endif; ?>
 </div>
 
-{{-- ===== TAB 1: KONTEN EDUKASI ===== --}}
+
 <div id="tab-konten" class="tab-content active">
     <div class="filter-row">
         <div class="filter-group">
@@ -143,11 +143,11 @@
             <label>Kategori</label>
             <select id="filterCategory" onchange="loadEdukasi()">
                 <option value="">Semua Kategori</option>
-                <option value="kesehatan-lansia">Kesehatan Lansia</option>
-                <option value="pola-hidup-sehat">Pola Hidup Sehat</option>
-                <option value="pencegahan-penyakit">Pencegahan Penyakit</option>
-                <option value="gizi-lansia">Gizi & Nutrisi Lansia</option>
-                <option value="tips-lansia">Tips Lansia</option>
+                <option value="gizi">Gizi &amp; Nutrisi</option>
+                <option value="tumbuh-kembang">Tumbuh Kembang</option>
+                <option value="kesehatan">Kesehatan</option>
+                <option value="imunisasi">Imunisasi</option>
+                <option value="tips">Tips Parenting</option>
             </select>
         </div>
     </div>
@@ -158,13 +158,13 @@
     </div>
 </div>
 
-{{-- ===== TAB 2: KELOLA KONTEN (admin only) ===== --}}
-@if(Auth::user()->role === 'admin')
+
+<?php if(Auth::user()->role === 'admin'): ?>
 <div id="tab-kelola" class="tab-content">
 
-    {{-- Form Tambah Konten --}}
+    
     <div class="kelola-card">
-        <h2 class="kelola-title"><i class="fas fa-plus-circle"></i> Tambah Konten Edukasi Lansia</h2>
+        <h2 class="kelola-title"><i class="fas fa-plus-circle"></i> Tambah Konten Edukasi</h2>
         <form id="formEdukasi" onsubmit="submitEdukasi(event)">
             <div class="form-grid">
                 <div class="form-group">
@@ -182,11 +182,11 @@
                     <label>Kategori <span style="color:red">*</span></label>
                     <select id="category" required>
                         <option value="">Pilih Kategori...</option>
-                        <option value="kesehatan-lansia">Kesehatan Lansia</option>
-                        <option value="pola-hidup-sehat">Pola Hidup Sehat</option>
-                        <option value="pencegahan-penyakit">Pencegahan Penyakit</option>
-                        <option value="gizi-lansia">Gizi & Nutrisi Lansia</option>
-                        <option value="tips-lansia">Tips Lansia</option>
+                        <option value="gizi">Gizi &amp; Nutrisi</option>
+                        <option value="tumbuh-kembang">Tumbuh Kembang</option>
+                        <option value="kesehatan">Kesehatan</option>
+                        <option value="imunisasi">Imunisasi</option>
+                        <option value="tips">Tips Parenting</option>
                     </select>
                 </div>
             </div>
@@ -224,7 +224,7 @@
         </form>
     </div>
 
-    {{-- Daftar Konten yang Dibagikan --}}
+    
     <div class="kelola-card">
         <h2 class="kelola-title"><i class="fas fa-list"></i> Konten yang Dibagikan</h2>
         <div id="kontenList">
@@ -232,10 +232,10 @@
         </div>
     </div>
 </div>
-@endif
-@endsection
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 // ── Helpers ────────────────────────────────────────────────
 function toast(msg, type = 'success') {
@@ -261,16 +261,16 @@ function switchTab(tab) {
 const PLATFORM_CONFIG = {
     youtube:   { icon:'fab fa-youtube',   badgeClass:'pb-youtube',   label:'YOUTUBE',   btnText:'Buka di YouTube',   placeholder:'https://www.youtube.com/watch?v=...' },
     tiktok:    { icon:'fab fa-tiktok',    badgeClass:'pb-tiktok',    label:'TIKTOK',    btnText:'Buka di TikTok',    placeholder:'https://www.tiktok.com/@user/video/...' },
-    facebook:  { icon:'fab fa-facebook',  badgeClass:'pb-facebook',  label:'FACEBOOK',  btnText:'Buka di Facebook',  placeholder:'https://www.facebook.com/watch?v=...' },
-    instagram: { icon:'fab fa-instagram', badgeClass:'pb-instagram', label:'INSTAGRAM', btnText:'Buka di Instagram', placeholder:'https://www.instagram.com/p/...' },
+    facebook:  { icon:'fab fa-facebook',  badgeClass:'pb-facebook',  label:'FACEBOOK',  btnText:'Buka di Facebook',  placeholder:'https://www.facebook.com/watch?v=... (hanya konten publik)' },
+    instagram: { icon:'fab fa-instagram', badgeClass:'pb-instagram', label:'INSTAGRAM', btnText:'Buka di Instagram', placeholder:'https://www.instagram.com/p/... (hanya konten publik)' },
     article:   { icon:'fas fa-newspaper', badgeClass:'pb-article',   label:'ARTIKEL',   btnText:'Baca Artikel',      placeholder:'https://...' },
 };
 
 const PLATFORM_HINTS = {
     youtube:   { cls:'info', text:'<i class="fas fa-info-circle"></i> Format: youtube.com/watch?v=... | youtu.be/... | youtube.com/shorts/...' },
     tiktok:    { cls:'info', text:'<i class="fas fa-info-circle"></i> Format: tiktok.com/@username/video/... (pastikan video publik)' },
-    facebook:  { cls:'warn', text:'<i class="fas fa-exclamation-triangle"></i> <strong>PENTING:</strong> Hanya konten Facebook <strong>PUBLIK</strong> yang dapat diakses. Konten privat tidak akan bisa dibuka oleh pengguna. Pastikan konten yang Anda bagikan bersifat publik.' },
-    instagram: { cls:'warn', text:'<i class="fas fa-exclamation-triangle"></i> <strong>PENTING:</strong> Hanya konten Instagram <strong>PUBLIK</strong> yang dapat diakses. Akun privat tidak akan bisa dibuka oleh pengguna. Pastikan konten yang Anda bagikan bersifat publik.' },
+    facebook:  { cls:'warn', text:'<i class="fas fa-exclamation-triangle"></i> HANYA konten Facebook publik yang dapat diakses. Konten privat tidak akan bisa dibuka.' },
+    instagram: { cls:'warn', text:'<i class="fas fa-exclamation-triangle"></i> HANYA konten Instagram publik yang dapat diakses. Akun privat tidak akan bisa dibuka.' },
     article:   { cls:'info', text:'<i class="fas fa-info-circle"></i> Masukkan URL artikel dari website manapun' },
 };
 
@@ -303,11 +303,8 @@ function formatDate(d) {
 function buildEduCard(item) {
     const cfg = PLATFORM_CONFIG[item.platform] || PLATFORM_CONFIG.article;
     const catLabel = {
-        'kesehatan-lansia':'KESEHATAN LANSIA',
-        'pola-hidup-sehat':'POLA HIDUP SEHAT',
-        'pencegahan-penyakit':'PENCEGAHAN PENYAKIT',
-        'gizi-lansia':'GIZI & NUTRISI LANSIA',
-        'tips-lansia':'TIPS LANSIA'
+        'gizi':'GIZI & NUTRISI', 'tumbuh-kembang':'TUMBUH KEMBANG',
+        'kesehatan':'KESEHATAN', 'imunisasi':'IMUNISASI', 'tips':'TIPS PARENTING'
     }[item.category] || (item.category || '').toUpperCase();
 
     const thumbHtml = item.thumbnail
@@ -345,7 +342,7 @@ async function loadEdukasi() {
     if (category) params.append('category', category);
 
     try {
-        const res  = await fetch(`/lansia/api/edukasi${params.toString() ? '?' + params.toString() : ''}`, {
+        const res  = await fetch(`<?php echo e(route('edukasi.list')); ?>${params.toString() ? '?' + params.toString() : ''}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -353,7 +350,7 @@ async function loadEdukasi() {
         const list = data.data || [];
 
         if (!list.length) {
-            grid.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>Belum ada konten edukasi lansia</p></div>';
+            grid.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>Belum ada konten edukasi</p></div>';
             return;
         }
         grid.innerHTML = list.map(buildEduCard).join('');
@@ -363,14 +360,14 @@ async function loadEdukasi() {
     }
 }
 
-@if(Auth::user()->role === 'admin')
+<?php if(Auth::user()->role === 'admin'): ?>
 // ── Load daftar konten (tab kelola) ───────────────────────
 async function loadKontenList() {
     const el = document.getElementById('kontenList');
     el.innerHTML = '<div class="loading-center"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>';
 
     try {
-        const res  = await fetch('/lansia/api/edukasi', {
+        const res  = await fetch('<?php echo e(route("edukasi.list")); ?>', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -428,7 +425,7 @@ async function fetchInfo() {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
     try {
-        const res  = await fetch('/lansia/api/edukasi/fetch-info', {
+        const res  = await fetch('<?php echo e(route("edukasi.fetchInfo")); ?>', {
             method: 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -440,12 +437,9 @@ async function fetchInfo() {
             if (data.data.thumbnail) document.getElementById('thumbnail').value = data.data.thumbnail;
             toast('Judul & thumbnail berhasil diambil!', 'success');
         } else {
-            toast(data.message || 'Tidak dapat auto-fetch. Isi judul secara manual.', 'warning');
+            toast('Tidak dapat auto-fetch. Isi judul secara manual.', 'warning');
         }
-    } catch (e) { 
-        console.error(e);
-        toast('Gagal fetch info', 'error'); 
-    }
+    } catch (e) { toast('Gagal fetch info', 'error'); }
     finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-magic"></i> Auto-fetch'; }
 }
 
@@ -464,7 +458,7 @@ async function submitEdukasi(e) {
     };
 
     try {
-        const res  = await fetch('/lansia/api/edukasi', {
+        const res  = await fetch('<?php echo e(route("edukasi.store")); ?>', {
             method: 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -486,7 +480,7 @@ async function submitEdukasi(e) {
 // ── Edit konten ────────────────────────────────────────────
 async function editKonten(id) {
     try {
-        const res  = await fetch(`/lansia/api/edukasi/${id}`, {
+        const res  = await fetch(`<?php echo e(url('/api/edukasi')); ?>/${id}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -506,7 +500,7 @@ async function editKonten(id) {
             e.preventDefault();
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
             try {
-                const r = await fetch(`/lansia/api/edukasi/${id}`, {
+                const r = await fetch(`<?php echo e(url('/api/edukasi')); ?>/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
                     credentials: 'same-origin',
@@ -536,7 +530,7 @@ async function editKonten(id) {
 async function hapusKonten(id, nama) {
     if (!confirm(`Hapus konten "${nama}"?`)) return;
     try {
-        const res  = await fetch(`/lansia/api/edukasi/${id}`, {
+        const res  = await fetch(`<?php echo e(url('/api/edukasi')); ?>/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
@@ -557,7 +551,7 @@ function resetForm() {
     btn.innerHTML = '<i class="fas fa-share-alt"></i> Bagikan Konten';
     btn.onclick = null;
 }
-@endif
+<?php endif; ?>
 
 document.addEventListener('DOMContentLoaded', function() {
     loadEdukasi();
@@ -565,4 +559,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (params.get('action') === 'tambah') switchTab('kelola');
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/edukasi/index.blade.php ENDPATH**/ ?>

@@ -54,10 +54,10 @@ class LoginController extends Controller
         // ROLE CHECK - UNCOMMENT UNTUK PRODUCTION
         // ═══════════════════════════════════════════════════════════════
         // Saat production, uncomment code di bawah untuk restrict orangtua
-        // Website hanya untuk Kader (Admin)
+        // Website hanya untuk Kader/Admin (admin = kader, kader = admin)
         
         /*
-        if ($user->role !== 'kader') {
+        if (!in_array($user->role, ['admin', 'kader'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Akses ditolak. Website ini hanya untuk Kader/Admin. Orangtua silakan gunakan aplikasi mobile.',

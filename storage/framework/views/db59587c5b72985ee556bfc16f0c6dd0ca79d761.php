@@ -1,7 +1,6 @@
-@extends('layouts.lansia')
-@section('title', 'Edukasi Lansia')
+<?php $__env->startSection('title', 'Edukasi Lansia'); ?>
 
-@section('styles')
+<?php $__env->startSection('styles'); ?>
 <style>
     body { background: linear-gradient(135deg,#D1FAE5 0%,#A7F3D0 50%,#6EE7B7 100%) !important; }
 
@@ -108,24 +107,24 @@
     .empty-state i { font-size:3rem; margin-bottom:12px; display:block; }
     .loading-center { text-align:center; padding:40px; color:#9CA3AF; }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div id="toast"></div>
 
-{{-- Tab Nav --}}
+
 <div class="tab-nav-top">
     <button class="tab-btn active" id="tabBtnKonten" onclick="switchTab('konten')">
         <i class="fas fa-play-circle"></i> Konten Edukasi
     </button>
-    @if(Auth::user()->role === 'admin')
+    <?php if(Auth::user()->role === 'admin'): ?>
     <button class="tab-btn" id="tabBtnKelola" onclick="switchTab('kelola')">
         <i class="fas fa-cog"></i> Kelola Konten
     </button>
-    @endif
+    <?php endif; ?>
 </div>
 
-{{-- ===== TAB 1: KONTEN EDUKASI ===== --}}
+
 <div id="tab-konten" class="tab-content active">
     <div class="filter-row">
         <div class="filter-group">
@@ -158,11 +157,11 @@
     </div>
 </div>
 
-{{-- ===== TAB 2: KELOLA KONTEN (admin only) ===== --}}
-@if(Auth::user()->role === 'admin')
+
+<?php if(Auth::user()->role === 'admin'): ?>
 <div id="tab-kelola" class="tab-content">
 
-    {{-- Form Tambah Konten --}}
+    
     <div class="kelola-card">
         <h2 class="kelola-title"><i class="fas fa-plus-circle"></i> Tambah Konten Edukasi Lansia</h2>
         <form id="formEdukasi" onsubmit="submitEdukasi(event)">
@@ -224,7 +223,7 @@
         </form>
     </div>
 
-    {{-- Daftar Konten yang Dibagikan --}}
+    
     <div class="kelola-card">
         <h2 class="kelola-title"><i class="fas fa-list"></i> Konten yang Dibagikan</h2>
         <div id="kontenList">
@@ -232,10 +231,10 @@
         </div>
     </div>
 </div>
-@endif
-@endsection
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
 
-@section('scripts')
+<?php $__env->startSection('scripts'); ?>
 <script>
 // ── Helpers ────────────────────────────────────────────────
 function toast(msg, type = 'success') {
@@ -363,7 +362,7 @@ async function loadEdukasi() {
     }
 }
 
-@if(Auth::user()->role === 'admin')
+<?php if(Auth::user()->role === 'admin'): ?>
 // ── Load daftar konten (tab kelola) ───────────────────────
 async function loadKontenList() {
     const el = document.getElementById('kontenList');
@@ -557,7 +556,7 @@ function resetForm() {
     btn.innerHTML = '<i class="fas fa-share-alt"></i> Bagikan Konten';
     btn.onclick = null;
 }
-@endif
+<?php endif; ?>
 
 document.addEventListener('DOMContentLoaded', function() {
     loadEdukasi();
@@ -565,4 +564,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (params.get('action') === 'tambah') switchTab('kelola');
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.lansia', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\asus\VSCode\poscare-laravel\resources\views/lansia/edukasi/index.blade.php ENDPATH**/ ?>
