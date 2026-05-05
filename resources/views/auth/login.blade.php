@@ -57,6 +57,8 @@
 
         <form class="login-form" id="loginForm">
             @csrf
+            {{-- Hidden field untuk menyimpan redirect target --}}
+            <input type="hidden" id="redirectTo" value="{{ $intended ?? '' }}">
             <div class="input-group">
                 <i class="fas fa-envelope input-icon"></i>
                 <input type="email" id="email" name="email" placeholder="Email" required />
@@ -288,6 +290,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     try {
         // POST ke route Laravel: POST /login
+        const redirectTo = document.getElementById('redirectTo')?.value || '';
+
         const response = await fetch('{{ route("auth.login") }}', {
             method: 'POST',
             headers: {
@@ -296,7 +300,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
                 'Accept': 'application/json',
             },
             credentials: 'same-origin',
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, redirect_to: redirectTo }),
         });
 
         const data = await response.json();

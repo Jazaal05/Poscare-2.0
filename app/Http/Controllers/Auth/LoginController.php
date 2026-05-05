@@ -15,14 +15,26 @@ class LoginController extends Controller
      * Tampilkan halaman login
      * Menggantikan: index.php
      */
-    public function showLogin()
+    public function showLogin(Request $request)
     {
-        // Kalau sudah login, langsung redirect ke dashboard
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->intended(route('dashboard'));
         }
 
-        return view('auth.login');
+        // Simpan intended URL ke session berdasarkan query param
+        $redirectTarget = match($request->query('redirect')) {
+            'lansia' => route('lansia.dashboard'),
+            default  => null,
+        };
+
+        if ($redirectTarget) {
+            $request->session()->put('url.intended', $redirectTarget);
+        }
+
+        // Kirim intended ke view agar bisa disimpan di hidden field form
+        $intended = $request->session()->get('url.intended', route('dashboard'));
+
+        return view('auth.login', compact('intended'));
     }
 
     /**
@@ -68,13 +80,19 @@ class LoginController extends Controller
         // Login berhasil - buat session
         Auth::login($user, $remember);
 
+        // Ambil intended URL SEBELUM regenerate (agar tidak hilang)
+        // Prioritas: 1) dari request body (dikirim JS), 2) dari session, 3) default dashboard
+        $intended = $request->input('redirect_to')
+            ?: $request->session()->get('url.intended')
+            ?: route('dashboard');
+
         // Regenerate session untuk keamanan (anti session fixation)
         $request->session()->regenerate();
 
         return response()->json([
             'success'  => true,
             'message'  => 'Login berhasil',
-            'redirect' => route('dashboard'),
+            'redirect' => $intended,
             'data'     => [
                 'id'        => $user->id,
                 'username'  => $user->username,

@@ -120,7 +120,7 @@
         </a>
 
         {{-- Layanan Lansia --}}
-        <a href="{{ auth()->check() ? route('lansia.dashboard') : route('login') }}" class="layanan-card lansia">
+        <a href="{{ auth()->check() ? route('lansia.dashboard') : route('login', ['redirect' => 'lansia']) }}" class="layanan-card lansia">
             <div class="layanan-icon"><i class="fas fa-user-friends"></i></div>
             <div class="layanan-name">Posyandu Lansia</div>
             <div class="layanan-desc">
