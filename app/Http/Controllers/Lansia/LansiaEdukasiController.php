@@ -119,9 +119,24 @@ class LansiaEdukasiController extends Controller
             'thumbnail' => 'nullable|url',
         ]);
 
+        // Tentukan platform dan URL final (gabungan data baru + data lama)
+        $platform = isset($data['platform'])
+            ? (self::PLATFORM_MAP[$data['platform']] ?? ucfirst(strtolower($data['platform'])))
+            : $item->platform;
+
+        $url = $data['url'] ?? $item->tautan;
+
+        // Validasi URL harus sesuai platform — sama ketatnya dengan store()
+        if (!EdukasiLansia::validateUrlForPlatform($url, $platform)) {
+            return response()->json([
+                'success' => false,
+                'message' => EdukasiLansia::getValidationMessage($platform),
+            ], 422);
+        }
+
         $update = [];
-        if (isset($data['platform'])) $update['platform']  = self::PLATFORM_MAP[$data['platform']] ?? ucfirst(strtolower($data['platform']));
-        if (isset($data['url']))      $update['tautan']     = $data['url'];
+        if (isset($data['platform'])) $update['platform']  = $platform;
+        if (isset($data['url']))      $update['tautan']     = $url;
         if (isset($data['title']))    $update['judul']      = $data['title'];
         if (isset($data['category'])) $update['kategori']   = $this->normalizeKategori($data['category']);
         if (array_key_exists('thumbnail', $data)) $update['thumbnail'] = $data['thumbnail'];
