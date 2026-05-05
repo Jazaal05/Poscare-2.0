@@ -16,12 +16,6 @@
         .navbar-inner { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
         .navbar-logo { display:flex; align-items:center; gap:10px; font-size:1.4rem; font-weight:700; color:#246BCE; text-decoration:none; }
         .navbar-logo img { width:36px; height:36px; object-fit:contain; }
-        .navbar-actions { display:flex; gap:12px; }
-        .btn-nav { padding:9px 22px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:7px; }
-        .btn-nav-outline { border:2px solid #246BCE; color:#246BCE; background:transparent; }
-        .btn-nav-outline:hover { background:#246BCE; color:#fff; }
-        .btn-nav-solid { background:#246BCE; color:#fff; border:2px solid #246BCE; }
-        .btn-nav-solid:hover { background:#1D58A8; }
 
         /* Hero */
         .hero { max-width:1200px; margin:0 auto; padding:80px 2rem 60px; text-align:center; }
@@ -76,17 +70,6 @@
             <img src="{{ asset('images/poscare-logo.png') }}" alt="PosCare">
             PosCare
         </a>
-        <div class="navbar-actions">
-            @auth
-                <a href="{{ route('dashboard') }}" class="btn-nav btn-nav-outline">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-            @else
-                <a href="{{ route('login') }}" class="btn-nav btn-nav-solid">
-                    <i class="fas fa-sign-in-alt"></i> Masuk
-                </a>
-            @endauth
-        </div>
     </div>
 </nav>
 
