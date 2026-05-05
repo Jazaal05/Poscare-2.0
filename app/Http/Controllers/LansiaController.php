@@ -139,7 +139,7 @@ class LansiaController extends Controller
                     'nama_lansia' => $lansia->nama_lengkap,
                     'nik_lansia' => $lansia->nik_lansia,
                     'jenis_kelamin' => $lansia->jenis_kelamin,
-                    'tanggal_lahir' => $lansia->tgl_lahir?->format('Y-m-d'),
+                    'tanggal_lahir' => $lansia->tgl_lahir ? \Carbon\Carbon::parse($lansia->tgl_lahir)->format('Y-m-d') : null,
                     'tempat_lahir' => $lansia->tempat_lahir,
                     'umur' => $lansia->umur,
                     'umur_display' => $lansia->umur_display,
