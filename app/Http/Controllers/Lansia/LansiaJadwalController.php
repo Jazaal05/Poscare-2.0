@@ -21,11 +21,12 @@ class LansiaJadwalController extends Controller
         $month = $request->get('month', date('m'));
 
         $jadwal = Jadwal::where('layanan', 'lansia')
-            ->whereYear('tanggal_kegiatan', $year)
-            ->whereMonth('tanggal_kegiatan', $month)
-            ->orderBy('tanggal_kegiatan')
+            ->whereYear('tanggal', $year)
+            ->whereMonth('tanggal', $month)
+            ->orderBy('tanggal')
             ->orderBy('waktu_mulai')
-            ->get();
+            ->get()
+            ->map(fn($j) => $this->formatJadwal($j));
 
         return response()->json([
             'success' => true,
@@ -40,8 +41,31 @@ class LansiaJadwalController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $jadwal,
+            'data'    => $this->formatJadwal($jadwal),
         ]);
+    }
+
+    // ── Helper: format jadwal untuk response ──────────────────
+    private function formatJadwal(Jadwal $j): array
+    {
+        // Ambil tanggal dari kolom tanggal (kolom utama), fallback ke tanggal_kegiatan
+        $tgl = $j->tanggal ?? $j->tanggal_kegiatan;
+        $tglStr = $tgl instanceof \Carbon\Carbon
+            ? $tgl->format('Y-m-d')
+            : (is_string($tgl) ? substr($tgl, 0, 10) : null);
+
+        return [
+            'id'               => $j->id,
+            'judul_kegiatan'   => $j->judul_kegiatan ?: $j->nama_kegiatan,
+            'nama_kegiatan'    => $j->nama_kegiatan,
+            'tanggal'          => $tglStr,
+            'tanggal_kegiatan' => $tglStr,   // alias agar JS tidak perlu bedakan
+            'waktu_mulai'      => substr($j->waktu_mulai ?? '', 0, 5),
+            'lokasi'           => $j->lokasi,
+            'keterangan'       => $j->keterangan,
+            'status'           => $j->status,
+            'layanan'          => $j->layanan,
+        ];
     }
 
     // ── API: Store jadwal baru ─────────────────────────────────

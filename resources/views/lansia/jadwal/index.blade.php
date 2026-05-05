@@ -250,19 +250,16 @@ function renderCalendar() {
         div.className = 'calendar-day' + (isToday ? ' today' : '');
         
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const events = allJadwal.filter(j => (j.tanggal_kegiatan || j.tanggal) === dateStr);
+        // tanggal dari API sudah format "YYYY-MM-DD" (dijamin oleh formatJadwal di controller)
+        const events = allJadwal.filter(j => j.tanggal === dateStr);
         
         let html = `<div class="day-number">${day}</div>`;
         events.forEach(e => {
-            html += `<div class="event-item lansia" onclick="openDetail(${e.id})" title="${e.judul_kegiatan || e.nama_kegiatan}">${e.judul_kegiatan || e.nama_kegiatan}</div>`;
+            html += `<div class="event-item lansia" onclick="event.stopPropagation();openDetail(${e.id})" title="${e.judul_kegiatan}">${e.judul_kegiatan}</div>`;
         });
         
         div.innerHTML = html;
-        div.onclick = (evt) => {
-            if (!evt.target.classList.contains('event-item')) {
-                openModalTambah(dateStr);
-            }
-        };
+        div.onclick = () => openModalTambah(dateStr);
         grid.appendChild(div);
     }
     
@@ -284,16 +281,21 @@ function renderJadwalList() {
         return;
     }
     
-    container.innerHTML = allJadwal.map(j => `
+    container.innerHTML = allJadwal.map(j => {
+        // Parse tanggal dengan aman: tambah T00:00:00 agar tidak kena UTC shift
+        const tglDisplay = j.tanggal
+            ? new Date(j.tanggal + 'T00:00:00').toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'})
+            : '-';
+        return `
         <div class="jadwal-card" onclick="openDetail(${j.id})">
-            <div class="jadwal-title">${j.judul_kegiatan || j.nama_kegiatan || '-'}</div>
+            <div class="jadwal-title">${j.judul_kegiatan || '-'}</div>
             <div class="jadwal-meta">
-                <span><i class="fas fa-calendar"></i> ${new Date((j.tanggal_kegiatan || j.tanggal) + 'T00:00:00').toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</span>
+                <span><i class="fas fa-calendar"></i> ${tglDisplay}</span>
                 <span><i class="fas fa-clock"></i> ${(j.waktu_mulai || '').substring(0,5)} WIB</span>
                 ${j.lokasi ? `<span><i class="fas fa-map-marker-alt"></i> ${j.lokasi}</span>` : ''}
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 function prevMonth() {
@@ -383,10 +385,13 @@ async function openDetail(id) {
         
         if (data.success) {
             const j = data.data;
+            const tglDisplay = j.tanggal
+                ? new Date(j.tanggal + 'T00:00:00').toLocaleDateString('id-ID', {weekday:'long', year:'numeric', month:'long', day:'numeric'})
+                : '-';
             document.getElementById('detailContent').innerHTML = `
                 <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div><strong>Judul:</strong> ${j.judul_kegiatan || j.nama_kegiatan || '-'}</div>
-                    <div><strong>Tanggal:</strong> ${new Date(((j.tanggal_kegiatan || j.tanggal) + 'T00:00:00')).toLocaleDateString('id-ID', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>
+                    <div><strong>Judul:</strong> ${j.judul_kegiatan || '-'}</div>
+                    <div><strong>Tanggal:</strong> ${tglDisplay}</div>
                     <div><strong>Waktu:</strong> ${(j.waktu_mulai || '').substring(0,5)} WIB</div>
                     ${j.lokasi ? `<div><strong>Lokasi:</strong> ${j.lokasi}</div>` : ''}
                     ${j.keterangan ? `<div><strong>Keterangan:</strong> ${j.keterangan}</div>` : ''}
@@ -416,7 +421,7 @@ async function editFromDetail() {
     document.getElementById('jadwalId').value = jadwal.id;
     document.getElementById('judulKegiatan').value = jadwal.judul_kegiatan || jadwal.nama_kegiatan || '';
     document.getElementById('tanggalKegiatan').min = today;
-    document.getElementById('tanggalKegiatan').value = jadwal.tanggal_kegiatan || jadwal.tanggal || '';
+    document.getElementById('tanggalKegiatan').value = jadwal.tanggal || '';
     // Pastikan format HH:mm (potong detik jika ada)
     document.getElementById('waktuMulai').value = (jadwal.waktu_mulai || '').substring(0, 5);
     document.getElementById('lokasi').value = jadwal.lokasi || '';
