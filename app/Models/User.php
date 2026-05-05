@@ -75,4 +75,38 @@ class User extends Authenticatable
     {
         return $query->where('role', 'kader');
     }
+
+    public function scopeWaliLansia($query)
+    {
+        return $query->where('role', 'wali_lansia');
+    }
+
+    // =====================
+    // HELPERS
+    // =====================
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isKader(): bool
+    {
+        return in_array($this->role, ['admin', 'kader']);
+    }
+
+    public function isOrangtua(): bool
+    {
+        return $this->role === 'orangtua';
+    }
+
+    public function isWaliLansia(): bool
+    {
+        return $this->role === 'wali_lansia';
+    }
+
+    public function isMobileUser(): bool
+    {
+        return in_array($this->role, ['orangtua', 'wali_lansia']);
+    }
 }

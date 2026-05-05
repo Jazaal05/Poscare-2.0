@@ -140,15 +140,18 @@ class LansiaPengaturanController extends Controller
         return response()->json(['success' => true, 'message' => 'Password berhasil diubah!']);
     }
 
-    // ── List semua user (admin only) ───────────────────────
+    // ── List user wali lansia (dari aplikasi mobile) ──────────
     public function usersList()
     {
         if (Auth::user()->role !== 'admin') {
             return response()->json(['success' => false, 'message' => 'Hanya admin yang dapat melihat daftar pengguna.'], 403);
         }
 
+        // Hanya tampilkan user dengan role 'wali_lansia' (dari aplikasi mobile)
         $users = User::select('id', 'username', 'email', 'nama_lengkap', 'no_telp', 'nik', 'role')
-            ->orderBy('role')->orderBy('username')->get();
+            ->where('role', 'wali_lansia')
+            ->orderBy('username')
+            ->get();
 
         return response()->json(['success' => true, 'data' => $users]);
     }

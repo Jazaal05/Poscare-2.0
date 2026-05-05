@@ -129,8 +129,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
     
     // ═══════════════════════════════════════════════════════════════════
-    // ROUTES UNTUK KADER DAN ORANGTUA - READ ACCESS
-    // Orangtua hanya bisa lihat data anak sendiri (filter di controller)
+    // ROUTES UNTUK KADER DAN ORANGTUA - READ ACCESS (Modul Balita)
     // ═══════════════════════════════════════════════════════════════════
     Route::middleware('role:kader,orangtua')->group(function () {
         
@@ -191,5 +190,36 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
             Route::put('/pengaturan/profile', [LansiaPengaturanController::class, 'updateProfile']);
             Route::put('/pengaturan/password', [LansiaPengaturanController::class, 'updatePassword']);
         });
+    });
+
+    // ═══════════════════════════════════════════════════════════════════
+    // ROUTES KHUSUS WALI LANSIA - Akses Modul Lansia dari Mobile
+    // Role: wali_lansia (didaftarkan via aplikasi mobile)
+    // ═══════════════════════════════════════════════════════════════════
+    Route::middleware('role:wali_lansia,kader')->group(function () {
+
+        // ── Profile ────────────────────────────────────────────────────
+        Route::get('/lansia/pengaturan/profile', [LansiaPengaturanController::class, 'getProfile']);
+        Route::put('/lansia/pengaturan/profile', [LansiaPengaturanController::class, 'updateProfile']);
+        Route::put('/lansia/pengaturan/password', [LansiaPengaturanController::class, 'updatePassword']);
+
+        // ── Data Lansia (read) ─────────────────────────────────────────
+        Route::get('/lansia/data/list', [LansiaKunjunganController::class, 'list']);
+        Route::get('/lansia/data/{id}', [LansiaKunjunganController::class, 'show']);
+
+        // ── Riwayat Kunjungan (read) ───────────────────────────────────
+        Route::get('/lansia/kunjungan/list', [LansiaKunjunganController::class, 'list']);
+        Route::get('/lansia/kunjungan/{id}', [LansiaKunjunganController::class, 'show']);
+        Route::get('/lansia/kunjungan/lansia/{lansiaId}/riwayat', [LansiaKunjunganController::class, 'riwayat']);
+
+        // ── Jadwal Lansia (read) ───────────────────────────────────────
+        Route::get('/lansia/jadwal/list', [LansiaJadwalController::class, 'list']);
+
+        // ── Edukasi Lansia (read) ──────────────────────────────────────
+        Route::get('/lansia/edukasi/list', [LansiaEdukasiController::class, 'list']);
+        Route::get('/lansia/edukasi/{id}', [LansiaEdukasiController::class, 'show']);
+
+        // ── Dashboard Lansia (read) ────────────────────────────────────
+        Route::get('/lansia/dashboard/stats', [LansiaDashboardController::class, 'stats']);
     });
 });
