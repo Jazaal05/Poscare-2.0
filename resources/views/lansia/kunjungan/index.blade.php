@@ -507,7 +507,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Nama Lansia</label>
-                    <input type="text" id="editNamaLansia" name="nama_lansia">
+                    <input type="text" id="editNamaLansia" name="nama_lengkap">
                 </div>
                 <div class="form-group">
                     <label>NIK Lansia</label>
@@ -929,7 +929,7 @@ async function openDetail(id) {
     openModal('modalDetail');
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const res  = await fetch(`/api/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
@@ -1027,12 +1027,19 @@ async function submitEdit(e) {
     const form = document.getElementById('formEdit');
     const formData = new FormData(form);
     const payload  = {};
-    formData.forEach((v, k) => { if (v) payload[k] = v; });
+    // Kirim semua field yang ada di form (termasuk yang kosong untuk field opsional)
+    formData.forEach((v, k) => { payload[k] = v; });
+    // Hapus field yang benar-benar kosong kecuali field wajib
+    const required = ['nama_lengkap', 'tgl_lahir', 'jenis_kelamin'];
+    Object.keys(payload).forEach(k => {
+        if (!payload[k] && !required.includes(k)) delete payload[k];
+    });
 
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+        // Edit = update data LANSIA (bukan kunjungan)
+        const res  = await fetch(`/api/lansia/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1069,7 +1076,8 @@ async function doHapus(id) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
     try {
-        const res  = await fetch(`/lansia/api/kunjungan/${id}`, {
+        // Hapus = soft delete data LANSIA (bukan kunjungan)
+        const res  = await fetch(`/api/lansia/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
