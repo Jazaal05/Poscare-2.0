@@ -13,16 +13,21 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('');
         $this->command->info('╔═══════════════════════════════════════════════════════════╗');
-        $this->command->info('║         POSCARE DATABASE SEEDER - LANSIA ONLY             ║');
+        $this->command->info('║           POSCARE DATABASE SEEDER - PRODUCTION            ║');
         $this->command->info('╚═══════════════════════════════════════════════════════════╝');
         $this->command->info('');
 
         $startTime = microtime(true);
 
+        // 1. Akun default (admin & kader) — harus pertama
+        $this->command->info('👤 Seeding Users (Admin & Kader default)...');
+        $this->call(UserSeeder::class);
+
+        // 2. Data Lansia
         $this->command->info('📋 Seeding Lansia...');
         $this->call(LansiaSeeder::class);
 
-        $endTime = microtime(true);
+        $endTime       = microtime(true);
         $executionTime = round($endTime - $startTime, 2);
 
         $this->command->info('');
@@ -33,10 +38,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info("⏱️  Execution Time: {$executionTime} seconds");
         $this->command->info('');
         $this->command->info('📊 DATABASE SUMMARY:');
-        $this->command->info('   • Lansia: 30 lansia (baru ditambahkan)');
-        $this->command->info('   • Anak: Menggunakan data dari SQL import');
-        $this->command->info('   • Users: Menggunakan data dari SQL import');
-        $this->command->info('   • Tabel lainnya: Dari SQL import');
+        $this->command->info('   • Kader  : kader@poscare.id   / PosCare@2025');
+        $this->command->info('   • Lansia : 30 data lansia');
+        $this->command->info('');
+        $this->command->warn('⚠️  PENTING: Segera ganti password setelah pertama kali login!');
         $this->command->info('');
     }
 }

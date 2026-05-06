@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthApiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AnakController;
 use App\Http\Controllers\PengukuranController;
@@ -31,6 +32,24 @@ use App\Http\Controllers\Lansia\LansiaPengaturanController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+/*
+|--------------------------------------------------------------------------
+| API V1 - AUTH ROUTES (Public - Tidak butuh token)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('v1/auth')->group(function () {
+    Route::post('/login',          [AuthApiController::class, 'login']);
+    Route::post('/register',       [AuthApiController::class, 'register']);
+    Route::post('/forgot-password',[AuthApiController::class, 'forgotPassword']);
+    Route::post('/reset-password', [AuthApiController::class, 'resetPassword']);
+});
+
+// Auth routes yang butuh token
+Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthApiController::class, 'logout']);
+    Route::get('/me',      [AuthApiController::class, 'me']);
 });
 
 /*

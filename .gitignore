@@ -1,5 +1,5 @@
 /node_modules
-/public/build
+# public/build — include ke git karena Hostinger shared hosting tidak ada Node.js
 /public/hot
 /public/storage
 /storage/*.key

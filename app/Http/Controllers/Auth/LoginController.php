@@ -63,19 +63,15 @@ class LoginController extends Controller
         }
 
         // ═══════════════════════════════════════════════════════════════
-        // ROLE CHECK - UNCOMMENT UNTUK PRODUCTION
+        // ROLE CHECK - Website hanya untuk Kader/Admin
+        // Orangtua & wali_lansia hanya bisa akses via aplikasi mobile
         // ═══════════════════════════════════════════════════════════════
-        // Saat production, uncomment code di bawah untuk restrict orangtua
-        // Website hanya untuk Kader/Admin (admin = kader, kader = admin)
-        
-        /*
         if (!in_array($user->role, ['admin', 'kader'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Akses ditolak. Website ini hanya untuk Kader/Admin. Orangtua silakan gunakan aplikasi mobile.',
+                'message' => 'Akses ditolak. Website ini hanya untuk Kader/Admin. Silakan gunakan aplikasi mobile PosCare.',
             ], 403);
         }
-        */
 
         // Login berhasil - buat session
         Auth::login($user, $remember);

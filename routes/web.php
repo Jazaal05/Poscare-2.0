@@ -43,8 +43,8 @@ Route::middleware('guest')->group(function () {
 | PRODUCTION MODE: Uncomment middleware 'kader.only' untuk restrict orangtua
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
-// Route::middleware(['auth', 'kader.only'])->group(function () { // Uncomment untuk production
+Route::middleware(['auth', 'kader.only'])->group(function () {
+// Route::middleware(['auth'])->group(function () { // Development mode (semua role bisa akses)
     
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/home', fn() => redirect()->route('dashboard'));
