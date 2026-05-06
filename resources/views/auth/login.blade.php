@@ -30,8 +30,13 @@
 
 {{-- VIDEO BACKGROUND --}}
 <div class="video-background">
+    @php
+        $isLansia = request('redirect') === 'lansia'
+            || (session('url.intended') && str_contains(session('url.intended'), 'lansia'));
+        $bgVideo  = $isLansia ? 'images/login-bg-lansia.mp4' : 'images/login-bg.mp4';
+    @endphp
     <video id="bgVideo" autoplay loop muted playsinline preload="auto">
-        <source src="{{ asset('images/login-bg.mp4') }}" type="video/mp4">
+        <source src="{{ asset($bgVideo) }}" type="video/mp4">
     </video>
 </div>
 
