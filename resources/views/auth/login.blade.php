@@ -15,6 +15,67 @@
     {{-- Font Awesome lokal - tidak pakai CDN agar tidak diblokir browser --}}
     <link rel="stylesheet" href="{{ asset('css/fontawesome/all.min.css') }}" />
 
+    @if(request('redirect') === 'lansia' || (session('url.intended') && str_contains(session('url.intended'), 'lansia')))
+    <style>
+        /* ── Tombol MASUK ── */
+        .login-btn {
+            background: #10B981 !important;
+        }
+        .login-btn:hover {
+            background: #059669 !important;
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4) !important;
+        }
+
+        /* ── Icon input & password toggle ── */
+        .login-form .input-icon,
+        .login-form .password-toggle { color: #10B981 !important; }
+        .login-form .password-toggle:hover { color: #059669 !important; }
+
+        /* ── Input focus ── */
+        .login-form input:focus {
+            border-color: #10B981 !important;
+            box-shadow: 0 0 0 4px rgba(16,185,129,0.2) !important;
+        }
+
+        /* ── Link Lupa Kata Sandi ── */
+        .forgot-password-link { color: #10B981 !important; }
+        .forgot-password-link:hover { color: #059669 !important; }
+
+        /* ── Border animasi card ── */
+        .login-card::before {
+            background: linear-gradient(
+                90deg,
+                rgba(16,185,129,0) 0%,
+                rgba(16,185,129,1) 25%,
+                rgba(52,211,153,1) 50%,
+                rgba(16,185,129,1) 75%,
+                rgba(16,185,129,0) 100%
+            ) !important;
+        }
+
+        /* ── Modal ── */
+        .modal-header { border-bottom-color: rgba(16,185,129,0.2) !important; }
+        .modal-header h2 i { color: #10B981 !important; }
+        .modal-info {
+            background: rgba(16,185,129,0.08) !important;
+            border-left-color: #10B981 !important;
+        }
+        .modal-body input:focus {
+            border-color: #10B981 !important;
+            box-shadow: 0 0 0 4px rgba(16,185,129,0.1) !important;
+        }
+        .modal-body .input-icon,
+        .modal-body .password-toggle { color: #10B981 !important; }
+        .btn-primary-modal {
+            background: linear-gradient(135deg, #10B981, #34D399) !important;
+        }
+        .btn-primary-modal:hover {
+            background: linear-gradient(135deg, #059669, #10B981) !important;
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4) !important;
+        }
+    </style>
+    @endif
+
     <script>
         // Bersihkan session markers saat halaman login dimuat
         (function() {
