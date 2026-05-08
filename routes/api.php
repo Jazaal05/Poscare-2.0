@@ -3,242 +3,171 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthApiController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AnakController;
 use App\Http\Controllers\PengukuranController;
 use App\Http\Controllers\ImunisasiController;
 use App\Http\Controllers\JadwalController;
-use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\EdukasiController;
-use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\VaksinController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\Lansia\LansiaDashboardController;
 use App\Http\Controllers\Lansia\LansiaKunjunganController;
 use App\Http\Controllers\Lansia\LansiaLaporanController;
 use App\Http\Controllers\Lansia\LansiaJadwalController;
 use App\Http\Controllers\Lansia\LansiaEdukasiController;
 use App\Http\Controllers\Lansia\LansiaPengaturanController;
+use App\Http\Controllers\Api\MobileController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes - PosCare Mobile
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-/*
-|--------------------------------------------------------------------------
-| API V1 - AUTH ROUTES (Public - Tidak butuh token)
+| Base URL: https://poscare.pbltifnganjuk.com/api/
 |--------------------------------------------------------------------------
 */
-Route::prefix('v1/auth')->group(function () {
-    Route::post('/login',          [AuthApiController::class, 'login']);
-    Route::post('/register',       [AuthApiController::class, 'register']);
-    Route::post('/forgot-password',[AuthApiController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthApiController::class, 'resetPassword']);
+
+// ═══════════════════════════════════════════════════════════════════════
+// AUTH - Publik (tidak butuh token)
+// ═══════════════════════════════════════════════════════════════════════
+Route::prefix('auth')->group(function () {
+    Route::post('/login',           [AuthApiController::class, 'login']);
+    Route::post('/register',        [AuthApiController::class, 'register']);
+    Route::post('/forgot-password', [AuthApiController::class, 'forgotPassword']);
+    Route::post('/reset-password',  [AuthApiController::class, 'resetPassword']);
 });
 
-// Auth routes yang butuh token
-Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthApiController::class, 'logout']);
-    Route::get('/me',      [AuthApiController::class, 'me']);
-});
+// ═══════════════════════════════════════════════════════════════════════
+// PROTECTED ROUTES - Butuh token Sanctum
+// ═══════════════════════════════════════════════════════════════════════
+Route::middleware('auth:sanctum')->group(function () {
 
-/*
-|--------------------------------------------------------------------------
-| API V1 Routes - Protected by Sanctum Auth
-|--------------------------------------------------------------------------
-| API ini digunakan oleh aplikasi mobile
-| - Kader: Full access (CRUD semua data)
-| - Orangtua: Read-only access (hanya data anak sendiri)
-|--------------------------------------------------------------------------
-*/
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
-    
+    // ── Auth ──────────────────────────────────────────────────────────
+    Route::post('/auth/logout', [AuthApiController::class, 'logout']);
+    Route::get('/auth/me',      [AuthApiController::class, 'me']);
+
+    // ── Profil & Akun ─────────────────────────────────────────────────
+    Route::get('/profile',          [MobileController::class, 'getProfile']);
+    Route::post('/profile/update',  [MobileController::class, 'updateProfile']);
+    Route::put('/password',         [MobileController::class, 'changePassword']);
+    Route::post('/fcm-token',       [MobileController::class, 'saveFcmToken']);
+
+    // ── Notifikasi ────────────────────────────────────────────────────
+    Route::get('/notifikasi',             [MobileController::class, 'getNotifikasi']);
+    Route::get('/notifikasi/unread',      [MobileController::class, 'unreadCount']);
+    Route::post('/notifikasi/mark-read',  [MobileController::class, 'markRead']);
+
+    // ── Data BBU WHO (untuk grafik KMS) ───────────────────────────────
+    Route::get('/bbu', [MobileController::class, 'getBbu']);
+
     // ═══════════════════════════════════════════════════════════════════
-    // ROUTES KHUSUS UNTUK KADER (ADMIN) - FULL ACCESS
+    // MODUL BALITA — orangtua & kader
+    // ═══════════════════════════════════════════════════════════════════
+    Route::middleware('role:orangtua,kader')->group(function () {
+
+        // Data Anak
+        Route::get('/anak',      [AnakController::class, 'list']);
+        Route::get('/anak/{id}', [AnakController::class, 'show']);
+
+        // Pengukuran / Riwayat Pertumbuhan
+        Route::get('/pengukuran/{anakId}/riwayat', [PengukuranController::class, 'riwayat']);
+        Route::post('/pengukuran',                 [PengukuranController::class, 'store']);
+
+        // Vaksin & Imunisasi
+        Route::get('/vaksin',          [VaksinController::class, 'list']);
+        Route::get('/vaksin/count',    [MobileController::class, 'getVaccinesCount']);
+        Route::get('/vaksin/next',     [MobileController::class, 'getNextVaccine']);
+        Route::get('/vaksin/history',  [MobileController::class, 'getVaccineHistory']);
+
+        // Jadwal Posyandu Balita
+        Route::get('/jadwal', [JadwalController::class, 'list']);
+
+        // Edukasi Balita
+        Route::get('/edukasi',      [EdukasiController::class, 'list']);
+        Route::get('/edukasi/{id}', [EdukasiController::class, 'show']);
+    });
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MODUL LANSIA — wali_lansia & kader
+    // ═══════════════════════════════════════════════════════════════════
+    Route::middleware('role:wali_lansia,kader')->prefix('lansia')->group(function () {
+
+        // Riwayat Kunjungan — HARUS di atas /{id} agar tidak tertimpa
+        Route::get('/{lansiaId}/kunjungan', [LansiaKunjunganController::class, 'riwayat']);
+
+        // Jadwal Lansia
+        Route::get('/jadwal', [LansiaJadwalController::class, 'list']);
+
+        // Edukasi Lansia
+        Route::get('/edukasi',      [LansiaEdukasiController::class, 'list']);
+        Route::get('/edukasi/{id}', [LansiaEdukasiController::class, 'show']);
+
+        // Dashboard Stats
+        Route::get('/dashboard/stats', [LansiaDashboardController::class, 'stats']);
+
+        // Data Lansia — generic routes TERAKHIR
+        Route::get('/',      [LansiaKunjunganController::class, 'list']);
+        Route::get('/{id}',  [LansiaKunjunganController::class, 'show']);
+    });
+
+    // ═══════════════════════════════════════════════════════════════════
+    // KADER ONLY — Full CRUD (web dashboard & mobile kader)
     // ═══════════════════════════════════════════════════════════════════
     Route::middleware('role:kader')->group(function () {
-        
-        // ── Dashboard Stats (hanya kader) ──────────────────────────────
+
+        // Dashboard
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-        
-        // ── Data Anak - Full CRUD ──────────────────────────────────────
-        Route::post('/anak/store', [AnakController::class, 'store']);
-        Route::post('/anak/registrasi', [AnakController::class, 'registrasi']);
-        Route::put('/anak/{id}', [AnakController::class, 'update']);
-        Route::delete('/anak/{id}', [AnakController::class, 'destroy']);
-        Route::get('/anak/{id}/export-pdf', [AnakController::class, 'exportPdf']);
-        
-        // ── Pengukuran - Input & Delete ────────────────────────────────
-        Route::post('/pengukuran/store', [PengukuranController::class, 'store']);
+
+        // Anak - CRUD
+        Route::post('/anak/registrasi', [AnakController::class, 'store']);
+        Route::put('/anak/{id}',        [AnakController::class, 'update']);
+        Route::delete('/anak/{id}',     [AnakController::class, 'destroy']);
+
+        // Pengukuran - Delete
         Route::delete('/pengukuran/{id}', [PengukuranController::class, 'destroy']);
-        
-        // ── Imunisasi - Input & Delete ─────────────────────────────────
-        Route::post('/imunisasi/store', [ImunisasiController::class, 'store']);
-        Route::delete('/imunisasi/{id}', [ImunisasiController::class, 'destroy']);
-        
-        // ── Master Vaksin - Full CRUD ──────────────────────────────────
-        Route::post('/vaksin/store', [VaksinController::class, 'store']);
-        Route::put('/vaksin/{id}', [VaksinController::class, 'update']);
-        Route::delete('/vaksin/{id}', [VaksinController::class, 'destroy']);
-        
-        // ── Jadwal - Full CRUD ─────────────────────────────────────────
-        Route::post('/jadwal/store', [JadwalController::class, 'store']);
-        Route::put('/jadwal/{id}', [JadwalController::class, 'update']);
-        Route::delete('/jadwal/{id}', [JadwalController::class, 'destroy']);
+
+        // Imunisasi - Tandai & Undo
+        Route::post('/imunisasi/tandai', [ImunisasiController::class, 'tandai']);
+        Route::post('/imunisasi/undo',   [ImunisasiController::class, 'undo']);
+
+        // Vaksin - CRUD
+        Route::post('/vaksin',       [VaksinController::class, 'store']);
+        Route::put('/vaksin/{id}',   [VaksinController::class, 'update']);
+        Route::delete('/vaksin/{id}',[VaksinController::class, 'destroy']);
+
+        // Jadwal - CRUD
+        Route::post('/jadwal',              [JadwalController::class, 'store']);
+        Route::put('/jadwal/{id}',          [JadwalController::class, 'update']);
+        Route::delete('/jadwal/{id}',       [JadwalController::class, 'destroy']);
         Route::patch('/jadwal/{id}/status', [JadwalController::class, 'updateStatus']);
-        
-        // ── Laporan - Full CRUD ────────────────────────────────────────
-        Route::post('/laporan/store', [LaporanController::class, 'store']);
-        Route::put('/laporan/{id}', [LaporanController::class, 'update']);
-        Route::delete('/laporan/{id}', [LaporanController::class, 'destroy']);
+
+        // Edukasi - CRUD
+        Route::post('/edukasi',       [EdukasiController::class, 'store']);
+        Route::put('/edukasi/{id}',   [EdukasiController::class, 'update']);
+        Route::delete('/edukasi/{id}',[EdukasiController::class, 'destroy']);
+
+        // Laporan
+        Route::get('/laporan',              [LaporanController::class, 'list']);
         Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel']);
-        
-        // ── Edukasi - Full CRUD ────────────────────────────────────────
-        Route::post('/edukasi/store', [EdukasiController::class, 'store']);
-        Route::put('/edukasi/{id}', [EdukasiController::class, 'update']);
-        Route::delete('/edukasi/{id}', [EdukasiController::class, 'destroy']);
-        
-        // ── Pengaturan - Admin Functions ───────────────────────────────
-        Route::post('/pengaturan/upload-avatar', [PengaturanController::class, 'uploadAvatar']);
-        
-        // ── LANSIA MODULE - FULL ACCESS ────────────────────────────────
+
+        // Lansia - CRUD (kader)
         Route::prefix('lansia')->group(function () {
-            
-            // Dashboard Lansia
-            Route::get('/dashboard/stats', [LansiaDashboardController::class, 'stats']);
-            
-            // Data Lansia - Full CRUD
-            Route::post('/data/store', [LansiaKunjunganController::class, 'store']);
-            Route::put('/data/{id}', [LansiaKunjunganController::class, 'update']);
-            Route::delete('/data/{id}', [LansiaKunjunganController::class, 'destroy']);
-            Route::get('/data/{id}/export-pdf', [LansiaKunjunganController::class, 'show']);
-            
-            // Kunjungan Lansia - Full CRUD
-            Route::post('/kunjungan/store', [LansiaKunjunganController::class, 'store']);
-            Route::put('/kunjungan/{id}', [LansiaKunjunganController::class, 'update']);
-            Route::delete('/kunjungan/{id}', [LansiaKunjunganController::class, 'destroy']);
-            
-            // Laporan Lansia - Full CRUD
-            Route::post('/laporan/store', [LansiaLaporanController::class, 'store']);
-            Route::put('/laporan/{id}', [LansiaLaporanController::class, 'update']);
-            Route::delete('/laporan/{id}', [LansiaLaporanController::class, 'destroy']);
-            Route::get('/laporan/export-excel', [LansiaLaporanController::class, 'exportExcel']);
-            
-            // Jadwal Lansia - Full CRUD
-            Route::post('/jadwal/store', [LansiaJadwalController::class, 'store']);
-            Route::put('/jadwal/{id}', [LansiaJadwalController::class, 'update']);
-            Route::delete('/jadwal/{id}', [LansiaJadwalController::class, 'destroy']);
+            Route::post('/kunjungan',       [LansiaKunjunganController::class, 'store']);
+            Route::put('/kunjungan/{id}',   [LansiaKunjunganController::class, 'update']);
+            Route::delete('/kunjungan/{id}',[LansiaKunjunganController::class, 'destroy']);
+
+            Route::post('/jadwal',              [LansiaJadwalController::class, 'store']);
+            Route::put('/jadwal/{id}',          [LansiaJadwalController::class, 'update']);
+            Route::delete('/jadwal/{id}',       [LansiaJadwalController::class, 'destroy']);
             Route::patch('/jadwal/{id}/status', [LansiaJadwalController::class, 'updateStatus']);
-            
-            // Edukasi Lansia - Full CRUD
-            Route::post('/edukasi/store', [LansiaEdukasiController::class, 'store']);
-            Route::put('/edukasi/{id}', [LansiaEdukasiController::class, 'update']);
-            Route::delete('/edukasi/{id}', [LansiaEdukasiController::class, 'destroy']);
+
+            Route::post('/edukasi',       [LansiaEdukasiController::class, 'store']);
+            Route::put('/edukasi/{id}',   [LansiaEdukasiController::class, 'update']);
+            Route::delete('/edukasi/{id}',[LansiaEdukasiController::class, 'destroy']);
+
+            Route::get('/laporan/stats',   [LansiaLaporanController::class, 'stats']);
+            Route::get('/laporan/export',  [LansiaLaporanController::class, 'exportExcel']);
         });
-    });
-    
-    // ═══════════════════════════════════════════════════════════════════
-    // ROUTES UNTUK KADER DAN ORANGTUA - READ ACCESS (Modul Balita)
-    // ═══════════════════════════════════════════════════════════════════
-    Route::middleware('role:kader,orangtua')->group(function () {
-        
-        // ── Data Anak - Read Only ──────────────────────────────────────
-        // Controller akan filter: kader lihat semua, orangtua hanya anak sendiri
-        Route::get('/anak/list', [AnakController::class, 'list']);
-        Route::get('/anak/{id}', [AnakController::class, 'show']);
-        
-        // ── Pengukuran - Read Only ─────────────────────────────────────
-        Route::get('/pengukuran/anak/{anakId}/list', [PengukuranController::class, 'list']);
-        Route::get('/pengukuran/anak/{anakId}/grafik-data', [PengukuranController::class, 'grafikData']);
-        
-        // ── Imunisasi - Read Only ──────────────────────────────────────
-        Route::get('/imunisasi/anak/{anakId}/list', [ImunisasiController::class, 'list']);
-        
-        // ── Vaksin - Read Only ─────────────────────────────────────────
-        Route::get('/vaksin/list', [VaksinController::class, 'list']);
-        
-        // ── Jadwal - Read Only ─────────────────────────────────────────
-        Route::get('/jadwal/list', [JadwalController::class, 'list']);
-        Route::get('/jadwal/{id}', [JadwalController::class, 'show']);
-        
-        // ── Laporan - Read Only ────────────────────────────────────────
-        Route::get('/laporan/list', [LaporanController::class, 'list']);
-        
-        // ── Edukasi - Read Only ────────────────────────────────────────
-        Route::get('/edukasi/list', [EdukasiController::class, 'list']);
-        Route::get('/edukasi/{id}', [EdukasiController::class, 'show']);
-        
-        // ── Profile Management (Semua User) ────────────────────────────
-        Route::get('/pengaturan/profile', [PengaturanController::class, 'getProfile']);
-        Route::put('/pengaturan/profile', [PengaturanController::class, 'updateProfile']);
-        Route::put('/pengaturan/password', [PengaturanController::class, 'updatePassword']);
-        
-        // ── LANSIA MODULE - READ ONLY ──────────────────────────────────
-        Route::prefix('lansia')->group(function () {
-            
-            // Data Lansia - Read Only
-            Route::get('/data/list', [LansiaKunjunganController::class, 'list']);
-            Route::get('/data/{id}', [LansiaKunjunganController::class, 'show']);
-            
-            // Kunjungan Lansia - Read Only
-            Route::get('/kunjungan/list', [LansiaKunjunganController::class, 'list']);
-            Route::get('/kunjungan/{id}', [LansiaKunjunganController::class, 'show']);
-            Route::get('/kunjungan/lansia/{lansiaId}/riwayat', [LansiaKunjunganController::class, 'riwayat']);
-            
-            // Laporan Lansia - Read Only
-            Route::get('/laporan/list', [LansiaLaporanController::class, 'list']);
-            
-            // Jadwal Lansia - Read Only
-            Route::get('/jadwal/list', [LansiaJadwalController::class, 'list']);
-            
-            // Edukasi Lansia - Read Only
-            Route::get('/edukasi/list', [LansiaEdukasiController::class, 'list']);
-            
-            // Pengaturan Lansia
-            Route::get('/pengaturan/profile', [LansiaPengaturanController::class, 'getProfile']);
-            Route::put('/pengaturan/profile', [LansiaPengaturanController::class, 'updateProfile']);
-            Route::put('/pengaturan/password', [LansiaPengaturanController::class, 'updatePassword']);
-        });
-    });
-
-    // ═══════════════════════════════════════════════════════════════════
-    // ROUTES KHUSUS WALI LANSIA - Akses Modul Lansia dari Mobile
-    // Role: wali_lansia (didaftarkan via aplikasi mobile)
-    // ═══════════════════════════════════════════════════════════════════
-    Route::middleware('role:wali_lansia,kader')->group(function () {
-
-        // ── Profile ────────────────────────────────────────────────────
-        Route::get('/lansia/pengaturan/profile', [LansiaPengaturanController::class, 'getProfile']);
-        Route::put('/lansia/pengaturan/profile', [LansiaPengaturanController::class, 'updateProfile']);
-        Route::put('/lansia/pengaturan/password', [LansiaPengaturanController::class, 'updatePassword']);
-
-        // ── Data Lansia (read) ─────────────────────────────────────────
-        Route::get('/lansia/data/list', [LansiaKunjunganController::class, 'list']);
-        Route::get('/lansia/data/{id}', [LansiaKunjunganController::class, 'show']);
-
-        // ── Riwayat Kunjungan (read) ───────────────────────────────────
-        Route::get('/lansia/kunjungan/list', [LansiaKunjunganController::class, 'list']);
-        Route::get('/lansia/kunjungan/{id}', [LansiaKunjunganController::class, 'show']);
-        Route::get('/lansia/kunjungan/lansia/{lansiaId}/riwayat', [LansiaKunjunganController::class, 'riwayat']);
-
-        // ── Jadwal Lansia (read) ───────────────────────────────────────
-        Route::get('/lansia/jadwal/list', [LansiaJadwalController::class, 'list']);
-
-        // ── Edukasi Lansia (read) ──────────────────────────────────────
-        Route::get('/lansia/edukasi/list', [LansiaEdukasiController::class, 'list']);
-        Route::get('/lansia/edukasi/{id}', [LansiaEdukasiController::class, 'show']);
-
-        // ── Dashboard Lansia (read) ────────────────────────────────────
-        Route::get('/lansia/dashboard/stats', [LansiaDashboardController::class, 'stats']);
     });
 });

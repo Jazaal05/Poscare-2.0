@@ -239,6 +239,38 @@ class LansiaKunjunganController extends Controller
         ]);
     }
 
+    // ── API: Riwayat kunjungan per lansia (untuk mobile) ──────
+    // GET /api/lansia/{lansiaId}/kunjungan
+    public function riwayat($lansiaId)
+    {
+        $data = KunjunganLansia::where('lansia_id', $lansiaId)
+            ->orderBy('tanggal_kunjungan', 'desc')
+            ->get()
+            ->map(function ($k) {
+                return [
+                    'id'                 => $k->id,
+                    'lansia_id'          => $k->lansia_id,
+                    'tanggal_kunjungan'  => $k->tanggal_kunjungan,
+                    'berat_badan'        => $k->berat_badan,
+                    'tekanan_darah'      => $k->tekanan_darah,
+                    'status_tensi'       => $k->status_tensi,
+                    'gula_darah'         => $k->gula_darah,
+                    'status_gula'        => $k->status_gula,
+                    'kolesterol'         => $k->kolesterol,
+                    'status_kolesterol'  => $k->status_kolesterol,
+                    'asam_urat'          => $k->asam_urat,
+                    'status_asam_urat'   => $k->status_asam_urat,
+                    'ada_keluhan'        => (int) $k->ada_keluhan,
+                    'keluhan'            => $k->keluhan,
+                    'obat_diberikan'     => $k->obat_diberikan ?? [],
+                    'vitamin_diberikan'  => $k->vitamin_diberikan ?? [],
+                    'catatan_bidan'      => $k->catatan_bidan,
+                ];
+            });
+
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
     // ── API: Kunjungan Selanjutnya (Update Data Lansia + Catat Kunjungan) ──
     public function kunjunganSelanjutnya(Request $request, $lansiaId)
     {

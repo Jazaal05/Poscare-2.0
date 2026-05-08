@@ -19,15 +19,18 @@ class AuthApiController extends BaseApiController
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email'    => 'required|string', // bisa email atau username
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // Cari user berdasarkan email ATAU username
+        $user = User::where('email', $request->email)
+            ->orWhere('username', $request->email)
+            ->first();
 
         // Cek user ada dan password cocok
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->errorResponse('Email atau kata sandi salah', 401);
+            return $this->errorResponse('Email/Username atau kata sandi salah', 401);
         }
 
         // Hapus token lama agar tidak menumpuk
