@@ -150,7 +150,7 @@ function toast(msg, type = 'success') {
 
 async function loadStats() {
     try {
-        const res = await fetch('/lansia/api/laporan/stats', {
+        const res = await fetch('/lansia/web/laporan/stats', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -174,7 +174,7 @@ async function exportExcel() {
     toast('Membuat file Excel, mohon tunggu...', 'info');
 
     try {
-        const res = await fetch(`/lansia/api/laporan/export?tahun=${tahun}`, {
+        const res = await fetch(`/lansia/web/laporan/export?tahun=${tahun}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
             credentials: 'same-origin'
         });

@@ -254,7 +254,7 @@ async function submitVaksin(e) {
     };
 
     try {
-        const url    = id ? `/api/vaksin/${id}` : '{{ route("vaksin.store") }}';
+        const url    = id ? `/web/vaksin/${id}` : '{{ route("vaksin.store") }}';
         const method = id ? 'PUT' : 'POST';
 
         const res  = await fetch(url, {
@@ -299,7 +299,7 @@ document.getElementById('btnKonfirmasiHapus').addEventListener('click', async ()
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
     try {
-        const res  = await fetch(`/api/vaksin/${hapusId}`, {
+        const res  = await fetch(`/web/vaksin/${hapusId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',

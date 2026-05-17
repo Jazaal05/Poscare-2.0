@@ -18,14 +18,14 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (!auth()->check()) {
+        $user = $request->user();
+
+        if (!$user) {
             return $request->expectsJson() 
                 ? response()->json(['message' => 'Unauthenticated'], 401)
                 : redirect()->route('login');
         }
 
-        $user = auth()->user();
-        
         if (!in_array($user->role, $roles)) {
             return $request->expectsJson()
                 ? response()->json([

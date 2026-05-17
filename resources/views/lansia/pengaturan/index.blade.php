@@ -233,7 +233,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('active')
 // ── Load profil ────────────────────────────────────────────
 async function loadCurrentUser() {
     try {
-        const res  = await fetch('/lansia/api/pengaturan/current-user', {
+        const res  = await fetch('/lansia/web/pengaturan/current-user', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -254,7 +254,7 @@ async function submitProfil(e) {
     const btn = document.getElementById('btnSaveProfil');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/profil', {
+        const res  = await fetch('/lansia/web/pengaturan/profil', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -276,7 +276,7 @@ async function requestOTP() {
     const btn = document.getElementById('btnRequestOTP');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/request-otp', {
+        const res  = await fetch('/lansia/web/pengaturan/request-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -305,7 +305,7 @@ async function verifikasiOTP() {
     const btn = document.getElementById('btnVerifikasiOTP');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/verifikasi-otp', {
+        const res  = await fetch('/lansia/web/pengaturan/verifikasi-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -338,16 +338,18 @@ function backToStep1() {
 @if(Auth::user()->role === 'admin')
 function roleBadge(role) {
     const map = {
-        admin:       'danger',
-        kader:       'info',
-        orangtua:    'warning',
-        wali_lansia: 'success',
+        admin:            'danger',
+        kader:            'info',
+        orangtua:         'warning',
+        wali_lansia:      'success',
+        orangtua_lansia:  'info',
     };
     const label = {
-        admin:       'Admin',
-        kader:       'Kader',
-        orangtua:    'Orang Tua',
-        wali_lansia: 'Wali Lansia',
+        admin:            'Admin',
+        kader:            'Kader',
+        orangtua:         'Orang Tua',
+        wali_lansia:      'Wali Lansia',
+        orangtua_lansia:  'Wali Lansia & Orang Tua',
     };
     return `<span class="badge badge-${map[role]||'info'}">${label[role]||role}</span>`;
 }
@@ -356,7 +358,7 @@ async function loadUsers() {
     const tbody = document.getElementById('usersTableBody');
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#9CA3AF;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>';
     try {
-        const res  = await fetch('/lansia/api/pengaturan/users', {
+        const res  = await fetch('/lansia/web/pengaturan/users', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -399,7 +401,7 @@ document.getElementById('btnKonfirmasiHapusUser').addEventListener('click', asyn
     const btn = document.getElementById('btnKonfirmasiHapusUser');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     try {
-        const res  = await fetch(`/lansia/api/pengaturan/users/${hapusUserId}`, {
+        const res  = await fetch(`/lansia/web/pengaturan/users/${hapusUserId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

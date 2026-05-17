@@ -480,7 +480,7 @@ async function submitEdukasi(e) {
 // ── Edit konten ────────────────────────────────────────────
 async function editKonten(id) {
     try {
-        const res  = await fetch(`{{ url('/api/edukasi') }}/${id}`, {
+        const res  = await fetch(`{{ url('/web/edukasi') }}/${id}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -500,7 +500,7 @@ async function editKonten(id) {
             e.preventDefault();
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
             try {
-                const r = await fetch(`{{ url('/api/edukasi') }}/${id}`, {
+                const r = await fetch(`{{ url('/web/edukasi') }}/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
                     credentials: 'same-origin',
@@ -530,7 +530,7 @@ async function editKonten(id) {
 async function hapusKonten(id, nama) {
     if (!confirm(`Hapus konten "${nama}"?`)) return;
     try {
-        const res  = await fetch(`{{ url('/api/edukasi') }}/${id}`, {
+        const res  = await fetch(`{{ url('/web/edukasi') }}/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

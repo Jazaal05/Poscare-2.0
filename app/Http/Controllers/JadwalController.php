@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jadwal;
+use App\Services\FcmService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,6 +86,20 @@ class JadwalController extends Controller
         $data['layanan']    = $data['layanan'] ?? 'balita';
         $jadwal = Jadwal::create($data);
 
+        // Kirim notifikasi FCM
+        try {
+            $fcm   = new FcmService();
+            $tgl   = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+            $waktu = substr($jadwal->waktu_mulai, 0, 5);
+            $emoji = $jadwal->jenis_kegiatan === 'Imunisasi' ? '💉' : '📅';
+            $title = "$emoji Jadwal {$jadwal->jenis_kegiatan} Baru!";
+            $body  = "{$jadwal->nama_kegiatan} - {$tgl} pukul {$waktu} di {$jadwal->lokasi}";
+            $fcm->saveNotifikasi($title, $body, strtolower($jadwal->jenis_kegiatan ?? 'jadwal'));
+            $fcm->sendToAll($title, $body);
+        } catch (\Exception $e) {
+            \Log::warning('FCM store jadwal gagal: ' . $e->getMessage());
+        }
+
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil disimpan!', 'data' => $jadwal], 201);
     }
 
@@ -135,12 +150,41 @@ class JadwalController extends Controller
         }
 
         $jadwal->update($data);
+
+        // Kirim notifikasi FCM update
+        try {
+            $fcm   = new FcmService();
+            $tgl   = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+            $waktu = substr($jadwal->waktu_mulai, 0, 5);
+            $title = '📅 Jadwal Posyandu Diperbarui';
+            $body  = "{$jadwal->nama_kegiatan} - {$tgl} pukul {$waktu} di {$jadwal->lokasi}";
+            $fcm->saveNotifikasi($title, $body, 'jadwal');
+            $fcm->sendToAll($title, $body);
+        } catch (\Exception $e) {
+            \Log::warning('FCM update jadwal gagal: ' . $e->getMessage());
+        }
+
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil diperbarui!']);
     }
 
     public function destroy($id)
     {
-        Jadwal::findOrFail($id)->delete();
+        $jadwal = Jadwal::findOrFail($id);
+        $namaKegiatan = $jadwal->nama_kegiatan;
+        $tgl = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+        $jadwal->delete();
+
+        // Kirim notifikasi FCM hapus
+        try {
+            $fcm   = new FcmService();
+            $title = '📅 Jadwal Dibatalkan';
+            $body  = "{$namaKegiatan} - {$tgl} telah dibatalkan";
+            $fcm->saveNotifikasi($title, $body, 'jadwal');
+            $fcm->sendToAll($title, $body);
+        } catch (\Exception $e) {
+            \Log::warning('FCM destroy jadwal gagal: ' . $e->getMessage());
+        }
+
         return response()->json(['success' => true, 'message' => 'Jadwal berhasil dihapus!']);
     }
 

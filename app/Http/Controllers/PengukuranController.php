@@ -100,29 +100,8 @@ class PengukuranController extends Controller
             $tbPbCm = $tbCm - 0.7;
         }
 
-        // Hitung IMT
-        $imt = $bbKg / (($tbPbCm / 100) ** 2);
-
-        // Cek duplikat (data identik dengan entry terakhir)
-        $lastEntry = RiwayatPengukuran::where('anak_id', $anakId)
-            ->orderBy('tanggal_ukur', 'desc')->orderBy('id', 'desc')->first();
-
-        if ($lastEntry) {
-            $threshold = 0.01;
-            $bbSame    = abs((float)$lastEntry->bb_kg - $bbKg) < $threshold;
-            $tbSame    = abs((float)$lastEntry->tb_pb_cm - $tbPbCm) < $threshold;
-            $caraSame  = $lastEntry->cara_ukur === $caraUkur;
-            $lkSame    = ($lkCm === null && $lastEntry->lk_cm === null)
-                || ($lkCm !== null && $lastEntry->lk_cm !== null && abs((float)$lastEntry->lk_cm - $lkCm) < $threshold);
-
-            if ($bbSame && $tbSame && $caraSame && $lkSame) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Data pengukuran tidak berubah dari entry terakhir.',
-                    'caused_by' => 'duplicate_measurement',
-                ], 400);
-            }
-        }
+        // Hitung IMT (guard division by zero)
+        $imt = ($tbPbCm > 0) ? $bbKg / (($tbPbCm / 100) ** 2) : 0;
 
         DB::beginTransaction();
         try {
@@ -149,6 +128,9 @@ class PengukuranController extends Controller
             ];
 
             // Insert riwayat pengukuran
+            // Helper: sanitasi nilai z-score agar JSON-safe (buang NAN/INF)
+            $safeZ = fn($v) => ($v !== null && is_finite($v)) ? $v : null;
+
             $riwayat = RiwayatPengukuran::create([
                 'anak_id'       => $anakId,
                 'tanggal_ukur'  => $tanggalUkur,
@@ -158,11 +140,11 @@ class PengukuranController extends Controller
                 'tb_pb_cm'      => $tbPbCm,
                 'lk_cm'         => $lkCm,
                 'cara_ukur'     => $caraUkur,
-                'imt'           => round($imt, 2),
-                'z_tbu'         => $zscore['tbu'],
-                'z_bbu'         => $zscore['bbu'],
-                'z_bbtb'        => $zscore['bbtb'],
-                'z_imtu'        => $zscore['imtu'],
+                'imt'           => is_finite($imt) ? round($imt, 2) : null,
+                'z_tbu'         => $safeZ($zscore['tbu']),
+                'z_bbu'         => $safeZ($zscore['bbu']),
+                'z_bbtb'        => $safeZ($zscore['bbtb']),
+                'z_imtu'        => $safeZ($zscore['imtu']),
                 'kat_tbu'       => $kategori['tbu'],
                 'kat_bbu'       => $kategori['bbu'],
                 'kat_bbtb'      => $kategori['bbtb'],
@@ -225,7 +207,7 @@ class PengukuranController extends Controller
             ->get()
             ->map(fn($r) => [
                 'id'          => $r->id,
-                'tanggal_ukur'=> $r->tanggal_ukur,
+                'tanggal_ukur'=> $r->tanggal_ukur ? \Carbon\Carbon::parse($r->tanggal_ukur)->format('Y-m-d') : null,
                 'umur_bulan'  => (float) $r->umur_bulan,
                 'bb_kg'       => (float) $r->bb_kg,
                 'tb_pb_cm'    => (float) $r->tb_pb_cm,

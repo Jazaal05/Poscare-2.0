@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Lansia;
 
 use App\Http\Controllers\Controller;
 use App\Models\Jadwal;
+use App\Services\FcmService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,9 +83,9 @@ class LansiaJadwalController extends Controller
 
         $jadwal = Jadwal::create([
             'judul_kegiatan'   => $data['judul_kegiatan'],
-            'nama_kegiatan'    => $data['judul_kegiatan'],   // sync ke kolom lama
+            'nama_kegiatan'    => $data['judul_kegiatan'],
             'tanggal_kegiatan' => $data['tanggal_kegiatan'],
-            'tanggal'          => $data['tanggal_kegiatan'], // sync ke kolom lama
+            'tanggal'          => $data['tanggal_kegiatan'],
             'waktu_mulai'      => $data['waktu_mulai'],
             'lokasi'           => $data['lokasi'] ?? null,
             'keterangan'       => $data['keterangan'] ?? null,
@@ -92,6 +94,19 @@ class LansiaJadwalController extends Controller
             'dibuat_oleh'      => Auth::id(),
             'created_by'       => Auth::id(),
         ]);
+
+        // Kirim notifikasi FCM
+        try {
+            $fcm   = new FcmService();
+            $tgl   = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+            $waktu = substr($jadwal->waktu_mulai, 0, 5);
+            $title = '🧓 Jadwal Posyandu Lansia Baru!';
+            $body  = "{$jadwal->nama_kegiatan} - {$tgl} pukul {$waktu} di {$jadwal->lokasi}";
+            $fcm->saveNotifikasi($title, $body, 'jadwal_lansia');
+            $fcm->sendToAll($title, $body, ['type' => 'jadwal_lansia']);
+        } catch (\Exception $e) {
+            \Log::warning('FCM store jadwal lansia gagal: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,
@@ -128,6 +143,19 @@ class LansiaJadwalController extends Controller
 
         $jadwal->update($update);
 
+        // Kirim notifikasi FCM
+        try {
+            $fcm   = new FcmService();
+            $tgl   = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+            $waktu = substr($jadwal->waktu_mulai, 0, 5);
+            $title = '📝 Jadwal Posyandu Lansia Diperbarui';
+            $body  = "{$jadwal->nama_kegiatan} - {$tgl} pukul {$waktu} di {$jadwal->lokasi}";
+            $fcm->saveNotifikasi($title, $body, 'jadwal_lansia');
+            $fcm->sendToAll($title, $body, ['type' => 'jadwal_lansia']);
+        } catch (\Exception $e) {
+            \Log::warning('FCM update jadwal lansia gagal: ' . $e->getMessage());
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Jadwal berhasil diperbarui!',
@@ -139,7 +167,24 @@ class LansiaJadwalController extends Controller
     public function destroy($id)
     {
         $jadwal = Jadwal::where('layanan', 'lansia')->findOrFail($id);
+
+        $namaKegiatan = $jadwal->nama_kegiatan;
+        $tgl          = Carbon::parse($jadwal->tanggal)->format('d/m/Y');
+        $waktu        = substr($jadwal->waktu_mulai, 0, 5);
+        $lokasi       = $jadwal->lokasi;
+
         $jadwal->delete();
+
+        // Kirim notifikasi FCM
+        try {
+            $fcm   = new FcmService();
+            $title = '❌ Jadwal Posyandu Lansia Dibatalkan';
+            $body  = "{$namaKegiatan} - {$tgl} pukul {$waktu} di {$lokasi}";
+            $fcm->saveNotifikasi($title, $body, 'jadwal_lansia');
+            $fcm->sendToAll($title, $body, ['type' => 'jadwal_lansia']);
+        } catch (\Exception $e) {
+            \Log::warning('FCM delete jadwal lansia gagal: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

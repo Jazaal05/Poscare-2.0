@@ -863,10 +863,20 @@ function hitungStatusGiziLengkap($umur_bulan, $berat_kg, $tinggi_cm, $jenis_kela
         }
         
         // Hitung z-scores
-        $z_tbu = hitungZScoreTBU_LMS($umur_bulan, $tb_for_age, $sex, $cara_ukur);
-        $z_bbu = hitungZScoreBBU_LMS($umur_bulan, $berat_kg, $sex);
+        $z_tbu  = hitungZScoreTBU_LMS($umur_bulan, $tb_for_age, $sex, $cara_ukur);
+        $z_bbu  = hitungZScoreBBU_LMS($umur_bulan, $berat_kg, $sex);
         $z_bbtb = hitungZScoreBBTB_LMS($umur_bulan, $berat_kg, $tinggi_cm, $sex, $cara_ukur);
-        
+
+        // Sanitasi: ubah NAN/INF/null menjadi null agar JSON-safe
+        $sanitizeZ = function($v) {
+            if ($v === null) return null;
+            if (!is_finite($v)) return null; // tangkap NAN dan INF
+            return $v;
+        };
+        $z_tbu  = $sanitizeZ($z_tbu);
+        $z_bbu  = $sanitizeZ($z_bbu);
+        $z_bbtb = $sanitizeZ($z_bbtb);
+
         // Hitung BMI dan z-score IMT/U
         $bmi = $tb_for_age > 0 ? $berat_kg / pow($tb_for_age / 100, 2) : null;
         $z_imtu = $z_bbtb; // Gunakan z_bbtb sebagai proxy untuk IMT/U
@@ -878,22 +888,22 @@ function hitungStatusGiziLengkap($umur_bulan, $berat_kg, $tinggi_cm, $jenis_kela
             $z_lku = null;
         }
         
-        // Klasifikasi per sumbu
-        $axis_tbu = classify_tbu_axis($z_tbu);
-        $axis_bbu = classify_bbu_axis($z_bbu);
-        $axis_adp = classify_adiposity_axis($z_bbtb);
+        // Klasifikasi per sumbu (null-safe: jika z-score null, fallback ke 'Normal'/'Gizi Baik')
+        $axis_tbu = $z_tbu  !== null ? classify_tbu_axis($z_tbu)       : ['label' => 'Tidak Dapat Dihitung', 'detail' => 'Data tidak cukup', 'flag_stunting' => false, 'severity' => null, 'color' => '#9CA3AF'];
+        $axis_bbu = $z_bbu  !== null ? classify_bbu_axis($z_bbu)       : ['label' => 'Tidak Dapat Dihitung', 'detail' => 'Data tidak cukup', 'flag_under'    => false, 'severity' => null, 'color' => '#9CA3AF'];
+        $axis_adp = $z_bbtb !== null ? classify_adiposity_axis($z_bbtb): ['label' => 'Tidak Dapat Dihitung', 'detail' => 'Data tidak cukup', 'flags'         => [],    'color' => '#9CA3AF'];
         
         // Overall 8-kategori
         $overall = overall_8_category($axis_tbu, $axis_bbu, $axis_adp);
         
-        // Generate flags
+        // Generate flags (null-safe: jika z-score null, anggap tidak memenuhi kondisi)
         $data_warnings = validasi_biologis($umur_bulan, $berat_kg, $tinggi_cm);
         $flags = [
-            'stunting' => ($z_tbu < -2.0),
-            'wasting' => ($z_bbtb < -2.0 || $z_imtu < -2.0),
-            'risk_over' => ($z_bbtb > 1.0 || $z_imtu > 1.0),
-            'overweight' => ($z_bbtb > 2.0 || $z_imtu > 2.0),
-            'obesity' => ($z_bbtb > 3.0 || $z_imtu > 3.0),
+            'stunting'  => ($z_tbu  !== null && $z_tbu  < -2.0),
+            'wasting'   => ($z_bbtb !== null && $z_bbtb < -2.0) || ($z_imtu !== null && $z_imtu < -2.0),
+            'risk_over' => ($z_bbtb !== null && $z_bbtb > 1.0)  || ($z_imtu !== null && $z_imtu > 1.0),
+            'overweight'=> ($z_bbtb !== null && $z_bbtb > 2.0)  || ($z_imtu !== null && $z_imtu > 2.0),
+            'obesity'   => ($z_bbtb !== null && $z_bbtb > 3.0)  || ($z_imtu !== null && $z_imtu > 3.0),
         ];
         
         // Klasifikasi LK/U (opsional)
@@ -907,11 +917,11 @@ function hitungStatusGiziLengkap($umur_bulan, $berat_kg, $tinggi_cm, $jenis_kela
             'status_gizi' => $overall['kategori'],
             'status_gizi_detail' => [
                 'zscore' => [
-                    'tbu' => round($z_tbu, 2),
-                    'bbu' => round($z_bbu, 2),
-                    'bbtb' => round($z_bbtb, 2),
-                    'imtu' => round($z_imtu, 2),
-                    'lku' => $z_lku !== null ? round($z_lku, 2) : null
+                    'tbu'  => $z_tbu  !== null ? round($z_tbu,  2) : null,
+                    'bbu'  => $z_bbu  !== null ? round($z_bbu,  2) : null,
+                    'bbtb' => $z_bbtb !== null ? round($z_bbtb, 2) : null,
+                    'imtu' => $z_imtu !== null ? round($z_imtu, 2) : null,
+                    'lku'  => $z_lku  !== null ? round($z_lku,  2) : null
                 ],
                 'axis' => [
                     'tbu' => [

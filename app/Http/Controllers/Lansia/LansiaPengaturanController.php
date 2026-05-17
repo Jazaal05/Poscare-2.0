@@ -147,10 +147,10 @@ class LansiaPengaturanController extends Controller
             return response()->json(['success' => false, 'message' => 'Hanya admin yang dapat melihat daftar pengguna.'], 403);
         }
 
-        // Hanya tampilkan user dengan role 'wali_lansia' (dari aplikasi mobile)
+        // Tampilkan wali_lansia dan orangtua_lansia (pengguna mobile modul lansia)
         $users = User::select('id', 'username', 'email', 'nama_lengkap', 'no_telp', 'nik', 'role')
-            ->where('role', 'wali_lansia')
-            ->orderBy('username')
+            ->whereIn('role', ['wali_lansia', 'orangtua_lansia'])
+            ->orderBy('role')->orderBy('username')
             ->get();
 
         return response()->json(['success' => true, 'data' => $users]);

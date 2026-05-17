@@ -47,6 +47,7 @@ class Lansia extends Model
         
         // Metadata
         'dicatat_oleh',
+        'user_id',
         'is_deleted',
     ];
 

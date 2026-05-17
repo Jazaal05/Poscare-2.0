@@ -25,6 +25,7 @@ class User extends Authenticatable
         'profile_image_url',
         'reset_otp_code',
         'reset_otp_expires_at',
+        'fcm_token',
     ];
 
     protected $hidden = [

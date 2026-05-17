@@ -28,7 +28,7 @@ class AnakController extends Controller
     // =============================================
     public function list(Request $request)
     {
-        $user   = Auth::user();
+        $user   = $request->user();
         $search = trim($request->get('q', ''));
         $limit  = min(100, max(10, (int) $request->get('limit', 50)));
 
@@ -36,7 +36,13 @@ class AnakController extends Controller
 
         // Role-based filter
         if ($user->role !== 'admin') {
-            $query->where('user_id', $user->id);
+            // Ambil berdasarkan user_id ATAU nik_ibu (untuk akun lama yang belum terhubung)
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if ($user->nik) {
+                    $q->orWhere('nik_ibu', $user->nik);
+                }
+            });
         }
 
         // Search
@@ -103,11 +109,16 @@ class AnakController extends Controller
     // =============================================
     public function show(Request $request, $id)
     {
-        $user  = Auth::user();
+        $user  = $request->user();
         $query = Anak::aktif()->where('id', $id);
 
         if ($user->role !== 'admin') {
-            $query->where('user_id', $user->id);
+            $query->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if ($user->nik) {
+                    $q->orWhere('nik_ibu', $user->nik);
+                }
+            });
         }
 
         $anak = $query->first();
@@ -297,6 +308,11 @@ class AnakController extends Controller
                     'nik'          => $data['nik_ibu'],
                     'no_telp'      => $hp,
                 ]);
+            } else {
+                // Jika user sudah ada dan punya lansia, upgrade ke orangtua_lansia
+                if ($user->role === 'wali_lansia') {
+                    $user->update(['role' => 'orangtua_lansia']);
+                }
             }
 
             // Insert anak
@@ -438,7 +454,7 @@ class AnakController extends Controller
     // =============================================
     public function update(UpdateAnakRequest $request, $id)
     {
-        $user  = Auth::user();
+        $user  = $request->user();
         $query = Anak::aktif()->where('id', $id);
 
         if ($user->role !== 'admin') {
@@ -561,7 +577,7 @@ class AnakController extends Controller
     // =============================================
     public function destroy(Request $request, $id)
     {
-        $user  = Auth::user();
+        $user  = $request->user();
         $query = Anak::aktif()->where('id', $id);
 
         if ($user->role !== 'admin') {

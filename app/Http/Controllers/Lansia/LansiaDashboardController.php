@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\KunjunganLansia;
 use App\Models\Lansia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LansiaDashboardController extends Controller
 {
@@ -16,42 +17,61 @@ class LansiaDashboardController extends Controller
 
     public function stats()
     {
-        $total   = Lansia::aktif()->count();
-        $totalL  = Lansia::aktif()->where('jenis_kelamin', 'L')->count();
-        $totalP  = Lansia::aktif()->where('jenis_kelamin', 'P')->count();
-        $rataUsia = round(Lansia::aktif()->get()->avg(fn($l) => $l->umur) ?? 0, 1);
+        $user = Auth::user();
 
-        // Kunjungan bulan ini
-        $kunjunganBulanIni = KunjunganLansia::whereMonth('tanggal_kunjungan', now()->month)
+        // Filter lansia berdasarkan role:
+        // wali_lansia, orangtua, orangtua_lansia → hanya lansia miliknya
+        // kader/admin → semua lansia
+        $query = Lansia::aktif();
+        if ($user && in_array($user->role, ['wali_lansia', 'orangtua', 'orangtua_lansia'])) {
+            $query->where('user_id', $user->id);
+        }
+
+        $lansiaList = $query->get();
+        $lansiaIds  = $lansiaList->pluck('id');
+
+        $total    = $lansiaList->count();
+        $totalL   = $lansiaList->where('jenis_kelamin', 'L')->count();
+        $totalP   = $lansiaList->where('jenis_kelamin', 'P')->count();
+        $rataUsia = $total > 0
+            ? round($lansiaList->avg(fn($l) => $l->umur) ?? 0, 1)
+            : 0;
+
+        // Kunjungan bulan ini (hanya untuk lansia milik user)
+        $kunjunganBulanIni = KunjunganLansia::whereIn('lansia_id', $lansiaIds)
+            ->whereMonth('tanggal_kunjungan', now()->month)
             ->whereYear('tanggal_kunjungan', now()->year)
             ->count();
 
         // Lansia dengan kondisi tidak normal (dari kunjungan terakhir)
-        $lansiaIds = Lansia::aktif()->pluck('id');
-        $tidakNormal = KunjunganLansia::whereIn('lansia_id', $lansiaIds)
-            ->whereIn('lansia_id', function ($q) {
-                $q->selectRaw('lansia_id')
-                  ->from('kunjungan_lansia')
-                  ->groupBy('lansia_id')
-                  ->havingRaw('MAX(tanggal_kunjungan) = tanggal_kunjungan');
-            })
-            ->where(function ($q) {
-                $q->whereIn('status_tensi', ['hipertensi1', 'hipertensi2'])
-                  ->orWhereIn('status_gula', ['tinggi', 'sangat_tinggi'])
-                  ->orWhere('status_kolesterol', 'tinggi')
-                  ->orWhere('status_asam_urat', 'tinggi');
-            })
-            ->count();
+        $tidakNormal = 0;
+        if ($lansiaIds->isNotEmpty()) {
+            $tidakNormal = KunjunganLansia::whereIn('lansia_id', $lansiaIds)
+                ->whereIn('lansia_id', function ($q) use ($lansiaIds) {
+                    $q->selectRaw('lansia_id')
+                      ->from('kunjungan_lansia')
+                      ->whereIn('lansia_id', $lansiaIds)
+                      ->groupBy('lansia_id')
+                      ->havingRaw('MAX(tanggal_kunjungan) = tanggal_kunjungan');
+                })
+                ->where(function ($q) {
+                    $q->whereIn('status_tensi', ['hipertensi1', 'hipertensi2'])
+                      ->orWhereIn('status_gula', ['tinggi', 'sangat_tinggi'])
+                      ->orWhere('status_kolesterol', 'tinggi')
+                      ->orWhere('status_asam_urat', 'tinggi');
+                })
+                ->count();
+        }
 
         return response()->json([
             'success' => true,
             'data' => [
-                'total_lansia'       => $total,
-                'total_laki'         => $totalL,
-                'total_perempuan'    => $totalP,
-                'rata_rata_usia'     => $rataUsia,
-                'kunjungan_bulan_ini'=> $kunjunganBulanIni,
-                'tidak_normal'       => $tidakNormal,
+                'total_lansia'        => $total,
+                'total_laki'          => $totalL,
+                'total_perempuan'     => $totalP,
+                'rata_rata_usia'      => $rataUsia,
+                'kunjungan_bulan_ini' => $kunjunganBulanIni,
+                'tidak_normal'        => $tidakNormal,
             ],
         ]);
     }

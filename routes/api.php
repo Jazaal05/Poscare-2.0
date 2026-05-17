@@ -62,9 +62,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bbu', [MobileController::class, 'getBbu']);
 
     // ═══════════════════════════════════════════════════════════════════
-    // MODUL BALITA — orangtua & kader
+    // MODUL BALITA — orangtua, orangtua_lansia & kader
     // ═══════════════════════════════════════════════════════════════════
-    Route::middleware('role:orangtua,kader')->group(function () {
+    Route::middleware('role:orangtua,orangtua_lansia,kader')->group(function () {
 
         // Data Anak
         Route::get('/anak',      [AnakController::class, 'list']);
@@ -89,9 +89,9 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ═══════════════════════════════════════════════════════════════════
-    // MODUL LANSIA — wali_lansia & kader
+    // MODUL LANSIA — wali_lansia, orangtua_lansia, orangtua & kader
     // ═══════════════════════════════════════════════════════════════════
-    Route::middleware('role:wali_lansia,kader')->prefix('lansia')->group(function () {
+    Route::middleware('role:wali_lansia,orangtua_lansia,orangtua,kader')->prefix('lansia')->group(function () {
 
         // Riwayat Kunjungan — HARUS di atas /{id} agar tidak tertimpa
         Route::get('/{lansiaId}/kunjungan', [LansiaKunjunganController::class, 'riwayat']);
@@ -108,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Data Lansia — generic routes TERAKHIR
         Route::get('/',      [LansiaKunjunganController::class, 'list']);
-        Route::get('/{id}',  [LansiaKunjunganController::class, 'show']);
+        Route::get('/{id}',  [LansiaKunjunganController::class, 'show'])->where('id', '[0-9]+');
     });
 
     // ═══════════════════════════════════════════════════════════════════

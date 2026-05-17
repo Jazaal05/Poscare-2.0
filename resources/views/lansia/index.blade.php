@@ -1,4 +1,4 @@
-﻿@extends('layouts.lansia')
+@extends('layouts.lansia')
 
 @section('title', 'Data Lansia')
 
@@ -507,7 +507,7 @@ async function loadLansia() {
     tbody.innerHTML = '<tr class="loading-row"><td colspan="18"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
 
     try {
-        const url = `/api/lansia/list?q=${encodeURIComponent(search)}&limit=200`;
+        const url = `/web/lansia/list?q=${encodeURIComponent(search)}&limit=200`;
         const res = await fetch(url, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
 
@@ -646,7 +646,7 @@ async function openDetail(id) {
     openModal('modalDetail');
 
     try {
-        const res  = await fetch(`/api/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const res  = await fetch(`/web/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
@@ -749,7 +749,7 @@ async function submitEdit(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch(`/api/lansia/${id}`, {
+        const res  = await fetch(`/web/lansia/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -786,7 +786,7 @@ async function doHapus(id) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
     try {
-        const res  = await fetch(`/api/lansia/${id}`, {
+        const res  = await fetch(`/web/lansia/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',

@@ -102,6 +102,7 @@ class LansiaController extends Controller
                 'gula_darah' => 'nullable|numeric|min:50|max:500',
                 'kolesterol' => 'nullable|numeric|min:100|max:400',
                 'asam_urat' => 'nullable|numeric|min:1|max:15',
+                'user_id' => 'nullable|exists:users,id', // akun wali yang terhubung
             ]);
 
             $validated['dicatat_oleh'] = auth()->id();
@@ -109,7 +110,31 @@ class LansiaController extends Controller
             $validated['status_kesehatan'] = 'Sehat'; // Default
             $validated['tanggal_pemeriksaan_terakhir'] = now();
 
+            // Jika ada user_id yang dikirim, kaitkan langsung
+            // Jika tidak, coba cari user berdasarkan NIK wali
+            if (empty($validated['user_id']) && !empty($validated['nik_wali'])) {
+                $userWali = \App\Models\User::where('nik', $validated['nik_wali'])->first();
+                if ($userWali) {
+                    $validated['user_id'] = $userWali->id;
+                }
+            }
+
             $lansia = Lansia::create($validated);
+
+            // Update role user jika perlu
+            if (!empty($validated['user_id'])) {
+                $userWali = \App\Models\User::find($validated['user_id']);
+                if ($userWali) {
+                    // Jika user sudah punya balita (orangtua), upgrade ke orangtua_lansia
+                    if ($userWali->role === 'orangtua') {
+                        $userWali->update(['role' => 'orangtua_lansia']);
+                    }
+                    // Jika user belum punya role apapun atau role default, set wali_lansia
+                    elseif (!in_array($userWali->role, ['orangtua_lansia', 'wali_lansia', 'kader', 'admin'])) {
+                        $userWali->update(['role' => 'wali_lansia']);
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -156,6 +181,7 @@ class LansiaController extends Controller
                     'nama_wali' => $lansia->nama_wali,
                     'nik_wali' => $lansia->nik_wali,
                     'hp_kontak_wali' => $lansia->hp_kontak_wali,
+                    'tanggal_pemeriksaan_terakhir' => $lansia->tanggal_pemeriksaan_terakhir?->format('d/m/Y'),
                 ]
             ]);
         } catch (\Exception $e) {
@@ -195,6 +221,21 @@ class LansiaController extends Controller
             ]);
 
             $lansia->update($validated);
+
+            // Update user_id dan role jika nik_wali berubah
+            if (!empty($validated['nik_wali'])) {
+                $userWali = \App\Models\User::where('nik', $validated['nik_wali'])->first();
+                if ($userWali) {
+                    // Kaitkan lansia ke user
+                    $lansia->update(['user_id' => $userWali->id]);
+                    // Update role user
+                    if ($userWali->role === 'orangtua') {
+                        $userWali->update(['role' => 'orangtua_lansia']);
+                    } elseif (!in_array($userWali->role, ['orangtua_lansia', 'wali_lansia', 'kader', 'admin'])) {
+                        $userWali->update(['role' => 'wali_lansia']);
+                    }
+                }
+            }
 
             return response()->json([
                 'success' => true,

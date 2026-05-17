@@ -125,7 +125,15 @@ class MobileController extends BaseApiController
             'fcm_token' => 'required|string',
         ]);
 
-        $request->user()->update(['fcm_token' => $request->fcm_token]);
+        $token  = $request->fcm_token;
+        $userId = $request->user()->id;
+
+        // Hapus token yang sama dari user lain (1 device = 1 user aktif)
+        \App\Models\User::where('fcm_token', $token)
+            ->where('id', '!=', $userId)
+            ->update(['fcm_token' => null]);
+
+        $request->user()->update(['fcm_token' => $token]);
 
         return $this->successResponse(null, 'FCM token berhasil disimpan.');
     }
@@ -133,16 +141,26 @@ class MobileController extends BaseApiController
     // ─── NOTIFIKASI ───────────────────────────────────────────────────────────
 
     /**
-     * GET /api/notifikasi
+     * GET /api/notifikasi?layanan=semua|balita|lansia
      * Menggantikan: poscare_get_notifikasi.php
      */
-    public function getNotifikasi()
+    public function getNotifikasi(Request $request)
     {
-        $data = DB::table('notifikasi')
+        $layanan = $request->get('layanan', 'semua');
+
+        $query = DB::table('notifikasi')
             ->select('id', 'judul', 'pesan', 'tipe', 'is_read', 'created_at')
             ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get();
+            ->limit(50);
+
+        if ($layanan === 'lansia') {
+            $query->where('tipe', 'jadwal_lansia');
+        } elseif ($layanan === 'balita') {
+            $query->where('tipe', '!=', 'jadwal_lansia');
+        }
+        // 'semua' = tidak filter
+
+        $data = $query->get();
 
         return $this->successResponse($data, 'Notifikasi berhasil dimuat.');
     }

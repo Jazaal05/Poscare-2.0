@@ -15,7 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Kirim reminder jadwal posyandu setiap hari jam 08:00 (H-1)
+        $schedule->command('poscare:reminder-jadwal')->dailyAt('08:00');
+
+        // Kirim reminder 30 menit sebelum jadwal (cek setiap menit)
+        $schedule->command('poscare:reminder-30menit')->everyMinute();
     }
 
     /**

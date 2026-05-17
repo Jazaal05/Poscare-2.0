@@ -552,7 +552,7 @@ document.getElementById('btnKonfirmasiHapusVaksin').addEventListener('click', as
     const btn = document.getElementById('btnKonfirmasiHapusVaksin');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     try {
-        const res  = await fetch(`{{ url('/api/vaksin') }}/${pendingHapusVaksin}`, {
+        const res  = await fetch(`{{ url('/web/vaksin') }}/${pendingHapusVaksin}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

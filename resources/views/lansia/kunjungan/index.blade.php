@@ -1,4 +1,4 @@
-﻿@extends('layouts.lansia')
+@extends('layouts.lansia')
 
 @section('title', 'Kunjungan Lansia')
 
@@ -139,9 +139,12 @@
     .empty-row td { text-align:center; padding:40px; color:#9CA3AF; }
 
     /* Table nav arrows */
-    .table-nav-wrapper { position:relative; display:flex; align-items:center; gap:8px; }
-    .table-nav-arrow { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#4A90E2,#357ABD); border:none; box-shadow:0 2px 8px rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:all 0.3s ease; color:white; font-size:14px; opacity:0.3; pointer-events:none; }
-    .table-nav-arrow.visible { opacity:1; pointer-events:auto; }
+    .table-nav-wrapper { display:flex; align-items:center; gap:8px; }
+    .table-nav-arrow { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#4A90E2,#357ABD); border:none; box-shadow:0 2px 8px rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s ease; color:white; font-size:14px; }
+    #scrollLeft { opacity:0.3; pointer-events:none; }
+    #scrollRight { opacity:1; pointer-events:auto; }
+    .table-nav-arrow.visible { opacity:1 !important; pointer-events:auto !important; }
+    .table-nav-arrow.faded { opacity:0.3 !important; pointer-events:none !important; }
     .table-nav-arrow:hover { background:linear-gradient(135deg,#357ABD,#2868A8); transform:scale(1.1); }
     .table-slider-container { flex:1; overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:#CBD5E1 #F1F5F9; padding-bottom:8px; }
     .table-slider-container::-webkit-scrollbar { height:8px; }
@@ -489,6 +492,7 @@
         </div>
         <div id="detailContent">Memuat...</div>
         <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+            <button class="btn btn-success" onclick="closeModal('modalDetail');openKunjunganSelanjutnya(currentDetailId);"><i class="fas fa-notes-medical"></i> Catat Kunjungan</button>
             <button class="btn btn-warning" id="btnEditFromDetail" onclick="openEditFromDetail()"><i class="fas fa-edit"></i> Edit</button>
             <button class="btn btn-outline" onclick="closeModal('modalDetail')">Tutup</button>
         </div>
@@ -618,37 +622,6 @@
             </div>
 
             <div class="form-grid">
-                {{-- Data yang bisa diupdate --}}
-                <div class="form-section-title"><i class="fas fa-user-edit"></i> Update Data Lansia (Opsional)</div>
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" id="kunjNamaLengkap" placeholder="Nama lengkap lansia">
-                </div>
-                <div class="form-group">
-                    <label>NIK Lansia</label>
-                    <input type="text" name="nik_lansia" id="kunjNikLansia" placeholder="16 digit NIK" maxlength="16">
-                </div>
-                <div class="form-group" style="grid-column:1/-1">
-                    <label>Alamat Domisili</label>
-                    <textarea name="alamat_domisili" id="kunjAlamat" placeholder="Alamat lengkap" rows="2" style="padding:10px 14px;border:2px solid #E5E7EB;border-radius:8px;font-size:14px;resize:vertical;"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>RT/RW</label>
-                    <input type="text" name="rt_rw" id="kunjRtRw" placeholder="001/005" maxlength="10">
-                </div>
-                <div class="form-group">
-                    <label>Nama Wali</label>
-                    <input type="text" name="nama_wali" id="kunjNamaWali" placeholder="Nama wali/keluarga">
-                </div>
-                <div class="form-group">
-                    <label>NIK Wali</label>
-                    <input type="text" name="nik_wali" id="kunjNikWali" placeholder="16 digit NIK wali" maxlength="16">
-                </div>
-                <div class="form-group">
-                    <label>No HP Kontak Wali</label>
-                    <input type="text" name="hp_kontak_wali" id="kunjHpWali" placeholder="+62...">
-                </div>
-
                 {{-- Data Kunjungan --}}
                 <div class="form-section-title"><i class="fas fa-calendar-alt"></i> Data Kunjungan</div>
                 <div class="form-group">
@@ -736,6 +709,16 @@
                 <button type="submit" class="btn btn-primary" id="btnKunjunganSelanjutnya"><i class="fas fa-save"></i> Simpan Kunjungan</button>
             </div>
         </form>
+
+        {{-- Riwayat Kunjungan Sebelumnya --}}
+        <div style="margin-top:24px;border-top:2px solid #E5E7EB;padding-top:20px;">
+            <h4 style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:12px;">
+                <i class="fas fa-history" style="color:#246BCE;"></i> Riwayat Kunjungan Sebelumnya
+            </h4>
+            <div id="riwayatKunjunganBody">
+                <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px;">Memuat riwayat...</p>
+            </div>
+        </div>
     </div>
 </div>
 @endsection
@@ -777,7 +760,7 @@ async function loadLansia() {
     tbody.innerHTML = '<tr class="loading-row"><td colspan="18"><i class="fas fa-spinner fa-spin"></i> Memuat data...</td></tr>';
 
     try {
-        const url = `/lansia/api/kunjungan?q=${encodeURIComponent(search)}&limit=200`;
+        const url = `/lansia/web/kunjungan?q=${encodeURIComponent(search)}&limit=200`;
         console.log('Fetching lansia data from:', url);
         
         const res = await fetch(url, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
@@ -817,12 +800,11 @@ function renderTable() {
         return;
     }
 
-    const statusBadge = (s) => {
-        if (!s || s === 'Sehat') return '<span class="badge badge-sehat">Sehat</span>';
+    const statusBadge = (s, lansiaId, namaLansia) => {
+        if (!s || s === 'Sehat') return `<span class="badge badge-sehat" style="cursor:pointer;" onclick="openKunjunganSelanjutnya(${lansiaId})" title="Klik untuk catat kunjungan">Sehat <i class="fas fa-notes-medical" style="font-size:10px;margin-left:3px;opacity:0.7;"></i></span>`;
         
-        // Handle multiple conditions
         const conditions = s.split(', ');
-        return conditions.map(cond => {
+        const badges = conditions.map(cond => {
             const map = {
                 'Hipertensi': 'badge-hipertensi',
                 'Diabetes': 'badge-diabetes',
@@ -830,8 +812,9 @@ function renderTable() {
                 'Asam Urat Tinggi': 'badge-asam-urat-tinggi',
             };
             const cls = map[cond] || 'badge-secondary';
-            return `<span class="badge ${cls}">${cond}</span>`;
+            return `<span class="badge ${cls}" style="cursor:pointer;" onclick="openKunjunganSelanjutnya(${lansiaId})" title="Klik untuk catat kunjungan">${cond} <i class="fas fa-notes-medical" style="font-size:10px;margin-left:3px;opacity:0.7;"></i></span>`;
         }).join(' ');
+        return badges;
     };
 
     const jkBadge = (jk) => {
@@ -855,7 +838,7 @@ function renderTable() {
             <td>${l.gula_darah ? parseFloat(l.gula_darah).toFixed(1) : '-'}</td>
             <td>${l.kolesterol ? parseFloat(l.kolesterol).toFixed(1) : '-'}</td>
             <td>${l.asam_urat ? parseFloat(l.asam_urat).toFixed(1) : '-'}</td>
-            <td>${statusBadge(l.status_kesehatan)}</td>
+            <td>${statusBadge(l.status_kesehatan, l.id, l.nama_lansia)}</td>
             <td>${l.alamat_domisili || '-'}</td>
             <td>${l.nama_wali || '-'}</td>
             <td><code style="font-size:12px;">${l.nik_wali || '-'}</code></td>
@@ -901,19 +884,33 @@ function goPage(p) {
 }
 
 function scrollTable(amount) {
-    const slider = document.getElementById('tableSlider');
+    const slider = document.querySelector('.table-wrapper');
     if (slider) slider.scrollLeft += amount;
     setTimeout(updateScrollArrows, 100);
 }
 
 function updateScrollArrows() {
-    const slider = document.getElementById('tableSlider');
+    const slider = document.querySelector('.table-wrapper');
     if (!slider) return;
     const leftBtn  = document.getElementById('scrollLeft');
     const rightBtn = document.getElementById('scrollRight');
-    if (leftBtn)  leftBtn.classList.toggle('visible', slider.scrollLeft > 10);
-    if (rightBtn) rightBtn.classList.toggle('visible', slider.scrollLeft < slider.scrollWidth - slider.clientWidth - 10);
+    const atLeft   = slider.scrollLeft <= 10;
+    const atRight  = slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 10;
+    if (leftBtn)  { leftBtn.classList.toggle('visible', !atLeft); leftBtn.classList.toggle('faded', atLeft); }
+    if (rightBtn) { rightBtn.classList.toggle('faded', atRight); rightBtn.classList.toggle('visible', !atRight); }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.querySelector('.table-wrapper');
+    if (slider) {
+        slider.addEventListener('scroll', updateScrollArrows);
+        setTimeout(updateScrollArrows, 500);
+    }
+    const btnLeft  = document.getElementById('scrollLeft');
+    const btnRight = document.getElementById('scrollRight');
+    if (btnLeft)  btnLeft.addEventListener('click', function() { scrollTable(-300); });
+    if (btnRight) btnRight.addEventListener('click', function() { scrollTable(300); });
+});
 
 function debounceSearch() {
     clearTimeout(searchTimer);
@@ -929,11 +926,28 @@ async function openDetail(id) {
     openModal('modalDetail');
 
     try {
-        const res  = await fetch(`/api/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const res  = await fetch(`/web/lansia/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
         const d = data.data;
+
+        // Format tanggal lahir
+        const tglLahir = d.tanggal_lahir
+            ? new Date(d.tanggal_lahir.substring(0,10) + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})
+            : '-';
+
+        // Badge status kesehatan
+        const statusMap = {
+            'Sehat': 'badge-sehat', 'Hipertensi': 'badge-hipertensi',
+            'Diabetes': 'badge-diabetes', 'Kolesterol Tinggi': 'badge-kolesterol-tinggi',
+            'Asam Urat Tinggi': 'badge-asam-urat-tinggi',
+        };
+        const statusBadgeDetail = (s) => {
+            if (!s) return '<span class="badge badge-secondary">Belum diperiksa</span>';
+            return s.split(', ').map(c => `<span class="badge ${statusMap[c]||'badge-secondary'}">${c}</span>`).join(' ');
+        };
+
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-section">
                 <div class="detail-section-title"><i class="fas fa-user"></i> Data Lansia</div>
@@ -941,10 +955,10 @@ async function openDetail(id) {
                     <div class="detail-item"><label>Nama Lansia</label><span>${d.nama_lansia}</span></div>
                     <div class="detail-item"><label>NIK Lansia</label><span>${d.nik_lansia||'-'}</span></div>
                     <div class="detail-item"><label>Jenis Kelamin</label><span>${d.jenis_kelamin==='L'?'Laki-laki':'Perempuan'}</span></div>
-                    <div class="detail-item"><label>Tanggal Lahir</label><span>${d.tanggal_lahir||'-'}</span></div>
+                    <div class="detail-item"><label>Tanggal Lahir</label><span>${tglLahir}</span></div>
                     <div class="detail-item"><label>Tempat Lahir</label><span>${d.tempat_lahir||'-'}</span></div>
                     <div class="detail-item"><label>Usia</label><span>${d.umur_display||'-'}</span></div>
-                    <div class="detail-item"><label>Status Kesehatan</label><span>${d.status_kesehatan||'Belum diperiksa'}</span></div>
+                    <div class="detail-item" style="grid-column:1/-1"><label>Status Kesehatan</label><span>${statusBadgeDetail(d.status_kesehatan)}</span></div>
                 </div>
             </div>
             <div class="detail-section">
@@ -954,31 +968,20 @@ async function openDetail(id) {
                     <div class="detail-item"><label>NIK Wali</label><span>${d.nik_wali||'-'}</span></div>
                     <div class="detail-item"><label>No HP Wali</label><span>${d.hp_kontak_wali||'-'}</span></div>
                     <div class="detail-item"><label>Nama KK</label><span>${d.nama_kk||'-'}</span></div>
-                    <div class="detail-item" style="grid-column:1/-1"><label>Alamat</label><span>${d.alamat_domisili||'-'} ${d.rt_rw?'RT/RW '+d.rt_rw:''}</span></div>
+                    <div class="detail-item" style="grid-column:1/-1"><label>Alamat</label><span>${d.alamat_domisili||'-'}${d.rt_rw?' RT/RW '+d.rt_rw:''}</span></div>
                 </div>
             </div>
             ${d.berat_badan ? `
             <div class="detail-section">
                 <div class="detail-section-title"><i class="fas fa-heartbeat"></i> Data Kesehatan Terakhir</div>
                 <div class="detail-grid">
-                    <div class="detail-item"><label>Berat Badan</label><span>${d.berat_badan} kg</span></div>
-                    <div class="detail-item"><label>Tinggi Badan</label><span>${d.tinggi_badan} cm</span></div>
+                    <div class="detail-item"><label>Berat Badan</label><span>${parseFloat(d.berat_badan).toFixed(1)} kg</span></div>
+                    <div class="detail-item"><label>Tinggi Badan</label><span>${parseFloat(d.tinggi_badan).toFixed(1)} cm</span></div>
                     ${d.tekanan_darah ? `<div class="detail-item"><label>Tekanan Darah</label><span>${d.tekanan_darah} mmHg</span></div>` : ''}
-                    ${d.gula_darah ? `<div class="detail-item"><label>Gula Darah</label><span>${d.gula_darah} mg/dL</span></div>` : ''}
-                    ${d.kolesterol ? `<div class="detail-item"><label>Kolesterol</label><span>${d.kolesterol} mg/dL</span></div>` : ''}
-                    ${d.asam_urat ? `<div class="detail-item"><label>Asam Urat</label><span>${d.asam_urat} mg/dL</span></div>` : ''}
+                    ${d.gula_darah ? `<div class="detail-item"><label>Gula Darah</label><span>${parseFloat(d.gula_darah).toFixed(1)} mg/dL</span></div>` : ''}
+                    ${d.kolesterol ? `<div class="detail-item"><label>Kolesterol</label><span>${parseFloat(d.kolesterol).toFixed(1)} mg/dL</span></div>` : ''}
+                    ${d.asam_urat ? `<div class="detail-item"><label>Asam Urat</label><span>${parseFloat(d.asam_urat).toFixed(1)} mg/dL</span></div>` : ''}
                     <div class="detail-item"><label>Tanggal Pemeriksaan</label><span>${d.tanggal_pemeriksaan_terakhir||'-'}</span></div>
-                </div>
-            </div>` : ''}
-            ${d.status_detail_array ? `
-            <div class="detail-section">
-                <div class="detail-section-title"><i class="fas fa-notes-medical"></i> Detail Status Kesehatan</div>
-                <div style="display:flex;flex-wrap:wrap;gap:12px;">
-                    ${d.status_detail_array.tekanan_darah ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Tekanan Darah:</strong> ${d.status_detail_array.tekanan_darah.nilai} - ${d.status_detail_array.tekanan_darah.kategori}</div>` : ''}
-                    ${d.status_detail_array.gula_darah ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Gula Darah:</strong> ${d.status_detail_array.gula_darah.nilai} mg/dL - ${d.status_detail_array.gula_darah.kategori}</div>` : ''}
-                    ${d.status_detail_array.kolesterol ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Kolesterol:</strong> ${d.status_detail_array.kolesterol.nilai} mg/dL - ${d.status_detail_array.kolesterol.kategori}</div>` : ''}
-                    ${d.status_detail_array.asam_urat ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>Asam Urat:</strong> ${d.status_detail_array.asam_urat.nilai} mg/dL - ${d.status_detail_array.asam_urat.kategori}</div>` : ''}
-                    ${d.status_detail_array.bmi ? `<div style="flex:1;min-width:200px;padding:12px;background:#F8FAFC;border-radius:8px;"><strong>BMI:</strong> ${d.status_detail_array.bmi.nilai} - ${d.status_detail_array.bmi.kategori}</div>` : ''}
                 </div>
             </div>` : ''}
         `;
@@ -1039,7 +1042,7 @@ async function submitEdit(e) {
 
     try {
         // Edit = update data LANSIA (bukan kunjungan)
-        const res  = await fetch(`/api/lansia/${id}`, {
+        const res  = await fetch(`/web/lansia/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1077,7 +1080,7 @@ async function doHapus(id) {
 
     try {
         // Hapus = soft delete data LANSIA (bukan kunjungan)
-        const res  = await fetch(`/api/lansia/${id}`, {
+        const res  = await fetch(`/web/lansia/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1112,12 +1115,158 @@ function switchSubTab(tab) {
 }
 
 // ============================================================
+// HELPER VALIDASI FRONTEND
+// ============================================================
+function showFieldError(input, msg) {
+    clearFieldError(input);
+    input.style.borderColor = '#EF4444';
+    const err = document.createElement('small');
+    err.className = 'field-error';
+    err.style.cssText = 'color:#EF4444;font-size:12px;margin-top:4px;display:block;';
+    err.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+    input.parentNode.appendChild(err);
+}
+function clearFieldError(input) {
+    input.style.borderColor = '';
+    const old = input.parentNode.querySelector('.field-error');
+    if (old) old.remove();
+}
+function clearAllErrors(form) {
+    form.querySelectorAll('.field-error').forEach(e => e.remove());
+    form.querySelectorAll('input, select, textarea').forEach(el => el.style.borderColor = '');
+}
+function validateNIK(val) { return !val || /^\d{16}$/.test(val); }
+function validateHP(val)  { return !val || /^(\+62|08)\d{7,13}$/.test(val.replace(/\s/g,'')); }
+function validateTekananDarah(val) { return !val || /^\d{2,3}\/\d{2,3}$/.test(val); }
+
+function validateFormLansiaBaru(form) {
+    clearAllErrors(form);
+    let valid = true;
+
+    const nama = form.querySelector('[name="nama_lengkap"]');
+    if (!nama.value.trim()) { showFieldError(nama, 'Nama lengkap wajib diisi'); valid = false; }
+    else if (nama.value.trim().length < 3) { showFieldError(nama, 'Nama minimal 3 karakter'); valid = false; }
+
+    const tgl = form.querySelector('[name="tgl_lahir"]');
+    if (!tgl.value) { showFieldError(tgl, 'Tanggal lahir wajib diisi'); valid = false; }
+    else {
+        const lahir = new Date(tgl.value);
+        const today = new Date();
+        const umur  = (today - lahir) / (1000 * 60 * 60 * 24 * 365.25);
+        if (umur < 45) { showFieldError(tgl, 'Usia lansia minimal 45 tahun'); valid = false; }
+        if (lahir >= today) { showFieldError(tgl, 'Tanggal lahir tidak boleh hari ini atau masa depan'); valid = false; }
+    }
+
+    const jk = form.querySelector('[name="jenis_kelamin"]');
+    if (!jk.value) { showFieldError(jk, 'Jenis kelamin wajib dipilih'); valid = false; }
+
+    const nik = form.querySelector('[name="nik_lansia"]');
+    if (nik.value && !validateNIK(nik.value)) { showFieldError(nik, 'NIK harus 16 digit angka'); valid = false; }
+
+    const nikWali = form.querySelector('[name="nik_wali"]');
+    if (nikWali && nikWali.value && !validateNIK(nikWali.value)) { showFieldError(nikWali, 'NIK wali harus 16 digit angka'); valid = false; }
+
+    const hp = form.querySelector('[name="hp_kontak_wali"]');
+    if (hp && hp.value && !validateHP(hp.value)) { showFieldError(hp, 'Format HP tidak valid (contoh: 08123456789)'); valid = false; }
+
+    const td = form.querySelector('[name="tekanan_darah"]');
+    if (td && td.value && !validateTekananDarah(td.value)) { showFieldError(td, 'Format tekanan darah tidak valid (contoh: 120/80)'); valid = false; }
+
+    const bb = form.querySelector('[name="berat_badan"]');
+    if (bb && bb.value) {
+        const v = parseFloat(bb.value);
+        if (isNaN(v) || v < 30 || v > 150) { showFieldError(bb, 'Berat badan harus antara 30�150 kg'); valid = false; }
+    }
+    const tb = form.querySelector('[name="tinggi_badan"]');
+    if (tb && tb.value) {
+        const v = parseFloat(tb.value);
+        if (isNaN(v) || v < 100 || v > 200) { showFieldError(tb, 'Tinggi badan harus antara 100�200 cm'); valid = false; }
+    }
+    const gd = form.querySelector('[name="gula_darah"]');
+    if (gd && gd.value) {
+        const v = parseFloat(gd.value);
+        if (isNaN(v) || v < 50 || v > 500) { showFieldError(gd, 'Gula darah harus antara 50�500 mg/dL'); valid = false; }
+    }
+    const kol = form.querySelector('[name="kolesterol"]');
+    if (kol && kol.value) {
+        const v = parseFloat(kol.value);
+        if (isNaN(v) || v < 100 || v > 400) { showFieldError(kol, 'Kolesterol harus antara 100�400 mg/dL'); valid = false; }
+    }
+    const au = form.querySelector('[name="asam_urat"]');
+    if (au && au.value) {
+        const v = parseFloat(au.value);
+        if (isNaN(v) || v < 1 || v > 15) { showFieldError(au, 'Asam urat harus antara 1�15 mg/dL'); valid = false; }
+    }
+
+    if (!valid) {
+        // Scroll ke error pertama
+        const firstErr = form.querySelector('.field-error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return valid;
+}
+
+function validateFormKunjungan(form) {
+    clearAllErrors(form);
+    let valid = true;
+
+    const lansia = form.querySelector('[name="lansia_id"]');
+    if (lansia && !lansia.value) { showFieldError(lansia, 'Pilih lansia terlebih dahulu'); valid = false; }
+
+    const tgl = form.querySelector('[name="tanggal_kunjungan"]');
+    if (!tgl.value) { showFieldError(tgl, 'Tanggal kunjungan wajib diisi'); valid = false; }
+    else {
+        const tglVal = new Date(tgl.value);
+        const today  = new Date(); today.setHours(23,59,59,999);
+        if (tglVal > today) { showFieldError(tgl, 'Tanggal kunjungan tidak boleh masa depan'); valid = false; }
+    }
+
+    const td = form.querySelector('[name="tekanan_darah"]');
+    if (td && td.value && !validateTekananDarah(td.value)) { showFieldError(td, 'Format tekanan darah tidak valid (contoh: 120/80)'); valid = false; }
+
+    const bb = form.querySelector('[name="berat_badan"]');
+    if (bb && bb.value) {
+        const v = parseFloat(bb.value);
+        if (isNaN(v) || v < 30 || v > 150) { showFieldError(bb, 'Berat badan harus antara 30�150 kg'); valid = false; }
+    }
+    const tb = form.querySelector('[name="tinggi_badan"]');
+    if (tb && tb.value) {
+        const v = parseFloat(tb.value);
+        if (isNaN(v) || v < 100 || v > 200) { showFieldError(tb, 'Tinggi badan harus antara 100�200 cm'); valid = false; }
+    }
+    const gd = form.querySelector('[name="gula_darah"]');
+    if (gd && gd.value) {
+        const v = parseFloat(gd.value);
+        if (isNaN(v) || v < 50 || v > 500) { showFieldError(gd, 'Gula darah harus antara 50�500 mg/dL'); valid = false; }
+    }
+    const kol = form.querySelector('[name="kolesterol"]');
+    if (kol && kol.value) {
+        const v = parseFloat(kol.value);
+        if (isNaN(v) || v < 100 || v > 400) { showFieldError(kol, 'Kolesterol harus antara 100�400 mg/dL'); valid = false; }
+    }
+    const au = form.querySelector('[name="asam_urat"]');
+    if (au && au.value) {
+        const v = parseFloat(au.value);
+        if (isNaN(v) || v < 1 || v > 15) { showFieldError(au, 'Asam urat harus antara 1�15 mg/dL'); valid = false; }
+    }
+
+    if (!valid) {
+        const firstErr = form.querySelector('.field-error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return valid;
+}
+
+// ============================================================
 // DAFTARKAN LANSIA BARU
 // ============================================================
 async function submitLansiaBaru(e) {
     e.preventDefault();
     const btn  = document.getElementById('btnLansiaBaru');
     const form = document.getElementById('formLansiaBaru');
+
+    if (!validateFormLansiaBaru(form)) return;
+
     const fd   = new FormData(form);
     const payload = {};
     fd.forEach((v, k) => { if (v !== '') payload[k] = v; });
@@ -1161,6 +1310,9 @@ async function submitTambah(e) {
     e.preventDefault();
     const btn  = document.getElementById('btnTambah');
     const form = document.getElementById('formTambah');
+
+    if (!validateFormKunjungan(form)) return;
+
     const fd   = new FormData(form);
     const payload = {};
     fd.forEach((v, k) => { if (v) payload[k] = v; });
@@ -1168,7 +1320,7 @@ async function submitTambah(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch('/lansia/api/kunjungan', {
+        const res  = await fetch('/lansia/web/kunjungan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1212,6 +1364,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
     if (tab === 'tambah') switchTab(tab);
+
+    // Validasi real-time saat user keluar dari field
+    document.querySelectorAll('input[name="nik_lansia"], input[name="nik_wali"]').forEach(el => {
+        el.addEventListener('blur', function() {
+            if (this.value && !validateNIK(this.value)) showFieldError(this, 'NIK harus 16 digit angka');
+            else clearFieldError(this);
+        });
+        el.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 16);
+        });
+    });
+    document.querySelectorAll('input[name="hp_kontak_wali"]').forEach(el => {
+        el.addEventListener('blur', function() {
+            if (this.value && !validateHP(this.value)) showFieldError(this, 'Format HP tidak valid (contoh: 08123456789)');
+            else clearFieldError(this);
+        });
+    });
+    document.querySelectorAll('input[name="tekanan_darah"]').forEach(el => {
+        el.addEventListener('blur', function() {
+            if (this.value && !validateTekananDarah(this.value)) showFieldError(this, 'Format tidak valid (contoh: 120/80)');
+            else clearFieldError(this);
+        });
+    });
 });
 
 // ============================================================
@@ -1219,7 +1394,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================================
 async function loadLansiaSelect() {
     try {
-        const res = await fetch('/lansia/api/kunjungan?limit=500', {
+        const res = await fetch('/lansia/web/kunjungan?limit=500', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -1304,11 +1479,70 @@ function toggleKeluhanKunjungan(checkbox) {
 }
 
 // ============================================================
+// LOAD RIWAYAT KUNJUNGAN PER LANSIA
+// ============================================================
+async function loadRiwayatKunjungan(lansiaId) {
+    const container = document.getElementById('riwayatKunjunganBody');
+    container.innerHTML = '<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat riwayat...</p>';
+
+    try {
+        const res = await fetch(`/lansia/web/riwayat-kunjungan/${lansiaId}`, {
+            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+
+        if (!data.success || !data.data || !data.data.length) {
+            container.innerHTML = '<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px;">Belum ada riwayat kunjungan.</p>';
+            return;
+        }
+
+        const statusLabel = {
+            normal: 'Normal', prehipertensi: 'Prehipertensi',
+            hipertensi1: 'Hipertensi Tk.1', hipertensi2: 'Hipertensi Tk.2',
+            rendah: 'Rendah', tinggi: 'Tinggi', sangat_tinggi: 'Sangat Tinggi',
+            batas: 'Batas',
+        };
+        const statusColor = (s) => {
+            if (!s) return '#6B7280';
+            if (s.includes('normal')) return '#059669';
+            if (s.includes('tinggi') || s.includes('hipertensi2')) return '#DC2626';
+            return '#D97706';
+        };
+
+        container.innerHTML = data.data.map((k, i) => {
+            const tgl = k.tanggal_kunjungan
+                ? new Date(k.tanggal_kunjungan + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})
+                : '-';
+            const isLatest = i === 0;
+            return `
+            <div style="border:1px solid #E5E7EB;border-radius:10px;padding:14px;margin-bottom:10px;${isLatest ? 'background:#F0FDF4;border-color:#10B981;' : 'background:#FAFAFA;'}">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <strong style="font-size:13px;color:#1E3A5F;"><i class="fas fa-calendar-check" style="color:#10B981;margin-right:6px;"></i>${tgl}</strong>
+                    ${isLatest ? '<span style="font-size:11px;background:#10B981;color:#fff;padding:2px 8px;border-radius:10px;">Terbaru</span>' : `<span style="font-size:11px;color:#9CA3AF;">Kunjungan ke-${data.data.length - i}</span>`}
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;font-size:12px;">
+                    ${k.tekanan_darah ? `<div style="background:#fff;padding:8px;border-radius:6px;border:1px solid #E5E7EB;"><div style="color:#9CA3AF;margin-bottom:2px;">Tekanan Darah</div><strong style="color:${statusColor(k.status_tensi)};">${k.tekanan_darah} mmHg</strong>${k.status_tensi ? `<div style="color:${statusColor(k.status_tensi)};font-size:11px;">${statusLabel[k.status_tensi]||k.status_tensi}</div>` : ''}</div>` : ''}
+                    ${k.gula_darah ? `<div style="background:#fff;padding:8px;border-radius:6px;border:1px solid #E5E7EB;"><div style="color:#9CA3AF;margin-bottom:2px;">Gula Darah</div><strong style="color:${statusColor(k.status_gula)};">${k.gula_darah} mg/dL</strong>${k.status_gula ? `<div style="color:${statusColor(k.status_gula)};font-size:11px;">${statusLabel[k.status_gula]||k.status_gula}</div>` : ''}</div>` : ''}
+                    ${k.kolesterol ? `<div style="background:#fff;padding:8px;border-radius:6px;border:1px solid #E5E7EB;"><div style="color:#9CA3AF;margin-bottom:2px;">Kolesterol</div><strong style="color:${statusColor(k.status_kolesterol)};">${k.kolesterol} mg/dL</strong>${k.status_kolesterol ? `<div style="color:${statusColor(k.status_kolesterol)};font-size:11px;">${statusLabel[k.status_kolesterol]||k.status_kolesterol}</div>` : ''}</div>` : ''}
+                    ${k.asam_urat ? `<div style="background:#fff;padding:8px;border-radius:6px;border:1px solid #E5E7EB;"><div style="color:#9CA3AF;margin-bottom:2px;">Asam Urat</div><strong style="color:${statusColor(k.status_asam_urat)};">${k.asam_urat} mg/dL</strong>${k.status_asam_urat ? `<div style="color:${statusColor(k.status_asam_urat)};font-size:11px;">${statusLabel[k.status_asam_urat]||k.status_asam_urat}</div>` : ''}</div>` : ''}
+                    ${k.berat_badan ? `<div style="background:#fff;padding:8px;border-radius:6px;border:1px solid #E5E7EB;"><div style="color:#9CA3AF;margin-bottom:2px;">Berat Badan</div><strong style="color:#0369A1;">${k.berat_badan} kg</strong></div>` : ''}
+                </div>
+                ${k.ada_keluhan && k.keluhan ? `<div style="margin-top:8px;padding:8px;background:#FEF3C7;border-radius:6px;font-size:12px;color:#92400E;"><i class="fas fa-exclamation-circle"></i> <strong>Keluhan:</strong> ${k.keluhan}</div>` : ''}
+                ${k.catatan_bidan ? `<div style="margin-top:6px;font-size:12px;color:#6B7280;"><i class="fas fa-sticky-note"></i> ${k.catatan_bidan}</div>` : ''}
+            </div>`;
+        }).join('');
+    } catch (err) {
+        container.innerHTML = '<p style="color:#EF4444;font-size:13px;text-align:center;padding:20px;">Gagal memuat riwayat.</p>';
+    }
+}
+
+// ============================================================
 // OPEN KUNJUNGAN SELANJUTNYA
 // ============================================================
 async function openKunjunganSelanjutnya(id) {
     try {
-        const res = await fetch(`/lansia/api/kunjungan/${id}`, {
+        const res = await fetch(`/lansia/web/kunjungan/${id}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -1330,15 +1564,6 @@ async function openKunjunganSelanjutnya(id) {
         document.getElementById('kunjUsia').textContent = d.umur_display || '-';
         document.getElementById('kunjJK').textContent = d.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
         
-        // Pre-fill form dengan data lansia saat ini (bisa diupdate)
-        document.getElementById('kunjNamaLengkap').value = d.nama_lansia || '';
-        document.getElementById('kunjNikLansia').value = d.nik_lansia || '';
-        document.getElementById('kunjAlamat').value = d.alamat_domisili || '';
-        document.getElementById('kunjRtRw').value = d.rt_rw || '';
-        document.getElementById('kunjNamaWali').value = d.nama_wali || '';
-        document.getElementById('kunjNikWali').value = d.nik_wali || '';
-        document.getElementById('kunjHpWali').value = d.hp_kontak_wali || '';
-        
         // Reset form kunjungan
         const form = document.getElementById('formKunjunganSelanjutnya');
         const kunjunganFields = ['tanggal_kunjungan', 'berat_badan', 'tinggi_badan', 'tekanan_darah', 
@@ -1358,6 +1583,8 @@ async function openKunjunganSelanjutnya(id) {
         form.querySelectorAll('[name="vitamin_diberikan[]"] option').forEach(opt => opt.selected = false);
         
         openModal('modalKunjunganSelanjutnya');
+        // Load riwayat kunjungan sebelumnya
+        loadRiwayatKunjungan(id);
     } catch (err) {
         console.error('Error loading lansia data:', err);
         toast('Koneksi gagal', 'error');
@@ -1372,6 +1599,9 @@ async function submitKunjunganSelanjutnya(e) {
     const btn = document.getElementById('btnKunjunganSelanjutnya');
     const form = document.getElementById('formKunjunganSelanjutnya');
     const lansiaId = document.getElementById('kunjunganLansiaId').value;
+
+    if (!validateFormKunjungan(form)) return;
+
     const fd = new FormData(form);
     const payload = {};
     
@@ -1401,7 +1631,7 @@ async function submitKunjunganSelanjutnya(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     
     try {
-        const res = await fetch(`/lansia/api/kunjungan-selanjutnya/${lansiaId}`, {
+        const res = await fetch(`/lansia/web/kunjungan-selanjutnya/${lansiaId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

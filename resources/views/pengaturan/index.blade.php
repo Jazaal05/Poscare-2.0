@@ -163,9 +163,14 @@
 @if(Auth::user()->role === 'admin')
 <div class="card">
     <div class="card-title" style="justify-content:space-between;">
-        <span><i class="fas fa-users-cog" style="color:#246BCE;"></i> Manajemen Pengguna</span>
+        <span><i class="fas fa-users-cog" style="color:#246BCE;"></i> Manajemen Pengguna Mobile (Orang Tua)</span>
         <button class="btn btn-outline btn-sm" onclick="loadUsers()"><i class="fas fa-sync-alt"></i> Refresh</button>
     </div>
+    <p style="font-size:13px;color:#64748B;margin-bottom:16px;background:#EFF6FF;padding:10px 14px;border-radius:8px;border-left:4px solid #246BCE;">
+        <i class="fas fa-mobile-alt" style="color:#246BCE;margin-right:6px;"></i>
+        Daftar pengguna yang terdaftar melalui <strong>aplikasi mobile</strong> sebagai orang tua balita.
+        Hapus akun untuk memutus akses mereka ke aplikasi mobile.
+    </p>
     <div class="table-wrapper">
         <table>
             <thead>
@@ -332,8 +337,19 @@ function backToStep1() {
 // ── Manajemen pengguna (admin) ─────────────────────────────
 @if(Auth::user()->role === 'admin')
 function roleBadge(role) {
-    const map = { admin:'danger', kader:'info', petugas:'success', orangtua:'warning' };
-    return `<span class="badge badge-${map[role]||'info'}">${role}</span>`;
+    const map = {
+        admin:            'danger',
+        kader:            'info',
+        orangtua:         'warning',
+        orangtua_lansia:  'success',
+    };
+    const label = {
+        admin:            'Admin',
+        kader:            'Kader',
+        orangtua:         'Orang Tua',
+        orangtua_lansia:  'Orang Tua & Wali Lansia',
+    };
+    return `<span class="badge badge-${map[role]||'info'}">${label[role]||role}</span>`;
 }
 
 async function loadUsers() {
@@ -383,7 +399,7 @@ document.getElementById('btnKonfirmasiHapusUser').addEventListener('click', asyn
     const btn = document.getElementById('btnKonfirmasiHapusUser');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     try {
-        const res  = await fetch(`/api/pengaturan/users/${hapusUserId}`, {
+        const res  = await fetch(`/web/pengaturan/users/${hapusUserId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

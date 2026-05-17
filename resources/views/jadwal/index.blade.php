@@ -432,7 +432,7 @@ async function submitJadwal(e) {
     };
 
     try {
-        const res  = await fetch(isEdit ? `/api/jadwal/${id}` : '/api/jadwal', {
+        const res  = await fetch(isEdit ? `/web/jadwal/${id}` : '/web/jadwal', {
             method:  isEdit ? 'PUT' : 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -490,7 +490,7 @@ async function submitImunisasi(e) {
     };
 
     try {
-        const res  = await fetch(isEdit ? `/api/jadwal/${id}` : '/api/jadwal', {
+        const res  = await fetch(isEdit ? `/web/jadwal/${id}` : '/web/jadwal', {
             method:  isEdit ? 'PUT' : 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -566,7 +566,7 @@ document.getElementById('btnKonfirmasiHapus').addEventListener('click', async ()
     const btn = document.getElementById('btnKonfirmasiHapus');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
     try {
-        const res  = await fetch(`/api/jadwal/${hapusId}`, {
+        const res  = await fetch(`/web/jadwal/${hapusId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

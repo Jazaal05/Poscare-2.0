@@ -117,9 +117,12 @@
     .empty-row td { text-align:center; padding:40px; color:#9CA3AF; }
 
     /* Table nav arrows */
-    .table-nav-wrapper { position:relative; display:flex; align-items:center; gap:8px; }
-    .table-nav-arrow { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#4A90E2,#357ABD); border:none; box-shadow:0 2px 8px rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:all 0.3s ease; color:white; font-size:14px; opacity:0.3; pointer-events:none; }
-    .table-nav-arrow.visible { opacity:1; pointer-events:auto; }
+    .table-nav-wrapper { display:flex; align-items:center; gap:8px; }
+    .table-nav-arrow { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#4A90E2,#357ABD); border:none; box-shadow:0 2px 8px rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s ease; color:white; font-size:14px; }
+    #scrollLeft { opacity:0.3; pointer-events:none; }
+    #scrollRight { opacity:1; pointer-events:auto; }
+    .table-nav-arrow.visible { opacity:1 !important; pointer-events:auto !important; }
+    .table-nav-arrow.faded { opacity:0.3 !important; pointer-events:none !important; }
     .table-nav-arrow:hover { background:linear-gradient(135deg,#357ABD,#2868A8); transform:scale(1.1); }
     .table-slider-container { flex:1; overflow-x:auto; overflow-y:visible; scroll-behavior:smooth; scrollbar-width:thin; scrollbar-color:#CBD5E1 #F1F5F9; padding-bottom:8px; }
     .table-slider-container::-webkit-scrollbar { height:8px; }
@@ -183,8 +186,8 @@
                 <input type="text" id="searchInput" class="search-input" style="width:100%;" placeholder="Cari nama anak, NIK, atau nama orang tua..." oninput="debounceSearch()">
             </div>
         </div>
-        <div class="table-nav-wrapper" style="display:flex;align-items:center;gap:8px;">
-            <button class="table-nav-arrow" id="scrollLeft" onclick="scrollTable(-300)" title="Geser kiri">
+        <div class="table-nav-wrapper">
+            <button class="table-nav-arrow" id="scrollLeft" title="Geser kiri">
                 <i class="fas fa-chevron-left"></i>
             </button>
             <div class="table-slider-container" id="tableSlider">
@@ -215,7 +218,7 @@
                     </table>
                 </div>
             </div>
-            <button class="table-nav-arrow visible" id="scrollRight" onclick="scrollTable(300)" title="Geser kanan">
+            <button class="table-nav-arrow visible" id="scrollRight" title="Geser kanan">
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -604,7 +607,7 @@ function renderTable() {
         return;
     }
 
-    const statusBadge = (s) => {
+    const statusBadge = (s, anakId, namaAnak) => {
         const map = {
             'Gizi Baik':            'badge-gizi-baik',
             'Stunting':             'badge-stunting',
@@ -616,7 +619,10 @@ function renderTable() {
             'Obesitas':             'badge-obesitas',
         };
         const cls = map[s] || 'badge-secondary';
-        return `<span class="badge ${cls}">${s || '-'}</span>`;
+        if (!s) return `<span class="badge badge-secondary">-</span>`;
+        return `<span class="badge ${cls}" style="cursor:pointer;" onclick="openRiwayatGizi(${anakId}, '${(namaAnak||'').replace(/'/g,"\\'")}')">
+            ${s} <i class="fas fa-history" style="font-size:10px;margin-left:3px;opacity:0.7;"></i>
+        </span>`;
     };
 
     const jkBadge = (jk) => {
@@ -631,13 +637,13 @@ function renderTable() {
             <td class="nama-anak-cell"><strong>${a.nama_anak}</strong></td>
             <td><code style="font-size:12px;">${a.nik_anak || '-'}</code></td>
             <td>${jkBadge(a.jenis_kelamin)}</td>
-            <td>${a.tanggal_lahir ? new Date(a.tanggal_lahir).toLocaleDateString('id-ID') : '-'}</td>
+            <td>${a.tanggal_lahir ? new Date(a.tanggal_lahir.substring(0,10)+'T00:00:00').toLocaleDateString('id-ID') : '-'}</td>
             <td>${a.tempat_lahir || '-'}</td>
             <td>${a.usia || '-'}</td>
             <td>${a.berat_badan ? parseFloat(a.berat_badan).toFixed(2) : '-'}</td>
             <td>${a.tinggi_badan ? parseFloat(a.tinggi_badan).toFixed(2) : '-'}</td>
             <td>${a.lingkar_kepala ? parseFloat(a.lingkar_kepala).toFixed(2) : '-'}</td>
-            <td>${statusBadge(a.status_gizi)}</td>
+            <td>${statusBadge(a.status_gizi, a.id, a.nama_anak)}</td>
             <td>${a.alamat_domisili || '-'}</td>
             <td>${a.nama_ibu || '-'}</td>
             <td><code style="font-size:12px;">${a.nik_ibu || '-'}</code></td>
@@ -684,19 +690,35 @@ function goPage(p) {
 }
 
 function scrollTable(amount) {
-    const slider = document.getElementById('tableSlider');
+    const slider = document.querySelector('.table-wrapper');
     if (slider) slider.scrollLeft += amount;
     setTimeout(updateScrollArrows, 100);
 }
 
 function updateScrollArrows() {
-    const slider = document.getElementById('tableSlider');
+    const slider = document.querySelector('.table-wrapper');
     if (!slider) return;
     const leftBtn  = document.getElementById('scrollLeft');
     const rightBtn = document.getElementById('scrollRight');
-    if (leftBtn)  leftBtn.classList.toggle('visible', slider.scrollLeft > 10);
-    if (rightBtn) rightBtn.classList.toggle('visible', slider.scrollLeft < slider.scrollWidth - slider.clientWidth - 10);
+    const atLeft   = slider.scrollLeft <= 10;
+    const atRight  = slider.scrollLeft >= slider.scrollWidth - slider.clientWidth - 10;
+    if (leftBtn)  { leftBtn.classList.toggle('visible', !atLeft); leftBtn.classList.toggle('faded', atLeft); }
+    if (rightBtn) { rightBtn.classList.toggle('faded', atRight); rightBtn.classList.toggle('visible', !atRight); }
 }
+
+// Pasang event listener scroll pada tabel
+document.addEventListener('DOMContentLoaded', function() {
+    const slider = document.querySelector('.table-wrapper');
+    if (slider) {
+        slider.addEventListener('scroll', updateScrollArrows);
+        setTimeout(updateScrollArrows, 500);
+    }
+    // Pasang event listener tombol scroll
+    const btnLeft  = document.getElementById('scrollLeft');
+    const btnRight = document.getElementById('scrollRight');
+    if (btnLeft)  btnLeft.addEventListener('click',  function() { scrollTable(-300); });
+    if (btnRight) btnRight.addEventListener('click', function() { scrollTable(300); });
+});
 
 function debounceSearch() {
     clearTimeout(searchTimer);
@@ -712,11 +734,39 @@ async function openDetail(id) {
     openModal('modalDetail');
 
     try {
-        const res  = await fetch(`/api/anak/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+        const res  = await fetch(`/web/anak/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) { document.getElementById('detailContent').innerHTML = '<p style="color:red;">Gagal memuat detail.</p>'; return; }
 
         const d = data.data;
+
+        // Badge status gizi
+        const giziMap = {
+            'Gizi Baik':            'badge-gizi-baik',
+            'Stunting':             'badge-stunting',
+            'Risiko Stunting':      'badge-risk-stunting',
+            'Gizi Kurang':          'badge-gizi-kurang',
+            'Beresiko Gizi Kurang': 'badge-risk-gizi-kurang',
+            'Beresiko Gizi Lebih':  'badge-risk-gizi-lebih',
+            'Gizi Lebih':           'badge-gizi-lebih',
+            'Obesitas':             'badge-obesitas',
+        };
+        const giziBadge = (s) => s
+            ? `<span class="badge ${giziMap[s]||'badge-secondary'}">${s}</span>`
+            : '<span class="badge badge-secondary">Belum diukur</span>';
+
+        // Z-score color
+        const zColor = (v) => v === null || v === undefined ? '#6B7280' : (v < -2 ? '#DC2626' : (v > 1 ? '#F59E0B' : '#059669'));
+        const zLabel = (v) => v === null || v === undefined ? '-' : parseFloat(v).toFixed(2);
+
+        // IMT
+        const imt = (d.berat_badan && d.tinggi_badan)
+            ? (parseFloat(d.berat_badan) / Math.pow(parseFloat(d.tinggi_badan) / 100, 2)).toFixed(1)
+            : null;
+
+        // Zscore dari riwayat terakhir
+        const lastR = d.riwayat_pengukuran?.[0];
+
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-section">
                 <div class="detail-section-title"><i class="fas fa-baby"></i> Data Anak</div>
@@ -724,11 +774,11 @@ async function openDetail(id) {
                     <div class="detail-item"><label>Nama Anak</label><span>${d.nama_anak}</span></div>
                     <div class="detail-item"><label>NIK Anak</label><span>${d.nik_anak||'-'}</span></div>
                     <div class="detail-item"><label>Jenis Kelamin</label><span>${d.jenis_kelamin==='L'?'Laki-laki':'Perempuan'}</span></div>
-                    <div class="detail-item"><label>Tanggal Lahir</label><span>${d.tanggal_lahir||'-'}</span></div>
+                    <div class="detail-item"><label>Tanggal Lahir</label><span>${d.tanggal_lahir ? new Date(d.tanggal_lahir.substring(0,10)+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '-'}</span></div>
                     <div class="detail-item"><label>Tempat Lahir</label><span>${d.tempat_lahir||'-'}</span></div>
                     <div class="detail-item"><label>Usia</label><span>${d.umur_display||'-'}</span></div>
                     <div class="detail-item"><label>Anak Ke</label><span>${d.anak_ke||1}</span></div>
-                    <div class="detail-item"><label>Status Gizi</label><span>${d.status_gizi||'Belum diukur'}</span></div>
+                    <div class="detail-item"><label>Status Gizi</label><span>${giziBadge(d.status_gizi)}</span></div>
                 </div>
             </div>
             <div class="detail-section">
@@ -740,22 +790,50 @@ async function openDetail(id) {
                     <div class="detail-item"><label>NIK Ayah</label><span>${d.nik_ayah||'-'}</span></div>
                     <div class="detail-item"><label>No HP</label><span>${d.hp_kontak_ortu||'-'}</span></div>
                     <div class="detail-item"><label>Nama KK</label><span>${d.nama_kk||'-'}</span></div>
-                    <div class="detail-item" style="grid-column:1/-1"><label>Alamat</label><span>${d.alamat_domisili||'-'} ${d.rt_rw?'RT/RW '+d.rt_rw:''}</span></div>
+                    <div class="detail-item" style="grid-column:1/-1"><label>Alamat</label><span>${d.alamat_domisili||'-'}${d.rt_rw?' RT/RW '+d.rt_rw:''}</span></div>
                 </div>
             </div>
             ${d.berat_badan ? `
             <div class="detail-section">
                 <div class="detail-section-title"><i class="fas fa-weight"></i> Pengukuran Terakhir</div>
                 <div class="detail-grid">
-                    <div class="detail-item"><label>Berat Badan</label><span>${d.berat_badan} kg</span></div>
-                    <div class="detail-item"><label>Tinggi Badan</label><span>${d.tinggi_badan} cm</span></div>
-                    ${d.lingkar_kepala ? `<div class="detail-item"><label>Lingkar Kepala</label><span>${d.lingkar_kepala} cm</span></div>` : ''}
-                    <div class="detail-item"><label>Tanggal Ukur</label><span>${d.tanggal_penimbangan_terakhir||'-'}</span></div>
+                    <div class="detail-item"><label>Berat Badan</label><span>${parseFloat(d.berat_badan).toFixed(1)} kg</span></div>
+                    <div class="detail-item"><label>Tinggi Badan</label><span>${parseFloat(d.tinggi_badan).toFixed(1)} cm</span></div>
+                    ${d.lingkar_kepala ? `<div class="detail-item"><label>Lingkar Kepala</label><span>${parseFloat(d.lingkar_kepala).toFixed(1)} cm</span></div>` : ''}
+                    ${imt ? `<div class="detail-item"><label>IMT</label><span>${imt} kg/m²</span></div>` : ''}
+                    <div class="detail-item"><label>Cara Ukur</label><span>${d.cara_ukur ? (d.cara_ukur === 'berdiri' ? 'Berdiri' : 'Berbaring') : '-'}</span></div>
+                    <div class="detail-item"><label>Tanggal Ukur</label><span>${d.tanggal_penimbangan_terakhir ? new Date(d.tanggal_penimbangan_terakhir.substring(0,10)+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '-'}</span></div>
                 </div>
+                ${lastR ? `
+                <div style="margin-top:12px;padding:12px;background:#F8FAFC;border-radius:8px;border:1px solid #E5E7EB;">
+                    <div style="font-size:12px;font-weight:700;color:#4A6FA3;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">Z-Score WHO</div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:13px;">
+                        <div style="text-align:center;padding:8px;background:#fff;border-radius:6px;border:1px solid #E5E7EB;">
+                            <div style="color:#9CA3AF;font-size:11px;margin-bottom:2px;">TB/U (HAZ)</div>
+                            <strong style="color:${zColor(lastR.z_tbu)};">${zLabel(lastR.z_tbu)}</strong>
+                            ${lastR.kat_tbu ? `<div style="font-size:10px;color:${zColor(lastR.z_tbu)};margin-top:2px;">${lastR.kat_tbu}</div>` : ''}
+                        </div>
+                        <div style="text-align:center;padding:8px;background:#fff;border-radius:6px;border:1px solid #E5E7EB;">
+                            <div style="color:#9CA3AF;font-size:11px;margin-bottom:2px;">BB/U (WAZ)</div>
+                            <strong style="color:${zColor(lastR.z_bbu)};">${zLabel(lastR.z_bbu)}</strong>
+                            ${lastR.kat_bbu ? `<div style="font-size:10px;color:${zColor(lastR.z_bbu)};margin-top:2px;">${lastR.kat_bbu}</div>` : ''}
+                        </div>
+                        <div style="text-align:center;padding:8px;background:#fff;border-radius:6px;border:1px solid #E5E7EB;">
+                            <div style="color:#9CA3AF;font-size:11px;margin-bottom:2px;">BB/TB (WHZ)</div>
+                            <strong style="color:${zColor(lastR.z_bbtb)};">${zLabel(lastR.z_bbtb)}</strong>
+                            ${lastR.kat_bbtb ? `<div style="font-size:10px;color:${zColor(lastR.z_bbtb)};margin-top:2px;">${lastR.kat_bbtb}</div>` : ''}
+                        </div>
+                    </div>
+                    <div style="margin-top:6px;font-size:11px;color:#9CA3AF;text-align:center;">
+                        <span style="color:#059669;">■</span> Normal &nbsp;
+                        <span style="color:#F59E0B;">■</span> Berisiko (>+1) &nbsp;
+                        <span style="color:#DC2626;">■</span> Masalah (<-2)
+                    </div>
+                </div>` : ''}
             </div>` : ''}
             <div class="detail-section">
                 <div class="detail-section-title"><i class="fas fa-syringe"></i> Imunisasi (${d.imunisasi_count} kali)</div>
-                ${d.riwayat_imunisasi?.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;">${d.riwayat_imunisasi.map(i=>`<span class="badge badge-success">${i.nama_vaksin} (${i.tanggal})</span>`).join('')}</div>` : '<p style="color:#9CA3AF;font-size:13px;">Belum ada riwayat imunisasi</p>'}
+                ${d.riwayat_imunisasi?.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;">${d.riwayat_imunisasi.map(i=>`<span class="badge badge-success">${i.nama_vaksin} (${i.tanggal ? new Date(i.tanggal.substring(0,10)+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}) : '-'})</span>`).join('')}</div>` : '<p style="color:#9CA3AF;font-size:13px;">Belum ada riwayat imunisasi</p>'}
             </div>
         `;
     } catch (e) {
@@ -775,6 +853,16 @@ async function openEdit(id) {
     const anak = allAnak.find(a => a.id === id);
     if (!anak) { toast('Data tidak ditemukan', 'error'); return; }
 
+    // Ambil nama_kk dari detail API karena tidak ada di list
+    let namaKK = anak.nama_kk || '';
+    if (!namaKK) {
+        try {
+            const res = await fetch(`/web/anak/${id}`, { headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' }, credentials: 'same-origin' });
+            const data = await res.json();
+            if (data.success) namaKK = data.data.nama_kk || '';
+        } catch (_) {}
+    }
+
     // Parse RT/RW from combined rt_rw field (format: "001/005" or "1/5")
     let rt = '', rw = '';
     if (anak.rt_rw) {
@@ -790,7 +878,7 @@ async function openEdit(id) {
     document.getElementById('editTanggalLahir').value= anak.tanggal_lahir || '';
     document.getElementById('editTempatLahir').value = anak.tempat_lahir || '';
     document.getElementById('editAnakKe').value      = anak.anak_ke || 1;
-    document.getElementById('editNamaKK').value      = anak.nama_kk || '';
+    document.getElementById('editNamaKK').value      = namaKK;
     document.getElementById('editNamaIbu').value     = anak.nama_ibu || '';
     document.getElementById('editNikIbu').value      = anak.nik_ibu || '';
     document.getElementById('editNamaAyah').value    = anak.nama_ayah || '';
@@ -830,7 +918,7 @@ async function submitEdit(e) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
     try {
-        const res  = await fetch(`/api/anak/${id}`, {
+        const res  = await fetch(`/web/anak/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -867,7 +955,7 @@ async function doHapus(id) {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
     try {
-        const res  = await fetch(`/api/anak/${id}`, {
+        const res  = await fetch(`/web/anak/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin',
@@ -1039,6 +1127,102 @@ document.querySelectorAll('.modal-overlay').forEach(m => {
 });
 
 // ============================================================
+// RIWAYAT STATUS GIZI + TAMBAH PENGUKURAN
+// ============================================================
+async function openRiwayatGizi(anakId, namaAnak) {
+    document.getElementById('riwayatGiziNama').textContent = namaAnak;
+    document.getElementById('pengukuranAnakId').value = anakId;
+    document.getElementById('formTambahPengukuran').reset();
+    document.getElementById('pengukuranAnakId').value = anakId;
+    document.getElementById('riwayatGiziBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat...</td></tr>';
+    const footer = document.getElementById('riwayatGiziFooter');
+    if (footer) footer.style.display = 'none';
+    openModal('modalRiwayatGizi');
+    await loadRiwayatGizi(anakId);
+}
+
+async function loadRiwayatGizi(anakId) {
+    try {
+        const res = await fetch(`/web/pengukuran/${anakId}/riwayat`, {
+            headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin'
+        });
+        const data = await res.json();
+        if (!data.success || !data.data || !data.data.length) {
+            document.getElementById('riwayatGiziBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:3rem;color:#6B7280;">Belum ada riwayat pengukuran</td></tr>';
+            return;
+        }
+        const statusMap = { 'Gizi Baik':'badge-gizi-baik','Stunting':'badge-stunting','Risiko Stunting':'badge-risk-stunting','Gizi Kurang':'badge-gizi-kurang','Beresiko Gizi Kurang':'badge-risk-gizi-kurang','Beresiko Gizi Lebih':'badge-risk-gizi-lebih','Gizi Lebih':'badge-gizi-lebih','Obesitas':'badge-obesitas' };
+        const zColor = (v) => (v === null || v === undefined) ? '#6B7280' : (v < -2 ? '#DC2626' : (v > 1 ? '#F59E0B' : '#059669'));
+        document.getElementById('riwayatGiziBody').innerHTML = data.data.map((r, i) => {
+            const tgl = r.tanggal_ukur ? new Date(r.tanggal_ukur + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) : '-';
+            const cls = statusMap[r.overall_8] || 'badge-secondary';
+            const no = data.data.length - i;
+            return `<tr style="border-bottom:1px solid #E5E7EB;">
+                <td style="text-align:center;font-weight:600;color:#6B7280;">${no}</td>
+                <td style="font-weight:600;">${tgl}</td>
+                <td style="text-align:center;">${r.umur_bulan ? parseFloat(r.umur_bulan).toFixed(1) + ' bln' : '-'}</td>
+                <td style="text-align:center;font-weight:600;color:#059669;">${r.bb_kg ? parseFloat(r.bb_kg).toFixed(1) : '-'}</td>
+                <td style="text-align:center;font-weight:600;color:#0369A1;">${r.tb_pb_cm ? parseFloat(r.tb_pb_cm).toFixed(1) : '-'}</td>
+                <td style="text-align:center;">${r.lk_cm ? parseFloat(r.lk_cm).toFixed(1) : '-'}</td>
+                <td style="text-align:center;">${r.imt ? parseFloat(r.imt).toFixed(2) : '-'}</td>
+                <td style="text-align:center;font-weight:600;color:${zColor(r.z_tbu)};">${(r.z_tbu !== null && r.z_tbu !== undefined) ? parseFloat(r.z_tbu).toFixed(2) : '-'}</td>
+                <td style="text-align:center;font-weight:600;color:${zColor(r.z_bbu)};">${(r.z_bbu !== null && r.z_bbu !== undefined) ? parseFloat(r.z_bbu).toFixed(2) : '-'}</td>
+                <td style="text-align:center;font-weight:600;color:${zColor(r.z_bbtb)};">${(r.z_bbtb !== null && r.z_bbtb !== undefined) ? parseFloat(r.z_bbtb).toFixed(2) : '-'}</td>
+                <td style="text-align:center;"><span class="badge ${cls}" style="font-size:11px;padding:4px 8px;">${r.overall_8 || 'Belum diukur'}</span></td>
+            </tr>`;
+        }).join('');
+        const lastDate = data.data[0]?.tanggal_ukur ? new Date(data.data[0].tanggal_ukur + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}) : '-';
+        const footer = document.getElementById('riwayatGiziFooter');
+        if (footer) {
+            footer.innerHTML = `<div style="display:flex;align-items:center;gap:16px;font-size:14px;"><div style="flex:1;"><strong style="color:#0369A1;">Total Pengukuran:</strong><span style="color:#075985;font-size:18px;font-weight:700;"> ${data.data.length} kali</span></div><div style="flex:1;text-align:right;"><strong style="color:#065F46;">Terakhir:</strong><span style="color:#047857;font-size:16px;font-weight:600;"> ${lastDate}</span></div></div>`;
+            footer.style.display = 'block';
+        }
+    } catch (e) {
+        document.getElementById('riwayatGiziBody').innerHTML = '<tr><td colspan="11" style="text-align:center;padding:20px;color:#EF4444;"><i class="fas fa-times-circle"></i> Gagal memuat riwayat</td></tr>';
+    }
+}
+
+async function submitPengukuranBaru(e) {
+    e.preventDefault();
+    const anakId = document.getElementById('pengukuranAnakId').value;
+    const btn = document.getElementById('btnSimpanPengukuran');
+    const payload = {
+        anak_id:      anakId,
+        tanggal_ukur: document.getElementById('pengukuranTanggal').value,
+        bb_kg:        document.getElementById('pengukuranBB').value,
+        tb_cm:        document.getElementById('pengukuranTB').value,
+        lk_cm:        document.getElementById('pengukuranLK').value || null,
+        cara_ukur:    document.getElementById('pengukuranCaraUkur').value,
+    };
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    try {
+        const res = await fetch('/web/pengukuran', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            toast(`Pengukuran berhasil! Status gizi: ${data.status_gizi}`, 'success');
+            document.getElementById('formTambahPengukuran').reset();
+            document.getElementById('pengukuranAnakId').value = anakId;
+            await loadRiwayatGizi(anakId);
+            loadAnak();
+        } else {
+            toast(data.message || 'Gagal menyimpan', 'error');
+        }
+    } catch (err) {
+        toast('Koneksi gagal', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pengukuran';
+    }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -1048,4 +1232,55 @@ document.addEventListener('DOMContentLoaded', function() {
     if (tab === 'tambah' || tab === 'registrasi') switchTab(tab);
 });
 </script>
+
+{{-- MODAL RIWAYAT STATUS GIZI --}}
+<div class="modal-overlay" id="modalRiwayatGizi">
+    <div class="modal-box" style="max-width:1100px;">
+        <div class="modal-header">
+            <h3 class="modal-title"><i class="fas fa-history" style="color:#246BCE;"></i> Riwayat Pengukuran &mdash; <span id="riwayatGiziNama"></span></h3>
+            <button class="modal-close" onclick="closeModal('modalRiwayatGizi')">&times;</button>
+        </div>
+        <div style="background:#F0F9FF;border:2px solid #BFDBFE;border-radius:12px;padding:16px;margin-bottom:20px;">
+            <h4 style="font-size:14px;font-weight:700;color:#1E40AF;margin-bottom:12px;"><i class="fas fa-plus-circle"></i> Tambah Pengukuran Baru</h4>
+            <form id="formTambahPengukuran" onsubmit="submitPengukuranBaru(event)">
+                <input type="hidden" id="pengukuranAnakId">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+                    <div class="form-group"><label style="font-size:12px;">Tanggal Ukur *</label><input type="date" id="pengukuranTanggal" name="tanggal_ukur" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required style="padding:8px 10px;border:2px solid #E5E7EB;border-radius:8px;font-size:13px;"></div>
+                    <div class="form-group"><label style="font-size:12px;">Berat Badan (kg) *</label><input type="number" id="pengukuranBB" name="bb_kg" placeholder="12.5" step="0.1" min="1.5" max="30" required style="padding:8px 10px;border:2px solid #E5E7EB;border-radius:8px;font-size:13px;"></div>
+                    <div class="form-group"><label style="font-size:12px;">Tinggi Badan (cm) *</label><input type="number" id="pengukuranTB" name="tb_cm" placeholder="85" step="0.1" min="40" max="130" required style="padding:8px 10px;border:2px solid #E5E7EB;border-radius:8px;font-size:13px;"></div>
+                    <div class="form-group"><label style="font-size:12px;">Lingkar Kepala (cm)</label><input type="number" id="pengukuranLK" name="lk_cm" placeholder="48" step="0.1" min="20" max="60" style="padding:8px 10px;border:2px solid #E5E7EB;border-radius:8px;font-size:13px;"></div>
+                    <div class="form-group"><label style="font-size:12px;">Cara Ukur *</label><select id="pengukuranCaraUkur" name="cara_ukur" required style="padding:8px 10px;border:2px solid #E5E7EB;border-radius:8px;font-size:13px;"><option value="berbaring">Berbaring (&lt;2 th)</option><option value="berdiri">Berdiri (&ge;2 th)</option></select></div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;"><button type="submit" class="btn btn-primary" id="btnSimpanPengukuran" style="font-size:13px;padding:7px 14px;"><i class="fas fa-save"></i> Simpan Pengukuran</button></div>
+            </form>
+        </div>
+        <p style="font-size:13px;color:#64748B;margin-bottom:10px;"><i class="fas fa-list"></i> Riwayat pengukuran (terbaru di atas)</p>
+        <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                    <tr style="background:#F3F4F6;">
+                        <th style="padding:12px;text-align:center;">No</th>
+                        <th style="padding:12px;">Tanggal Ukur</th>
+                        <th style="padding:12px;text-align:center;">Usia (bln)</th>
+                        <th style="padding:12px;text-align:center;">BB (kg)</th>
+                        <th style="padding:12px;text-align:center;">TB/PB (cm)</th>
+                        <th style="padding:12px;text-align:center;">LK (cm)</th>
+                        <th style="padding:12px;text-align:center;">IMT</th>
+                        <th style="padding:12px;text-align:center;">Z-TB/U</th>
+                        <th style="padding:12px;text-align:center;">Z-BB/U</th>
+                        <th style="padding:12px;text-align:center;">Z-BB/TB</th>
+                        <th style="padding:12px;text-align:center;">Status Gizi</th>
+                    </tr>
+                </thead>
+                <tbody id="riwayatGiziBody">
+                    <tr><td colspan="11" style="text-align:center;padding:20px;color:#9CA3AF;">Memuat...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="riwayatGiziFooter" style="display:none;margin-top:20px;padding:16px;background:linear-gradient(135deg,#F0F9FF,#E0F2FE);border-radius:12px;border:1px solid #BAE6FD;"></div>
+        <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+            <button class="btn btn-outline" onclick="closeModal('modalRiwayatGizi')">Tutup</button>
+        </div>
+    </div>
+</div>
 @endsection

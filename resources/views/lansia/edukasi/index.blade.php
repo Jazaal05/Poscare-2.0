@@ -345,7 +345,7 @@ async function loadEdukasi() {
     if (category) params.append('category', category);
 
     try {
-        const res  = await fetch(`/lansia/api/edukasi${params.toString() ? '?' + params.toString() : ''}`, {
+        const res  = await fetch(`/lansia/web/edukasi${params.toString() ? '?' + params.toString() : ''}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -370,7 +370,7 @@ async function loadKontenList() {
     el.innerHTML = '<div class="loading-center"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>';
 
     try {
-        const res  = await fetch('/lansia/api/edukasi', {
+        const res  = await fetch('/lansia/web/edukasi', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -428,7 +428,7 @@ async function fetchInfo() {
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
     try {
-        const res  = await fetch('/lansia/api/edukasi/fetch-info', {
+        const res  = await fetch('/lansia/web/edukasi/fetch-info', {
             method: 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -464,7 +464,7 @@ async function submitEdukasi(e) {
     };
 
     try {
-        const res  = await fetch('/lansia/api/edukasi', {
+        const res  = await fetch('/lansia/web/edukasi', {
             method: 'POST',
             headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
             credentials: 'same-origin',
@@ -486,7 +486,7 @@ async function submitEdukasi(e) {
 // ── Edit konten ────────────────────────────────────────────
 async function editKonten(id) {
     try {
-        const res  = await fetch(`/lansia/api/edukasi/${id}`, {
+        const res  = await fetch(`/lansia/web/edukasi/${id}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -506,7 +506,7 @@ async function editKonten(id) {
             e.preventDefault();
             btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
             try {
-                const r = await fetch(`/lansia/api/edukasi/${id}`, {
+                const r = await fetch(`/lansia/web/edukasi/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type':'application/json', 'X-CSRF-TOKEN':CSRF_TOKEN, 'Accept':'application/json' },
                     credentials: 'same-origin',
@@ -536,7 +536,7 @@ async function editKonten(id) {
 async function hapusKonten(id, nama) {
     if (!confirm(`Hapus konten "${nama}"?`)) return;
     try {
-        const res  = await fetch(`/lansia/api/edukasi/${id}`, {
+        const res  = await fetch(`/lansia/web/edukasi/${id}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'

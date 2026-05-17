@@ -143,7 +143,7 @@ function animateCounter(id, target) {
 
 async function loadStats() {
     try {
-        const res = await fetch('/lansia/api/dashboard/stats', {
+        const res = await fetch('/lansia/web/dashboard/stats', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -173,7 +173,7 @@ async function loadStats() {
 
 async function loadChartDistribusiUsia() {
     try {
-        const res = await fetch('/lansia/api/dashboard/chart-distribusi-usia', {
+        const res = await fetch('/lansia/web/dashboard/chart-distribusi-usia', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -242,7 +242,7 @@ async function loadChartDistribusiUsia() {
 
 async function loadChartKondisiKesehatan() {
     try {
-        const res = await fetch('/lansia/api/dashboard/chart-kondisi-kesehatan', {
+        const res = await fetch('/lansia/web/dashboard/chart-kondisi-kesehatan', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -321,7 +321,7 @@ async function loadChartKondisiKesehatan() {
 
 async function loadChartTrendKunjungan() {
     try {
-        const res = await fetch('/lansia/api/dashboard/chart-trend-kunjungan', {
+        const res = await fetch('/lansia/web/dashboard/chart-trend-kunjungan', {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });

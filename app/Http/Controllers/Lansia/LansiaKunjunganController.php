@@ -32,8 +32,16 @@ class LansiaKunjunganController extends Controller
     {
         $search = trim($request->get('q', ''));
         $limit  = (int) $request->get('limit', 200);
+        $user   = Auth::user();
 
         $query = Lansia::aktif();
+
+        // Filter berdasarkan role:
+        // - wali_lansia, orangtua, orangtua_lansia: hanya lihat lansia miliknya (user_id = auth user)
+        // - kader/admin: lihat semua
+        if ($user && in_array($user->role, ['wali_lansia', 'orangtua', 'orangtua_lansia'])) {
+            $query->where('user_id', $user->id);
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -164,7 +172,7 @@ class LansiaKunjunganController extends Controller
         } elseif ($data['status_asam_urat'] === 'tinggi') {
             $updateLansia['status_kesehatan'] = 'Asam Urat Tinggi';
         } else {
-            $updateLansia['status_kesehatan'] = 'Normal';
+            $updateLansia['status_kesehatan'] = 'Sehat';
         }
 
         $lansia->update($updateLansia);
@@ -250,7 +258,7 @@ class LansiaKunjunganController extends Controller
                 return [
                     'id'                 => $k->id,
                     'lansia_id'          => $k->lansia_id,
-                    'tanggal_kunjungan'  => $k->tanggal_kunjungan,
+                    'tanggal_kunjungan'  => $k->tanggal_kunjungan ? \Carbon\Carbon::parse($k->tanggal_kunjungan)->format('Y-m-d') : null,
                     'berat_badan'        => $k->berat_badan,
                     'tekanan_darah'      => $k->tekanan_darah,
                     'status_tensi'       => $k->status_tensi,
@@ -355,7 +363,7 @@ class LansiaKunjunganController extends Controller
         } elseif ($kunjunganData['status_asam_urat'] === 'tinggi') {
             $updateLansia['status_kesehatan'] = 'Asam Urat Tinggi';
         } else {
-            $updateLansia['status_kesehatan'] = 'Normal';
+            $updateLansia['status_kesehatan'] = 'Sehat';
         }
 
         // Simpan kunjungan

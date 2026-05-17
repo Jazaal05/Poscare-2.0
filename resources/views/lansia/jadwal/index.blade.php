@@ -202,7 +202,7 @@ async function loadJadwal() {
     try {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth() + 1;
-        const res = await fetch(`/lansia/api/jadwal?year=${year}&month=${month}`, {
+        const res = await fetch(`/lansia/web/jadwal?year=${year}&month=${month}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -346,7 +346,7 @@ async function submitJadwal(e) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     
     try {
-        const url = id ? `/lansia/api/jadwal/${id}` : '/lansia/api/jadwal';
+        const url = id ? `/lansia/web/jadwal/${id}` : '/lansia/web/jadwal';
         const method = id ? 'PUT' : 'POST';
         const res = await fetch(url, {
             method,
@@ -377,7 +377,7 @@ async function openDetail(id) {
     document.getElementById('modalDetail').classList.add('active');
     
     try {
-        const res = await fetch(`/lansia/api/jadwal/${id}`, {
+        const res = await fetch(`/lansia/web/jadwal/${id}`, {
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
         });
@@ -434,7 +434,7 @@ async function hapusFromDetail() {
     if (!confirm('Yakin ingin menghapus jadwal ini?')) return;
     
     try {
-        const res = await fetch(`/lansia/api/jadwal/${currentJadwalId}`, {
+        const res = await fetch(`/lansia/web/jadwal/${currentJadwalId}`, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF_TOKEN, 'Accept': 'application/json' },
             credentials: 'same-origin'
