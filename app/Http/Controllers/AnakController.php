@@ -85,6 +85,7 @@ class AnakController extends Controller
                 'rt_rw'                        => $anak->rt_rw,
                 'berat_badan'                  => $anak->berat_badan,
                 'tinggi_badan'                 => $anak->tinggi_badan,
+                'lingkar_kepala'               => $anak->lingkar_kepala,
                 'status_gizi'                  => $anak->status_gizi ?? 'Belum diukur',
                 'status_gizi_detail'           => $anak->status_gizi_detail,
                 'tanggal_penimbangan_terakhir' => $anak->tanggal_penimbangan_terakhir,
