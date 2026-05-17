@@ -70,6 +70,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/anak',      [AnakController::class, 'list']);
         Route::get('/anak/{id}', [AnakController::class, 'show']);
 
+        // Edit & Hapus Anak — orangtua hanya bisa edit/hapus anak miliknya sendiri
+        // (validasi user_id sudah ada di controller)
+        Route::put('/anak/{id}',    [AnakController::class, 'update']);
+        Route::delete('/anak/{id}', [AnakController::class, 'destroy']);
+
         // Pengukuran / Riwayat Pertumbuhan
         Route::get('/pengukuran/{anakId}/riwayat', [PengukuranController::class, 'riwayat']);
         Route::post('/pengukuran',                 [PengukuranController::class, 'store']);
@@ -119,10 +124,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // Dashboard
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-        // Anak - CRUD
+        // Anak - CRUD (kader bisa registrasi baru, edit, hapus semua anak)
         Route::post('/anak/registrasi', [AnakController::class, 'store']);
-        Route::put('/anak/{id}',        [AnakController::class, 'update']);
-        Route::delete('/anak/{id}',     [AnakController::class, 'destroy']);
 
         // Pengukuran - Delete
         Route::delete('/pengukuran/{id}', [PengukuranController::class, 'destroy']);
